@@ -1,0 +1,63 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description = 'Análisis, explicaciones, teorías y debates sobre FROM.',
+  ogImage = '/assets/profile-landscape-hd.jpg',
+  bodyClass = '',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://elhombredeamarillo.com');
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#070805" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site ?? 'https://elhombredeamarillo.com').href} />
+    <meta property="og:locale" content="es_ES" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site ?? 'https://elhombredeamarillo.com').href} />
+
+    <link rel="canonical" href={canonicalURL.href} />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>{title}</title>
+
+    <slot name="head" />
+  </head>
+  <body class:list={['bg-bg text-text font-body antialiased', bodyClass]}>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>

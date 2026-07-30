@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+
+/* ─── Custom theme (Tailwind v4 CSS-first) ─── */
+@theme {
+  --color-bg: #070805;
+  --color-surface: #0c0d0a;
+  --color-surface-raised: #12140f;
+  --color-border: #212318;
+  --color-border-light: #2d3023;
+
+  --color-text: #f1ebdc;
+  --color-text-muted: rgba(241, 235, 220, 0.62);
+
+  --color-yellow: #e4b722;
+  --color-yellow-bright: #f4c943;
+  --color-yellow-glow: rgba(244, 201, 67, 0.15);
+  --color-yellow-soft: rgba(228, 183, 34, 0.12);
+
+  --color-amber: #f4c943;
+  --color-amber-hot: #f4c943;
+
+  --color-rust: #9d3e32;
+  --color-rust-hot: #d36255;
+
+  --color-ivory: #f1ebdc;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-pixel: 'VT323', monospace;
+
+  --spacing-header: 72px;
+}
+
+/* ─── Base ─── */
+:root {
+  --shell: 1320px;
+  --header-h: 72px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-yellow);
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: rgba(244, 201, 67, 0.3);
+  color: #f1ebdc;
+}
+
+/* ─── Focus visible ─── */
+:focus-visible {
+  outline: 2px solid var(--color-yellow);
+  outline-offset: 2px;
+}
+
+/* ─── Visually hidden ─── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

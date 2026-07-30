@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/ui/Header.astro';
+import Footer from '../components/ui/Footer.astro';
+import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
+import { thumbnailUrl } from '../lib/youtube';
+---
+
+<BaseLayout
+  title="Expedientes — El Hombre de Amarillo"
+  description="Archivo interactivo de teorías de FROM: expedientes, pruebas, dudas y evolución a través de los vídeos."
+  ogImage="/assets/profile-landscape-hd.jpg"
+>
+  <Header />
+
+  <main class="pt-[var(--header-h)]">
+    <!-- Hero de expedientes -->
+    <section class="relative overflow-hidden border-b border-border" aria-labelledby="cases-title">
+      <div class="absolute inset-0 bg-gradient-to-br from-yellow/5 via-transparent to-rust/5"></div>
+      <div class="relative mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 lg:py-24">
+        <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-3">ACCESO RESTRINGIDO // ARCHIVO DE FROM</p>
+        <h1 class="font-pixel text-[clamp(2.5rem,7vw,5rem)] uppercase leading-[0.85]" id="cases-title">
+          EXPEDIENTES
+        </h1>
+        <p class="mt-4 max-w-[60ch] text-text-muted text-sm leading-relaxed">
+          Una sala para conectar las grandes teorías del canal y una cronología que conserva cómo nacieron,
+          cambiaron o quedaron en duda a medida que avanzó la serie.
+        </p>
+
+        <!-- Stats -->
+        <div class="flex flex-wrap gap-3 mt-8">
+          <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-surface/60">
+            <span class="font-pixel text-xl text-yellow">{DOSSIERS.length}</span>
+            <span class="text-[9px] font-bold tracking-[.1em] text-text-muted uppercase font-mono">EXPEDIENTES</span>
+          </div>
+          <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-surface/60">
+            <span class="font-pixel text-xl text-yellow">{SOURCES.length}</span>
+            <span class="text-[9px] font-bold tracking-[.1em] text-text-muted uppercase font-mono">VÍDEOS TRANSCRITOS</span>
+          </div>
+          <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-surface/60">
+            <span class="font-pixel text-xl text-yellow">{CASES_META.baseTheories}</span>
+            <span class="text-[9px] font-bold tracking-[.1em] text-text-muted uppercase font-mono">TEORÍAS NÚCLEO</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Muro de teorías -->
+    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16" aria-labelledby="archive-title">
+      <header class="flex items-end justify-between gap-6 mb-8">
+        <div>
+          <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">SALA DE INVESTIGACIÓN // EVIDENCE BOARD</p>
+          <h2 class="font-pixel text-[clamp(1.5rem,4vw,2.5rem)] uppercase" id="archive-title">MURO DE TEORÍAS</h2>
+        </div>
+        <span class="text-[10px] font-bold tracking-[.12em] text-yellow uppercase font-mono">
+          {DOSSIERS.length} EXPEDIENTES
+        </span>
+      </header>
+
+      <!-- Filtros placeholder (React island en Fase 2) -->
+      <div class="flex flex-wrap gap-2 mb-8">
+        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono bg-yellow text-bg rounded-lg">TODOS</span>
+        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">ORIGEN</span>
+        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">ENTIDADES</span>
+        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">SALIDA</span>
+        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">OBJETOS</span>
+        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">PERSONAJES</span>
+        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">REGLAS</span>
+      </div>
+
+      <!-- Grid de expedientes -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        {DOSSIERS.map((dossier) => {
+          const firstSource = SOURCES.find((s) => dossier.sourceIds.includes(s.id));
+          const imageId = firstSource?.videoId || '63yacyj-o-A';
+          return (
+            <div class="group relative flex flex-col p-5 rounded-2xl border border-border bg-surface hover:border-yellow/30 hover:-translate-y-1 transition-all cursor-pointer"
+              data-case-id={dossier.id}
+            >
+              <!-- Image -->
+              <div class="relative mb-4 rounded-xl overflow-hidden">
+                <img
+                  src={thumbnailUrl(imageId)}
+                  alt={dossier.title}
+                  width="480"
+                  height="270"
+                  loading="lazy"
+                  class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
+                  onerror={`this.src='${thumbnailUrl(imageId, 'mqdefault')}'`}
+                />
+              </div>
+
+              <!-- Header -->
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-pixel text-xl text-yellow">{dossier.number}</span>
+                <span class="text-[8px] font-bold tracking-[.1em] text-text-muted uppercase font-mono text-right">
+                  {dossier.categoryLabel}
+                </span>
+              </div>
+
+              <!-- Status -->
+              <span
+                class:list={[
+                  'w-fit px-2 py-1 text-[8px] font-bold tracking-[.1em] uppercase font-mono rounded border mb-3',
+                  dossier.statusTone === 'core' && 'text-amber border-amber/30 bg-amber/10',
+                  dossier.statusTone === 'open' && 'text-text-muted border-border',
+                  dossier.statusTone === 'warning' && 'text-rust-hot border-rust/30 bg-rust/10',
+                ]}
+              >
+                {dossier.status}
+              </span>
+
+              <!-- Content -->
+              <h3 class="font-pixel text-lg uppercase leading-tight mb-2">{dossier.title}</h3>
+              <p class="text-text-muted text-[11px] leading-relaxed line-clamp-3 flex-1">{dossier.summary}</p>
+
+              <!-- Footer -->
+              <div class="flex items-center justify-between mt-4 pt-3 border-t border-border">
+                <span class="text-[9px] font-bold tracking-[.1em] text-text-muted/60 uppercase font-mono">
+                  {dossier.sourceIds.length} FUENTES
+                </span>
+                <span class="text-[9px] font-bold tracking-[.1em] text-yellow uppercase font-mono">
+                  ABRIR CARPETA →
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- Método de archivo -->
+    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-t border-border" aria-labelledby="method-title">
+      <div class="grid grid-cols-1 lg:grid-cols-[0.7fr_1.3fr] gap-10 items-center">
+        <div>
+          <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">MÉTODO DE ARCHIVO</p>
+          <h2 class="font-pixel text-[clamp(1.5rem,4vw,2.5rem)] uppercase" id="method-title">DOS CAPAS, UNA MISMA INVESTIGACIÓN</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <article class="p-5 rounded-2xl border border-border bg-surface">
+            <span class="text-yellow/40 font-pixel text-3xl">01</span>
+            <h3 class="mt-3 font-pixel text-lg uppercase">EXPEDIENTES</h3>
+            <p class="mt-2 text-text-muted text-xs leading-relaxed">
+              Agrupan las ideas para leer una teoría completa, comparar pruebas y saltar a conexiones relacionadas.
+            </p>
+          </article>
+          <article class="p-5 rounded-2xl border border-border bg-surface">
+            <span class="text-yellow/40 font-pixel text-3xl">02</span>
+            <h3 class="mt-3 font-pixel text-lg uppercase">CRONOLOGÍA</h3>
+            <p class="mt-2 text-text-muted text-xs leading-relaxed">
+              Mantiene el recorrido de los vídeos para que una conclusión posterior no borre la formulación original.
+            </p>
+          </article>
+          <article class="p-5 rounded-2xl border border-border bg-surface">
+            <span class="text-yellow/40 font-pixel text-3xl">03</span>
+            <h3 class="mt-3 font-pixel text-lg uppercase">ESTADOS</h3>
+            <p class="mt-2 text-text-muted text-xs leading-relaxed">
+              Diferencia hipótesis centrales, alternativas abiertas, teorías derivadas y ejercicios de reinterpretación.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comunidad placeholder (completar en Fase 2) -->
+    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-t border-border" aria-labelledby="community-title">
+      <header class="flex items-end justify-between gap-6 mb-8">
+        <div>
+          <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">ARCHIVO COMUNITARIO // TEMPORADA 5</p>
+          <h2 class="font-pixel text-[clamp(1.5rem,4vw,2.5rem)] uppercase" id="community-title">MISTERIOS BAJO VOTACIÓN</h2>
+          <p class="mt-2 max-w-[60ch] text-text-muted text-sm">
+            El archivo agrupa preguntas repetidas, abre una sala de hipótesis para cada misterio y ordena las explicaciones según el apoyo de la comunidad.
+          </p>
+        </div>
+      </header>
+      <div class="p-8 rounded-2xl border border-border bg-surface text-center">
+        <p class="text-text-muted text-sm">La sección de comunidad se conectará con Supabase en la Fase 3.</p>
+        <p class="text-text-muted/60 text-xs mt-2 font-mono">Misterios, hipótesis y votos en tiempo real.</p>
+      </div>
+    </section>
+
+    <Footer />
+  </main>
+</BaseLayout>

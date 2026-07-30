@@ -1,0 +1,101 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/', label: 'INICIO' },
+  { href: '/videos', label: 'VÍDEOS' },
+  { href: '/expedientes', label: 'EXPEDIENTES' },
+];
+---
+
+<header id="site-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <div class="mx-auto max-w-[var(--shell)] flex items-center justify-between px-5 py-4 lg:px-8">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-3 no-underline group">
+      <div class="w-11 h-11 rounded-full border border-border bg-surface-raised flex items-center justify-center text-yellow font-pixel text-lg group-hover:border-yellow transition-colors">
+        Y
+      </div>
+      <div class="hidden sm:block">
+        <div class="text-xs font-bold tracking-widest text-yellow uppercase font-mono">El Hombre</div>
+        <div class="text-[10px] tracking-widest text-text-muted uppercase font-mono">de Amarillo</div>
+      </div>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex items-center gap-1" aria-label="Navegación principal">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'px-4 py-2 text-[10px] font-bold tracking-[.12em] uppercase font-mono rounded-lg transition-colors',
+            currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
+              ? 'text-bg bg-yellow'
+              : 'text-text-muted hover:text-yellow hover:bg-yellow/10',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Mobile hamburger -->
+    <button
+      id="mobile-menu-toggle"
+      type="button"
+      class="md:hidden w-10 h-10 flex items-center justify-center text-text-muted hover:text-yellow transition-colors"
+      aria-label="Abrir menú"
+      aria-expanded="false"
+    >
+      <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+        <path d="M0 1h20M0 7h20M0 13h20" stroke="currentColor" stroke-width="1.5" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <nav
+    id="mobile-menu"
+    class="md:hidden hidden bg-surface/95 backdrop-blur-lg border-t border-border"
+    aria-label="Navegación móvil"
+  >
+    <div class="flex flex-col p-4 gap-1">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'px-4 py-3 text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-lg transition-colors',
+            currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href))
+              ? 'text-bg bg-yellow'
+              : 'text-text-muted hover:text-yellow hover:bg-yellow/10',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </nav>
+</header>
+
+<script>
+  const header = document.getElementById('site-header');
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+
+  // Scroll effect
+  let lastScroll = 0;
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    if (scrollY > 80) {
+      header?.classList.add('bg-bg/90', 'backdrop-blur-lg', 'border-b', 'border-border');
+    } else {
+      header?.classList.remove('bg-bg/90', 'backdrop-blur-lg', 'border-b', 'border-border');
+    }
+    lastScroll = scrollY;
+  }, { passive: true });
+
+  // Mobile menu toggle
+  toggle?.addEventListener('click', () => {
+    const isOpen = menu?.classList.toggle('hidden') === false;
+    toggle.setAttribute('aria-expanded', String(isOpen));
+  });
+</script>

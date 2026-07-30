@@ -1,0 +1,231 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/ui/Header.astro';
+import Footer from '../components/ui/Footer.astro';
+import { getRecentVideos } from '../data/videos';
+import { thumbnailUrl } from '../lib/youtube';
+import { relativeTime } from '../lib/utils';
+
+const recentVideos = getRecentVideos(3);
+---
+
+<BaseLayout
+  title="El Hombre de Amarillo"
+  description="Página oficial de El Hombre de Amarillo: análisis, teorías y debates sobre FROM y otras historias de misterio."
+  ogImage="/assets/profile-landscape-hd.jpg"
+>
+  <Header />
+
+  <main>
+    <!-- Hero -->
+    <section class="relative min-h-screen flex items-center overflow-hidden" aria-labelledby="home-title">
+      <!-- Background image -->
+      <div class="absolute inset-0 z-0">
+        <img
+          src="/assets/profile-landscape-hd.jpg"
+          alt=""
+          width="1268"
+          height="622"
+          fetchpriority="high"
+          class="w-full h-full object-cover opacity-40"
+        />
+      </div>
+      <div class="absolute inset-0 z-[1] bg-gradient-to-b from-bg/60 via-bg/40 to-bg"></div>
+
+      <div class="relative z-10 mx-auto max-w-[var(--shell)] w-full px-5 lg:px-8 py-32">
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-12 items-center">
+          <!-- Copy -->
+          <div>
+            <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-4">
+              CANAL DE YOUTUBE // @KOIBOY_OG
+            </p>
+            <h1 class="font-pixel text-[clamp(3rem,8vw,7rem)] leading-[0.85] uppercase tracking-tight" id="home-title">
+              <span class="block">EL HOMBRE</span>
+              <span class="block text-yellow">DE AMARILLO</span>
+            </h1>
+            <p class="mt-6 max-w-[52ch] text-text-muted text-sm leading-relaxed">
+              El típico amigo con el que comentas tus series y películas favoritas. FROM es el centro
+              de una investigación que mezcla análisis, teorías, pistas y debates con otros creadores.
+            </p>
+            <div class="flex flex-wrap gap-3 mt-8">
+              <a
+                href="/videos"
+                class="inline-flex items-center gap-4 min-h-[48px] px-5 bg-yellow text-bg text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:brightness-110 transition-all"
+              >
+                <span>ENTRAR EN LA SALA DE VÍDEOS</span><b>→</b>
+              </a>
+              <a
+                href="/expedientes"
+                class="inline-flex items-center gap-4 min-h-[48px] px-5 border border-border text-text text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:border-yellow hover:text-yellow transition-all"
+              >
+                ABRIR LOS EXPEDIENTES<b>↗</b>
+              </a>
+            </div>
+          </div>
+
+          <!-- Signature -->
+          <aside class="hidden lg:flex flex-col items-center gap-4" aria-label="Identidad del canal">
+            <div class="w-[180px] h-[180px] rounded-full border-2 border-yellow/30 overflow-hidden shadow-[0_0_40px_rgba(244,201,67,0.15)]">
+              <img
+                src="/assets/channel-avatar-premium.jpg"
+                alt="Foto de perfil de El Hombre de Amarillo"
+                width="1254"
+                height="1254"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div class="text-center">
+              <div class="text-[9px] font-bold tracking-[.14em] text-text-muted uppercase font-mono">ANÁLISIS // TEORÍAS // DEBATES</div>
+              <div class="text-xs font-bold tracking-widest text-yellow uppercase font-mono mt-1">+18.300 SUSCRIPTORES</div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Scroll cue -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+        <div class="w-[1px] h-8 bg-gradient-to-b from-yellow/60 to-transparent animate-pulse"></div>
+        <span class="text-[9px] font-bold tracking-[.14em] text-text-muted uppercase font-mono">CONTINUAR</span>
+      </div>
+    </section>
+
+    <!-- Portals -->
+    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-20" aria-labelledby="portals-title">
+      <header class="flex items-end justify-between gap-6 mb-10">
+        <div>
+          <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">TRES FORMAS DE ENTRAR</p>
+          <h2 class="font-pixel text-[clamp(2rem,4.5vw,3.5rem)] uppercase" id="portals-title">EXPLORA EL ARCHIVO</h2>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Análisis -->
+        <a href="/videos?category=analysis" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all">
+          <img
+            src="https://i.ytimg.com/vi/n89wAW_gT3Q/maxresdefault.jpg"
+            alt="Miniatura de un análisis"
+            width="1280"
+            height="720"
+            loading="lazy"
+            class="w-full aspect-video object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+          />
+          <div class="p-5">
+            <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">01 // INVESTIGACIÓN</span>
+            <h3 class="mt-2 font-pixel text-2xl uppercase">Análisis y teorías</h3>
+            <p class="mt-2 text-text-muted text-xs leading-relaxed">Revelaciones, conexiones, símbolos y posibilidades construidas episodio a episodio.</p>
+            <span class="inline-block mt-4 text-[10px] font-bold tracking-[.12em] text-yellow uppercase font-mono">ENTRAR EN LOS ANÁLISIS →</span>
+          </div>
+        </a>
+
+        <!-- Debates -->
+        <a href="/videos?category=debate" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all">
+          <img
+            src="https://i.ytimg.com/vi/Kc0SnZH6KPY/maxresdefault.jpg"
+            alt="Miniatura de un debate con creadores"
+            width="1280"
+            height="720"
+            loading="lazy"
+            class="w-full aspect-video object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+          />
+          <div class="p-5">
+            <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">02 // MESA ABIERTA</span>
+            <h3 class="mt-2 font-pixel text-2xl uppercase">Debates con creadores</h3>
+            <p class="mt-2 text-text-muted text-xs leading-relaxed">Ideas enfrentadas, invitados recurrentes y conversaciones tras cada nuevo episodio.</p>
+            <span class="inline-block mt-4 text-[10px] font-bold tracking-[.12em] text-yellow uppercase font-mono">ENTRAR EN LOS DEBATES →</span>
+          </div>
+        </a>
+
+        <!-- Expedientes -->
+        <a href="/expedientes" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all">
+          <img
+            src="/assets/references/bosslogic-from-t5-fanart.png"
+            alt="Fanart de FROM"
+            width="448"
+            height="593"
+            loading="lazy"
+            class="w-full aspect-video object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+          />
+          <div class="p-5">
+            <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">03 // SALA RESTRINGIDA</span>
+            <h3 class="mt-2 font-pixel text-2xl uppercase">Expedientes</h3>
+            <p class="mt-2 text-text-muted text-xs leading-relaxed">Un muro de pruebas y una cronología para seguir cómo nacen, cambian o se debilitan las teorías.</p>
+            <span class="inline-block mt-4 text-[10px] font-bold tracking-[.12em] text-yellow uppercase font-mono">ABRIR EL MURO →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Recent videos (estático por ahora, será React island en Fase 2) -->
+    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-20 border-t border-border" aria-labelledby="recent-title">
+      <header class="flex items-end justify-between gap-6 mb-10">
+        <div>
+          <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">ÚLTIMAS PUBLICACIONES</p>
+          <h2 class="font-pixel text-[clamp(2rem,4.5vw,3.5rem)] uppercase" id="recent-title">AHORA EN EL CANAL</h2>
+        </div>
+        <a href="/videos" class="text-[10px] font-bold tracking-[.12em] text-text-muted hover:text-yellow uppercase font-mono transition-colors hidden sm:block">
+          EXPLORAR TODA LA BIBLIOTECA →
+        </a>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {recentVideos.map((video) => (
+          <a
+            href={`https://www.youtube.com/watch?v=${video.videoId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group block rounded-xl border border-border bg-surface overflow-hidden hover:border-yellow/30 transition-all"
+          >
+            <div class="relative">
+              <img
+                src={thumbnailUrl(video.videoId)}
+                alt={video.title}
+                width="480"
+                height="270"
+                loading="lazy"
+                class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
+                onerror="this.src='https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg'"
+              />
+              <span class="absolute top-3 left-3 px-2 py-1 bg-bg/80 backdrop-blur text-[9px] font-bold tracking-[.1em] text-yellow uppercase font-mono rounded">
+                {video.code}
+              </span>
+            </div>
+            <div class="p-4">
+              <h3 class="font-pixel text-lg uppercase leading-tight line-clamp-2">{video.title}</h3>
+              <p class="mt-2 text-text-muted text-xs line-clamp-2">{video.description}</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-[9px] font-bold tracking-[.1em] text-yellow/60 uppercase font-mono">
+                  {video.category === 'analysis' ? 'ANÁLISIS' : 'DEBATE'}
+                </span>
+                {video.publishedAt && (
+                  <span class="text-[9px] text-text-muted/60 font-mono">{relativeTime(video.publishedAt)}</span>
+                )}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Manifesto -->
+    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-20 border-t border-border" aria-label="Manifiesto del canal">
+      <div class="max-w-3xl mx-auto text-center">
+        <blockquote class="font-pixel text-[clamp(1.5rem,3.5vw,2.5rem)] leading-snug">
+          "En todo ese caos hay un <em class="text-yellow not-italic">orden</em>."
+        </blockquote>
+        <div class="mt-8 space-y-4 text-text-muted text-sm leading-relaxed">
+          <p>
+            La web reúne la parte audiovisual del canal y la convierte en una investigación navegable:
+            cada vídeo aporta contexto, cada expediente conecta pistas y cada nueva temporada obliga a
+            revisar lo que creíamos saber.
+          </p>
+          <p>
+            No se trata de presentar las teorías como hechos, sino de conservar el recorrido que las
+            hizo posibles.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <Footer />
+  </main>
+</BaseLayout>
