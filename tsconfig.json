@@ -9,8 +9,6 @@
       "@data/*": ["src/data/*"],
       "@styles/*": ["src/styles/*"]
     },
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": false,

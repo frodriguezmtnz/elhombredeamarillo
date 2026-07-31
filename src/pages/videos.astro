@@ -2,12 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/ui/Header.astro';
 import Footer from '../components/ui/Footer.astro';
-import { CHANNEL, CREATORS, getFeaturedVideo, getRecentVideos } from '../data/videos';
+import VideoGrid from '../components/videos/VideoGrid';
+import { CHANNEL, VIDEOS, getFeaturedVideo } from '../data/videos';
 import { thumbnailUrl, channelUrl } from '../lib/youtube';
 import { formatChannelNumber, relativeTime } from '../lib/utils';
 
 const featured = getFeaturedVideo();
-const recentAnalysis = getRecentVideos(6).filter((v) => v.category === 'analysis');
+const category = Astro.url.searchParams.get('category');
 ---
 
 <BaseLayout
@@ -127,7 +128,7 @@ const recentAnalysis = getRecentVideos(6).filter((v) => v.category === 'analysis
       </section>
     )}
 
-    <!-- Placeholder: Grid de vídeos (completar en Fase 2 con React island) -->
+    <!-- Grid de vídeos (React island) -->
     <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16" aria-labelledby="all-title">
       <header class="flex items-end justify-between gap-6 mb-8">
         <div>
@@ -135,44 +136,7 @@ const recentAnalysis = getRecentVideos(6).filter((v) => v.category === 'analysis
           <h2 class="font-pixel text-[clamp(1.5rem,4vw,2.5rem)] uppercase" id="all-title">TODOS LOS VÍDEOS</h2>
         </div>
       </header>
-
-      <!-- Filtros placeholder (React island en Fase 2) -->
-      <div class="flex flex-wrap gap-2 mb-6">
-        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono bg-yellow text-bg rounded-lg">TODOS</span>
-        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">ANÁLISIS</span>
-        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">DEBATE</span>
-      </div>
-
-      <!-- Grid placeholder (completar en Fase 2) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {recentAnalysis.map((video) => (
-          <a
-            href={`https://www.youtube.com/watch?v=${video.videoId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group block rounded-xl border border-border bg-surface overflow-hidden hover:border-yellow/30 transition-all"
-          >
-            <div class="relative">
-              <img
-                src={thumbnailUrl(video.videoId)}
-                alt={video.title}
-                width="480"
-                height="270"
-                loading="lazy"
-                class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
-                onerror={`this.src='${thumbnailUrl(video.videoId, 'mqdefault')}'`}
-              />
-              <span class="absolute top-2 left-2 px-2 py-0.5 bg-bg/80 backdrop-blur text-[8px] font-bold tracking-[.1em] text-yellow uppercase font-mono rounded">
-                {video.code}
-              </span>
-            </div>
-            <div class="p-3">
-              <h3 class="font-pixel text-sm uppercase leading-tight line-clamp-2">{video.title}</h3>
-              <p class="mt-1 text-text-muted text-[11px] line-clamp-2">{video.description}</p>
-            </div>
-          </a>
-        ))}
-      </div>
+      <VideoGrid client:load videos={VIDEOS} initialCategory={category ?? undefined} />
     </section>
 
     <Footer />
