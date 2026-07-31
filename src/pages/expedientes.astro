@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/ui/Header.astro';
+import ExpedientesBoard from '../components/cases/ExpedientesBoard';
 import Footer from '../components/ui/Footer.astro';
+import Header from '../components/ui/Header.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
-import { thumbnailUrl } from '../lib/youtube';
 ---
 
 <BaseLayout
@@ -52,81 +52,10 @@ import { thumbnailUrl } from '../lib/youtube';
           <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">SALA DE INVESTIGACIÓN // EVIDENCE BOARD</p>
           <h2 class="font-pixel text-[clamp(1.5rem,4vw,2.5rem)] uppercase" id="archive-title">MURO DE TEORÍAS</h2>
         </div>
-        <span class="text-[10px] font-bold tracking-[.12em] text-yellow uppercase font-mono">
-          {DOSSIERS.length} EXPEDIENTES
-        </span>
       </header>
 
-      <!-- Filtros placeholder (React island en Fase 2) -->
-      <div class="flex flex-wrap gap-2 mb-8">
-        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono bg-yellow text-bg rounded-lg">TODOS</span>
-        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">ORIGEN</span>
-        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">ENTIDADES</span>
-        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">SALIDA</span>
-        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">OBJETOS</span>
-        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">PERSONAJES</span>
-        <span class="px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono border border-border text-text-muted rounded-lg">REGLAS</span>
-      </div>
-
-      <!-- Grid de expedientes -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        {DOSSIERS.map((dossier) => {
-          const firstSource = SOURCES.find((s) => dossier.sourceIds.includes(s.id));
-          const imageId = firstSource?.videoId || '63yacyj-o-A';
-          return (
-            <div class="group relative flex flex-col p-5 rounded-2xl border border-border bg-surface hover:border-yellow/30 hover:-translate-y-1 transition-all cursor-pointer"
-              data-case-id={dossier.id}
-            >
-              <!-- Image -->
-              <div class="relative mb-4 rounded-xl overflow-hidden">
-                <img
-                  src={thumbnailUrl(imageId)}
-                  alt={dossier.title}
-                  width="480"
-                  height="270"
-                  loading="lazy"
-                  class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
-                  onerror={`this.src='${thumbnailUrl(imageId, 'mqdefault')}'`}
-                />
-              </div>
-
-              <!-- Header -->
-              <div class="flex items-center justify-between mb-3">
-                <span class="font-pixel text-xl text-yellow">{dossier.number}</span>
-                <span class="text-[8px] font-bold tracking-[.1em] text-text-muted uppercase font-mono text-right">
-                  {dossier.categoryLabel}
-                </span>
-              </div>
-
-              <!-- Status -->
-              <span
-                class:list={[
-                  'w-fit px-2 py-1 text-[8px] font-bold tracking-[.1em] uppercase font-mono rounded border mb-3',
-                  dossier.statusTone === 'core' && 'text-amber border-amber/30 bg-amber/10',
-                  dossier.statusTone === 'open' && 'text-text-muted border-border',
-                  dossier.statusTone === 'warning' && 'text-rust-hot border-rust/30 bg-rust/10',
-                ]}
-              >
-                {dossier.status}
-              </span>
-
-              <!-- Content -->
-              <h3 class="font-pixel text-lg uppercase leading-tight mb-2">{dossier.title}</h3>
-              <p class="text-text-muted text-[11px] leading-relaxed line-clamp-3 flex-1">{dossier.summary}</p>
-
-              <!-- Footer -->
-              <div class="flex items-center justify-between mt-4 pt-3 border-t border-border">
-                <span class="text-[9px] font-bold tracking-[.1em] text-text-muted/60 uppercase font-mono">
-                  {dossier.sourceIds.length} FUENTES
-                </span>
-                <span class="text-[9px] font-bold tracking-[.1em] text-yellow uppercase font-mono">
-                  ABRIR CARPETA →
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <!-- React island: Board interactivo -->
+      <ExpedientesBoard client:load dossiers={DOSSIERS} sources={SOURCES} />
     </section>
 
     <!-- Método de archivo -->
@@ -162,7 +91,7 @@ import { thumbnailUrl } from '../lib/youtube';
       </div>
     </section>
 
-    <!-- Comunidad placeholder (completar en Fase 2) -->
+    <!-- Comunidad placeholder (completar en Fase 2.14-2.15) -->
     <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-t border-border" aria-labelledby="community-title">
       <header class="flex items-end justify-between gap-6 mb-8">
         <div>
