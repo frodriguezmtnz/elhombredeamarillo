@@ -1,9 +1,12 @@
 ---
 import ExpedientesBoard from '../components/cases/ExpedientesBoard';
+import CommunityBoard from '../components/community/CommunityBoard';
+import MysteryProcess from '../components/community/MysteryProcess.astro';
 import Footer from '../components/ui/Footer.astro';
 import Header from '../components/ui/Header.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
+import { MYSTERIES } from '../data/mysteries';
 ---
 
 <BaseLayout
@@ -91,7 +94,7 @@ import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
       </div>
     </section>
 
-    <!-- Comunidad placeholder (completar en Fase 2.14-2.15) -->
+    <!-- Comunidad: proceso + misterios -->
     <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-t border-border" aria-labelledby="community-title">
       <header class="flex items-end justify-between gap-6 mb-8">
         <div>
@@ -102,10 +105,14 @@ import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
           </p>
         </div>
       </header>
-      <div class="p-8 rounded-2xl border border-border bg-surface text-center">
-        <p class="text-text-muted text-sm">La sección de comunidad se conectará con Supabase en la Fase 3.</p>
-        <p class="text-text-muted/60 text-xs mt-2 font-mono">Misterios, hipótesis y votos en tiempo real.</p>
+
+      <!-- Proceso (HTML estático) -->
+      <div class="mb-8">
+        <MysteryProcess />
       </div>
+
+      <!-- React island: Board comunitario -->
+      <CommunityBoard client:load mysteries={MYSTERIES} />
     </section>
 
     <Footer />

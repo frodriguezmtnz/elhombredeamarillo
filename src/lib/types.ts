@@ -89,3 +89,23 @@ export interface CasesMeta {
   transcribedVideos: number;
   note: string;
 }
+
+export interface HypothesisData {
+  id: string;
+  title: string;
+  description: string;
+  author: string;
+  votes: number;
+}
+
+export interface MysteryData {
+  id: string;
+  code: string;
+  title: string;
+  shortTitle: string;
+  category: 'entity' | 'origin' | 'character' | 'mechanic';
+  context: string;
+  contributors: string;
+  mentions: number;
+  hypotheses: HypothesisData[];
+}
