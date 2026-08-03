@@ -6,7 +6,6 @@ import Footer from '../components/ui/Footer.astro';
 import Header from '../components/ui/Header.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
-import { MYSTERIES } from '../data/mysteries';
 ---
 
 <BaseLayout
@@ -112,7 +111,7 @@ import { MYSTERIES } from '../data/mysteries';
       </div>
 
       <!-- React island: Board comunitario -->
-      <CommunityBoard client:load mysteries={MYSTERIES} />
+      <CommunityBoard client:load />
     </section>
 
     <Footer />

@@ -1,12 +1,16 @@
-import { MYSTERIES, getTotalHypotheses, getTotalVotes } from '@data/mysteries';
+import type { MysteryData } from '@lib/types';
 
-export default function CommunityStats() {
-  const openMysteries = MYSTERIES.length;
-  const totalHyp = getTotalHypotheses();
-  const totalVotes = getTotalVotes();
+interface Props {
+  mysteries: MysteryData[];
+}
+
+export default function CommunityStats({ mysteries }: Props) {
+  const openMysteries = mysteries.length;
+  const totalHyp = mysteries.reduce((s, m) => s + m.hypotheses.length, 0);
+  const totalVotes = mysteries.reduce((s, m) => s + m.hypotheses.reduce((v, h) => v + h.votes, 0), 0);
 
   const stats = [
-    { value: openMysteries, label: 'MITSTERIOS ABIERTOS' },
+    { value: openMysteries, label: 'MISTERIOS ABIERTOS' },
     { value: totalHyp, label: 'HIPÓTESIS' },
     { value: totalVotes, label: 'VOTOS TOTALES' },
   ];

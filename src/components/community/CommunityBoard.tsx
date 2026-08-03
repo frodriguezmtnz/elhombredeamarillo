@@ -1,5 +1,6 @@
+import { getSupabase } from '@lib/supabase-browser';
 import type { MysteryData } from '@lib/types';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AuthBar from './AuthBar';
 import AuthProvider from './AuthProvider';
 import CommunityStats from './CommunityStats';
@@ -8,16 +9,95 @@ import MysteryList from './MysteryList';
 import MysteryToolbar from './MysteryToolbar';
 import StreamMode from './StreamMode';
 
-interface Props {
-  mysteries: MysteryData[];
+interface SupabaseHypothesisRow {
+  id: string;
+  title: string;
+  votes_count: number;
 }
 
-function CommunityBoardInner({ mysteries }: Props) {
-  const [filtered, setFiltered] = useState<MysteryData[]>(mysteries);
+interface SupabaseMysteryRow {
+  id: string;
+  code: string;
+  title: string;
+  short_title: string;
+  category: string;
+  context: string;
+  contributors: string;
+  mentions_count: number;
+  hypotheses: SupabaseHypothesisRow[];
+}
+
+function mapRow(row: SupabaseMysteryRow): MysteryData {
+  return {
+    id: row.id,
+    code: row.code,
+    title: row.title,
+    shortTitle: row.short_title,
+    category: row.category as MysteryData['category'],
+    context: row.context,
+    contributors: row.contributors ?? '',
+    mentions: row.mentions_count ?? 0,
+    hypotheses: (row.hypotheses ?? []).map((h) => ({
+      id: h.id,
+      title: h.title,
+      description: '',
+      author: '',
+      votes: h.votes_count ?? 0,
+    })),
+  };
+}
+
+function CommunityBoardInner() {
+  const [mysteries, setMysteries] = useState<MysteryData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [filtered, setFiltered] = useState<MysteryData[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [streamOpen, setStreamOpen] = useState(false);
 
   const selectedMystery = selectedId ? (mysteries.find((m) => m.id === selectedId) ?? null) : null;
+
+  useEffect(() => {
+    getSupabase().then((sb) => {
+      sb.from('mysteries')
+        .select('*, hypotheses(id, title, votes_count)')
+        .order('display_order')
+        .then(({ data, error: err }) => {
+          if (err) {
+            setError(err.message);
+            setLoading(false);
+            return;
+          }
+          const mapped = (data as SupabaseMysteryRow[]).map(mapRow);
+          setMysteries(mapped);
+          setFiltered(mapped);
+          setLoading(false);
+        });
+    });
+  }, []);
+
+  const handleFilterChange = useCallback((newFiltered: MysteryData[]) => {
+    setFiltered(newFiltered);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center gap-3 py-10">
+        <span className="w-4 h-4 border-2 border-text-muted/20 border-t-yellow rounded-full animate-spin" />
+        <span className="text-[9px] font-bold tracking-[.1em] text-text-muted/60 uppercase font-mono">
+          Cargando misterios...
+        </span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-5 rounded-xl border border-rust/30 bg-rust/5 text-center">
+        <p className="text-rust-hot text-xs font-mono">Error cargando misterios: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -29,9 +109,13 @@ function CommunityBoardInner({ mysteries }: Props) {
         <AuthBar />
       </div>
 
-      <CommunityStats />
+      <CommunityStats mysteries={mysteries} />
 
-      <MysteryToolbar mysteries={mysteries} onFilterChange={setFiltered} onOpenStream={() => setStreamOpen(true)} />
+      <MysteryToolbar
+        mysteries={mysteries}
+        onFilterChange={handleFilterChange}
+        onOpenStream={() => setStreamOpen(true)}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-6">
         <MysteryList mysteries={filtered} selectedId={selectedId} onSelect={setSelectedId} />
@@ -43,10 +127,10 @@ function CommunityBoardInner({ mysteries }: Props) {
   );
 }
 
-export default function CommunityBoard({ mysteries }: Props) {
+export default function CommunityBoard() {
   return (
     <AuthProvider>
-      <CommunityBoardInner mysteries={mysteries} />
+      <CommunityBoardInner />
     </AuthProvider>
   );
 }
