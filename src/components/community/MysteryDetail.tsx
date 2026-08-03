@@ -1,5 +1,6 @@
 import type { MysteryData } from '@lib/types';
 import clsx from 'clsx';
+import VoteButton from './VoteButton';
 
 interface Props {
   mystery: MysteryData | null;
@@ -54,7 +55,7 @@ export default function MysteryDetail({ mystery }: Props) {
                   >
                     #{i + 1}
                   </span>
-                  <span className="text-[9px] font-bold tracking-[.1em] text-yellow font-mono">{hyp.votes} VOTOS</span>
+                  <VoteButton hypothesisId={hyp.id} initialVotes={hyp.votes} />
                 </div>
                 <h5 className="text-text text-xs font-bold mb-1">{hyp.title}</h5>
                 <p className="text-text-muted text-[10px] leading-relaxed mb-2">{hyp.description}</p>

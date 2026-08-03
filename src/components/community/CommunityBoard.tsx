@@ -1,5 +1,7 @@
 import type { MysteryData } from '@lib/types';
 import { useState } from 'react';
+import AuthBar from './AuthBar';
+import AuthProvider from './AuthProvider';
 import CommunityStats from './CommunityStats';
 import MysteryDetail from './MysteryDetail';
 import MysteryList from './MysteryList';
@@ -10,7 +12,7 @@ interface Props {
   mysteries: MysteryData[];
 }
 
-export default function CommunityBoard({ mysteries }: Props) {
+function CommunityBoardInner({ mysteries }: Props) {
   const [filtered, setFiltered] = useState<MysteryData[]>(mysteries);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [streamOpen, setStreamOpen] = useState(false);
@@ -19,6 +21,14 @@ export default function CommunityBoard({ mysteries }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* Auth bar */}
+      <div className="flex items-center justify-between gap-4 mb-2">
+        <span className="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono">
+          ACCESO COMUNITARIO
+        </span>
+        <AuthBar />
+      </div>
+
       <CommunityStats />
 
       <MysteryToolbar mysteries={mysteries} onFilterChange={setFiltered} onOpenStream={() => setStreamOpen(true)} />
@@ -30,5 +40,13 @@ export default function CommunityBoard({ mysteries }: Props) {
 
       <StreamMode mysteries={mysteries} isOpen={streamOpen} onClose={() => setStreamOpen(false)} />
     </div>
+  );
+}
+
+export default function CommunityBoard({ mysteries }: Props) {
+  return (
+    <AuthProvider>
+      <CommunityBoardInner mysteries={mysteries} />
+    </AuthProvider>
   );
 }
