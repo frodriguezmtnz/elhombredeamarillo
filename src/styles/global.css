@@ -69,6 +69,17 @@ html {
   outline-offset: 2px;
 }
 
+/* ─── Reveal on scroll ─── */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal-item.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ─── Visually hidden ─── */
 .sr-only {
   position: absolute;
@@ -80,4 +91,22 @@ html {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

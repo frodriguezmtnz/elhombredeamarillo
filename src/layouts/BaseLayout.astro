@@ -6,6 +6,11 @@ export interface Props {
   bodyClass?: string;
 }
 
+import MagneticButtons from '../components/effects/MagneticButtons';
+import PointerLight from '../components/effects/PointerLight';
+import RevealOnScroll from '../components/effects/RevealOnScroll';
+import ScrollProgress from '../components/effects/ScrollProgress';
+
 const {
   title,
   description = 'Análisis, explicaciones, teorías y debates sobre FROM.',
@@ -14,6 +19,7 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://elhombredeamarillo.com');
+const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
 ---
 
 <!doctype html>
@@ -54,6 +60,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://elhombre
     <slot name="head" />
   </head>
   <body class:list={['bg-bg text-text font-body antialiased', bodyClass]}>
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'El Hombre de Amarillo',
+      url: BASE_URL,
+      description: 'Análisis, explicaciones, teorías y debates sobre FROM.',
+      inLanguage: 'es',
+    })} />
+    <ScrollProgress client:idle />
+    <PointerLight client:idle />
+    <RevealOnScroll client:visible />
+    <MagneticButtons client:idle />
     <slot />
   </body>
 </html>
