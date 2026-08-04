@@ -1,12 +1,90 @@
-import type { MysteryData } from '@lib/types';
+import { getSupabase } from '@lib/supabase-browser';
+import type { HypothesisData, MysteryData } from '@lib/types';
 import clsx from 'clsx';
+import { useEffect, useState } from 'react';
 import VoteButton from './VoteButton';
 
 interface Props {
   mystery: MysteryData | null;
 }
 
+function fetchHypotheses(mysteryId: string): Promise<{ data: HypothesisData[] | null; error: string | null }> {
+  return getSupabase().then((sb) =>
+    sb
+      .from('hypotheses')
+      .select('id, title, description, author, votes_count, display_order')
+      .eq('mystery_id', mysteryId)
+      .order('display_order')
+      .then(({ data, error }) => {
+        if (error) return { data: null, error: error.message };
+        const mapped: HypothesisData[] = (data ?? []).map((h) => ({
+          id: h.id,
+          title: h.title,
+          description: h.description ?? '',
+          author: h.author ?? 'Anónimo',
+          votes: h.votes_count ?? 0,
+        }));
+        return { data: mapped, error: null };
+      }),
+  );
+}
+
 export default function MysteryDetail({ mystery }: Props) {
+  const [hypotheses, setHypotheses] = useState<HypothesisData[]>([]);
+  const [hypLoading, setHypLoading] = useState(false);
+  const [hypError, setHypError] = useState('');
+
+  const applyData = (data: HypothesisData[] | null, error: string | null) => {
+    if (!error && data) setHypotheses(data);
+  };
+
+  const refreshHypotheses = () => {
+    if (!mystery) return;
+    setTimeout(() => {
+      fetchHypotheses(mystery.id).then(({ data, error }) => applyData(data, error));
+    }, 500);
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: applyData es estable (solo usa setHypotheses)
+  useEffect(() => {
+    if (!mystery) return;
+    setHypLoading(true);
+    setHypError('');
+
+    const mysteryId = mystery.id;
+
+    fetchHypotheses(mysteryId).then(({ data, error }) => {
+      if (error) {
+        setHypError(error);
+        setHypLoading(false);
+        return;
+      }
+      setHypotheses(data ?? []);
+      setHypLoading(false);
+    });
+
+    let unsubscribe: (() => void) | undefined;
+
+    getSupabase().then((sb) => {
+      const refresh = () => {
+        fetchHypotheses(mysteryId).then(({ data, error }) => applyData(data, error));
+      };
+
+      const channel = sb
+        .channel(`hypotheses-${mysteryId}`)
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'hypotheses' }, refresh)
+        .subscribe();
+
+      unsubscribe = () => {
+        sb.removeChannel(channel);
+      };
+    });
+
+    return () => {
+      unsubscribe?.();
+    };
+  }, [mystery]);
+
   if (!mystery) {
     return (
       <div className="p-6 rounded-xl border border-border bg-surface text-center">
@@ -15,7 +93,7 @@ export default function MysteryDetail({ mystery }: Props) {
     );
   }
 
-  const sorted = [...mystery.hypotheses].sort((a, b) => b.votes - a.votes);
+  const sorted = [...hypotheses].sort((a, b) => b.votes - a.votes);
   const maxVotes = sorted[0]?.votes ?? 1;
 
   return (
@@ -39,36 +117,52 @@ export default function MysteryDetail({ mystery }: Props) {
       {/* Hypotheses */}
       <div>
         <h4 className="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-3">
-          HIPÓTESIS ({mystery.hypotheses.length})
+          HIPÓTESIS ({hypLoading ? '...' : hypotheses.length})
         </h4>
-        <div className="space-y-3">
-          {sorted.map((hyp, i) => {
-            const pct = Math.round((hyp.votes / maxVotes) * 100);
-            return (
-              <div key={hyp.id} className="p-3 rounded-lg border border-border bg-bg">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span
-                    className={clsx(
-                      'px-2 py-0.5 text-[8px] font-bold tracking-[.1em] uppercase font-mono rounded',
-                      i === 0 ? 'bg-yellow text-bg' : 'bg-surface text-text-muted border border-border',
-                    )}
-                  >
-                    #{i + 1}
-                  </span>
-                  <VoteButton hypothesisId={hyp.id} initialVotes={hyp.votes} />
-                </div>
-                <h5 className="text-text text-xs font-bold mb-1">{hyp.title}</h5>
-                <p className="text-text-muted text-[10px] leading-relaxed mb-2">{hyp.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-[8px] text-text-muted/50 font-mono">{hyp.author}</span>
-                  <div className="w-24 h-1.5 bg-border rounded-full overflow-hidden">
-                    <div className="h-full bg-yellow rounded-full transition-all" style={{ width: `${pct}%` }} />
+
+        {hypLoading && (
+          <div className="flex items-center gap-2 py-4">
+            <span className="w-3 h-3 border-2 border-text-muted/20 border-t-yellow rounded-full animate-spin" />
+            <span className="text-[9px] text-text-muted/40 font-mono">Cargando hipótesis...</span>
+          </div>
+        )}
+
+        {hypError && (
+          <div className="px-3 py-2 rounded-lg border border-rust/30 bg-rust/10 text-rust-hot text-[10px] font-mono">
+            {hypError}
+          </div>
+        )}
+
+        {!hypLoading && !hypError && (
+          <div className="space-y-3">
+            {sorted.map((hyp, i) => {
+              const pct = maxVotes > 0 ? Math.round((hyp.votes / maxVotes) * 100) : 0;
+              return (
+                <div key={hyp.id} className="p-3 rounded-lg border border-border bg-bg">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span
+                      className={clsx(
+                        'px-2 py-0.5 text-[8px] font-bold tracking-[.1em] uppercase font-mono rounded',
+                        i === 0 ? 'bg-yellow text-bg' : 'bg-surface text-text-muted border border-border',
+                      )}
+                    >
+                      #{i + 1}
+                    </span>
+                    <VoteButton hypothesisId={hyp.id} initialVotes={hyp.votes} onVoteChange={refreshHypotheses} />
+                  </div>
+                  <h5 className="text-text text-xs font-bold mb-1">{hyp.title}</h5>
+                  <p className="text-text-muted text-[10px] leading-relaxed mb-2">{hyp.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[8px] text-text-muted/50 font-mono">{hyp.author}</span>
+                    <div className="w-24 h-1.5 bg-border rounded-full overflow-hidden">
+                      <div className="h-full bg-yellow rounded-full transition-all" style={{ width: `${pct}%` }} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* CTA */}

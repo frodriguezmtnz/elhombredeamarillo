@@ -6,9 +6,10 @@ import { useAuth } from './AuthProvider';
 interface Props {
   hypothesisId: string;
   initialVotes: number;
+  onVoteChange?: () => void;
 }
 
-export default function VoteButton({ hypothesisId, initialVotes }: Props) {
+export default function VoteButton({ hypothesisId, initialVotes, onVoteChange }: Props) {
   const { user } = useAuth();
   const [votes, setVotes] = useState(initialVotes);
   const [voted, setVoted] = useState(false);
@@ -47,6 +48,8 @@ export default function VoteButton({ hypothesisId, initialVotes }: Props) {
       if (error) {
         setVotes((v) => v + 1);
         setVoted(true);
+      } else {
+        onVoteChange?.();
       }
     } else {
       setVotes((v) => v + 1);
@@ -56,11 +59,13 @@ export default function VoteButton({ hypothesisId, initialVotes }: Props) {
       if (error) {
         setVotes((v) => v - 1);
         setVoted(false);
+      } else {
+        onVoteChange?.();
       }
     }
 
     setLoading(false);
-  }, [user, voted, loading, hypothesisId]);
+  }, [user, voted, loading, hypothesisId, onVoteChange]);
 
   if (!user) {
     return (
