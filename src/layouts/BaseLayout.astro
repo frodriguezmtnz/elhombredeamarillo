@@ -46,6 +46,10 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
 
     <link rel="canonical" href={canonicalURL.href} />
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -75,6 +79,14 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
     <slot />
   </body>
 </html>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' });
+    });
+  }
+</script>
 
 <style is:global>
   @import '../styles/global.css';
