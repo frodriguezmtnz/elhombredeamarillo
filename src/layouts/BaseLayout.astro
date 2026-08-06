@@ -51,13 +51,19 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Preload hero image (LCP) -->
+    <link rel="preload" as="image" href="/assets/profile-landscape-hd.jpg" fetchpriority="high" />
+
+    <!-- DNS prefetch -->
+    <link rel="dns-prefetch" href="https://i.ytimg.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+
+    <!-- Google Fonts (async, no render-blocking) -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet" />
+    </noscript>
 
     <title>{title}</title>
 
@@ -75,7 +81,7 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
     <ScrollProgress client:idle />
     <PointerLight client:idle />
     <RevealOnScroll client:visible />
-    <MagneticButtons client:idle />
+    <MagneticButtons client:visible />
     <slot />
   </body>
 </html>
