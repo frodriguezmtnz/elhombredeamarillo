@@ -16,7 +16,7 @@ export default function CommunityStats({ mysteries }: Props) {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
       {stats.map((s) => (
         <div key={s.label} className="p-4 rounded-xl border border-border bg-surface text-center">
           <span className="font-pixel text-2xl text-yellow block">{s.value}</span>

@@ -86,7 +86,7 @@ export default function CaseDialog({ dossier, sources, allDossiers, onClose }: P
       aria-labelledby="dialog-title"
     >
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center justify-between p-5 border-b border-border bg-bg/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-10 flex flex-wrap items-center gap-2 justify-between p-3 sm:p-5 border-b border-border bg-bg/95 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <span className="font-pixel text-2xl text-yellow">{dossier.number}</span>
           <span

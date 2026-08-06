@@ -128,7 +128,7 @@ export default function StreamMode({ mysteries, isOpen, onClose }: Props) {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-3 px-4 sm:px-8">
           <button
             type="button"
             onClick={goPrev}

@@ -39,7 +39,7 @@ export default function UserMenu() {
             tabIndex={-1}
             aria-label="Cerrar menú"
           />
-          <div className="absolute right-0 top-full mt-2 z-50 w-56 p-3 rounded-xl border border-border bg-surface shadow-xl">
+          <div className="absolute left-0 sm:left-auto right-0 top-full mt-2 z-50 w-56 p-3 rounded-xl border border-border bg-surface shadow-xl">
             <p className="text-[9px] font-bold tracking-[.1em] text-text-muted/40 uppercase font-mono mb-2">
               CONECTADO COMO
             </p>

@@ -48,7 +48,7 @@ export default function CaseTimeline({ dossiers, sources, onOpenCase }: Props) {
                     href={youtubeUrl(source.videoId)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-shrink-0 w-24 rounded-lg overflow-hidden group/img"
+                    className="flex-shrink-0 hidden sm:block w-24 rounded-lg overflow-hidden group/img"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <img
