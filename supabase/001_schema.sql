@@ -61,6 +61,7 @@ CREATE POLICY "Public can read votes" ON votes FOR SELECT USING (true);
 -- Escritura solo autenticados
 CREATE POLICY "Auth users can vote" ON votes FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can remove own vote" ON votes FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Auth users can insert hypotheses" ON hypotheses FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
 -- =============================================================
 -- Función para mantener votes_count sincronizado
