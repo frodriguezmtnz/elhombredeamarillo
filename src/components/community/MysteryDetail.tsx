@@ -2,6 +2,8 @@ import { getSupabase } from '@lib/supabase-browser';
 import type { HypothesisData, MysteryData } from '@lib/types';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { useAuth } from './AuthProvider';
+import ProposeHypothesis from './ProposeHypothesis';
 import VoteButton from './VoteButton';
 
 interface Props {
@@ -30,9 +32,11 @@ function fetchHypotheses(mysteryId: string): Promise<{ data: HypothesisData[] | 
 }
 
 export default function MysteryDetail({ mystery }: Props) {
+  const { user, openLogin } = useAuth();
   const [hypotheses, setHypotheses] = useState<HypothesisData[]>([]);
   const [hypLoading, setHypLoading] = useState(false);
   const [hypError, setHypError] = useState('');
+  const [proposeOpen, setProposeOpen] = useState(false);
 
   const applyData = (data: HypothesisData[] | null, error: string | null) => {
     if (!error && data) setHypotheses(data);
@@ -166,13 +170,32 @@ export default function MysteryDetail({ mystery }: Props) {
       </div>
 
       {/* CTA */}
-      <button
-        type="button"
-        disabled
-        className="w-full py-3 border border-border text-text-muted/40 text-[9px] font-bold tracking-[.1em] uppercase font-mono rounded-lg cursor-not-allowed"
-      >
-        + PROPONER EXPLICACIÓN (próximamente)
-      </button>
+      {!user ? (
+        <button
+          type="button"
+          onClick={openLogin}
+          className="w-full py-3 border border-yellow/30 bg-yellow/5 text-yellow/60 text-[9px] font-bold tracking-[.1em] uppercase font-mono rounded-lg hover:border-yellow hover:text-yellow hover:bg-yellow/10 transition-colors"
+        >
+          INICIAR SESIÓN PARA PROPONER UNA EXPLICACIÓN →
+        </button>
+      ) : proposeOpen ? (
+        <ProposeHypothesis
+          mysteryId={mystery.id}
+          onSubmitted={() => {
+            setProposeOpen(false);
+            refreshHypotheses();
+          }}
+          onCancel={() => setProposeOpen(false)}
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setProposeOpen(true)}
+          className="w-full py-3 border border-yellow/30 bg-yellow/5 text-yellow text-[9px] font-bold tracking-[.1em] uppercase font-mono rounded-lg hover:bg-yellow hover:text-bg transition-colors"
+        >
+          + PROPONER EXPLICACIÓN
+        </button>
+      )}
     </div>
   );
 }

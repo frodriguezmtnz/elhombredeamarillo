@@ -6,6 +6,9 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
+  loginOpen: boolean;
+  openLogin: () => void;
+  closeLogin: () => void;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signUp: (email: string, password: string) => Promise<{ error?: string; message?: string }>;
   signOut: () => Promise<void>;
@@ -22,6 +25,7 @@ export function useAuth() {
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   useEffect(() => {
     getSupabase().then((sb) => {
@@ -60,7 +64,15 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     const sb = await getSupabase();
     await sb.auth.signOut();
+    setLoginOpen(false);
   }, []);
 
-  return <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>{children}</AuthContext.Provider>;
+  const openLogin = useCallback(() => setLoginOpen(true), []);
+  const closeLogin = useCallback(() => setLoginOpen(false), []);
+
+  return (
+    <AuthContext.Provider value={{ user, loading, loginOpen, openLogin, closeLogin, signIn, signUp, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

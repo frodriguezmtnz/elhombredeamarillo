@@ -1,11 +1,9 @@
-import { useState } from 'react';
 import { useAuth } from './AuthProvider';
 import LoginForm from './LoginForm';
 import UserMenu from './UserMenu';
 
 export default function AuthBar() {
-  const { user, loading } = useAuth();
-  const [loginOpen, setLoginOpen] = useState(false);
+  const { user, loading, loginOpen, openLogin, closeLogin } = useAuth();
 
   if (loading) {
     return (
@@ -22,7 +20,7 @@ export default function AuthBar() {
     <>
       <button
         type="button"
-        onClick={() => setLoginOpen(true)}
+        onClick={openLogin}
         className="flex items-center gap-2 min-h-[34px] px-3 border border-yellow/30 bg-yellow/10 text-yellow text-[9px] font-bold tracking-[.1em] uppercase font-mono rounded-lg hover:bg-yellow hover:text-bg transition-colors"
       >
         <svg
@@ -42,7 +40,7 @@ export default function AuthBar() {
         INICIAR SESIÓN
       </button>
 
-      <LoginForm isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
+      <LoginForm isOpen={loginOpen} onClose={closeLogin} />
     </>
   );
 }
