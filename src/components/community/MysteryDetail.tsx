@@ -37,15 +37,38 @@ export default function MysteryDetail({ mystery }: Props) {
   const [hypLoading, setHypLoading] = useState(false);
   const [hypError, setHypError] = useState('');
   const [proposeOpen, setProposeOpen] = useState(false);
+  const [votedIds, setVotedIds] = useState<Set<string>>(new Set());
 
   const applyData = (data: HypothesisData[] | null, error: string | null) => {
     if (!error && data) setHypotheses(data);
   };
 
+  const fetchUserVotes = (hyps: HypothesisData[]) => {
+    if (!user) {
+      setVotedIds(new Set());
+      return;
+    }
+    const ids = hyps.map((h) => h.id);
+    if (ids.length === 0) return;
+    getSupabase().then((sb) =>
+      sb
+        .from('votes')
+        .select('hypothesis_id')
+        .eq('user_id', user.id)
+        .in('hypothesis_id', ids)
+        .then(({ data }) => {
+          setVotedIds(new Set(data?.map((v) => v.hypothesis_id) ?? []));
+        }),
+    );
+  };
+
   const refreshHypotheses = () => {
     if (!mystery) return;
     setTimeout(() => {
-      fetchHypotheses(mystery.id).then(({ data, error }) => applyData(data, error));
+      fetchHypotheses(mystery.id).then(({ data, error }) => {
+        applyData(data, error);
+        if (data) fetchUserVotes(data);
+      });
     }, 500);
   };
 
@@ -65,6 +88,7 @@ export default function MysteryDetail({ mystery }: Props) {
       }
       setHypotheses(data ?? []);
       setHypLoading(false);
+      if (data) fetchUserVotes(data);
     });
 
     let unsubscribe: (() => void) | undefined;
@@ -152,7 +176,12 @@ export default function MysteryDetail({ mystery }: Props) {
                     >
                       #{i + 1}
                     </span>
-                    <VoteButton hypothesisId={hyp.id} initialVotes={hyp.votes} onVoteChange={refreshHypotheses} />
+                    <VoteButton
+                      hypothesisId={hyp.id}
+                      initialVotes={hyp.votes}
+                      initialVoted={votedIds.has(hyp.id)}
+                      onVoteChange={refreshHypotheses}
+                    />
                   </div>
                   <h5 className="text-text text-xs font-bold mb-1">{hyp.title}</h5>
                   <p className="text-text-muted text-[10px] leading-relaxed mb-2">{hyp.description}</p>

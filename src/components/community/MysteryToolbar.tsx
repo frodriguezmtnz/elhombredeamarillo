@@ -2,6 +2,7 @@ import type { MysteryData } from '@lib/types';
 import { normalizeText } from '@lib/utils';
 import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useAuth } from './AuthProvider';
 
 type Category = 'all' | MysteryData['category'];
 type Sort = 'mentions' | 'votes' | 'recent';
@@ -10,6 +11,9 @@ interface Props {
   mysteries: MysteryData[];
   onFilterChange: (filtered: MysteryData[]) => void;
   onOpenStream: () => void;
+  myVotesActive: boolean;
+  onMyVotesToggle: () => void;
+  votedHypIds: Set<string>;
 }
 
 const CATEGORIES: { value: Category; label: string }[] = [
@@ -38,19 +42,28 @@ function sortMysteries(items: MysteryData[], sort: Sort): MysteryData[] {
   });
 }
 
-export default function MysteryToolbar({ mysteries, onFilterChange, onOpenStream }: Props) {
+export default function MysteryToolbar({
+  mysteries,
+  onFilterChange,
+  onOpenStream,
+  myVotesActive,
+  onMyVotesToggle,
+  votedHypIds,
+}: Props) {
+  const { user } = useAuth();
   const [category, setCategory] = useState<Category>('all');
   const [sort, setSort] = useState<Sort>('mentions');
   const [query, setQuery] = useState('');
   const searchTimer = useRef<ReturnType<typeof setTimeout>>(null);
 
   const applyFilters = useCallback(
-    (cat: Category, q: string, s: Sort) => {
+    (cat: Category, q: string, s: Sort, myVotes: boolean, votedIds: Set<string>) => {
       const normalized = normalizeText(q);
       const result = mysteries.filter((m) => {
         const catMatch = cat === 'all' || m.category === cat;
         const queryMatch = !normalized || searchHaystack(m).includes(normalized);
-        return catMatch && queryMatch;
+        const votesMatch = !myVotes || m.hypotheses.some((h) => votedIds.has(h.id));
+        return catMatch && queryMatch && votesMatch;
       });
       onFilterChange(sortMysteries(result, s));
     },
@@ -58,8 +71,8 @@ export default function MysteryToolbar({ mysteries, onFilterChange, onOpenStream
   );
 
   useEffect(() => {
-    applyFilters(category, query, sort);
-  }, [category, query, sort, applyFilters]);
+    applyFilters(category, query, sort, myVotesActive, votedHypIds);
+  }, [category, query, sort, myVotesActive, votedHypIds, applyFilters]);
 
   const handleSearch = (value: string) => {
     if (searchTimer.current) clearTimeout(searchTimer.current);
@@ -90,6 +103,21 @@ export default function MysteryToolbar({ mysteries, onFilterChange, onOpenStream
           <option value="votes">MÁS VOTADOS</option>
           <option value="recent">MÁS RECIENTES</option>
         </select>
+
+        {user && (
+          <button
+            type="button"
+            onClick={onMyVotesToggle}
+            className={clsx(
+              'min-h-[42px] px-4 text-[10px] font-bold tracking-[.1em] uppercase font-mono rounded-lg transition-colors',
+              myVotesActive
+                ? 'bg-yellow text-bg border border-yellow'
+                : 'border border-border text-text-muted hover:border-yellow hover:text-yellow',
+            )}
+          >
+            ★ MIS VOTOS
+          </button>
+        )}
 
         <button
           type="button"

@@ -2,7 +2,7 @@ import { getSupabase } from '@lib/supabase-browser';
 import type { MysteryData } from '@lib/types';
 import { useCallback, useEffect, useState } from 'react';
 import AuthBar from './AuthBar';
-import AuthProvider from './AuthProvider';
+import AuthProvider, { useAuth } from './AuthProvider';
 import CommunityStats from './CommunityStats';
 import MysteryDetail from './MysteryDetail';
 import MysteryList from './MysteryList';
@@ -48,12 +48,15 @@ function mapRow(row: SupabaseMysteryRow): MysteryData {
 }
 
 function CommunityBoardInner() {
+  const { user } = useAuth();
   const [mysteries, setMysteries] = useState<MysteryData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filtered, setFiltered] = useState<MysteryData[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [streamOpen, setStreamOpen] = useState(false);
+  const [myVotesActive, setMyVotesActive] = useState(false);
+  const [votedHypIds, setVotedHypIds] = useState<Set<string>>(new Set());
 
   const selectedMystery = selectedId ? (mysteries.find((m) => m.id === selectedId) ?? null) : null;
 
@@ -75,6 +78,26 @@ function CommunityBoardInner() {
         });
     });
   }, []);
+
+  const fetchVotedIds = useCallback(async () => {
+    if (!user) {
+      setVotedHypIds(new Set());
+      return;
+    }
+    const sb = await getSupabase();
+    const { data } = await sb.from('votes').select('hypothesis_id').eq('user_id', user.id);
+    setVotedHypIds(new Set(data?.map((v) => v.hypothesis_id) ?? []));
+  }, [user]);
+
+  useEffect(() => {
+    if (myVotesActive) fetchVotedIds();
+    else setVotedHypIds(new Set());
+  }, [myVotesActive, fetchVotedIds]);
+
+  const toggleMyVotes = useCallback(() => {
+    if (!user) return;
+    setMyVotesActive((prev) => !prev);
+  }, [user]);
 
   const handleFilterChange = useCallback((newFiltered: MysteryData[]) => {
     setFiltered(newFiltered);
@@ -115,6 +138,9 @@ function CommunityBoardInner() {
         mysteries={mysteries}
         onFilterChange={handleFilterChange}
         onOpenStream={() => setStreamOpen(true)}
+        myVotesActive={myVotesActive}
+        onMyVotesToggle={toggleMyVotes}
+        votedHypIds={votedHypIds}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-6">

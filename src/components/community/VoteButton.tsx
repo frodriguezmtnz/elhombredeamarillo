@@ -6,13 +6,14 @@ import { useAuth } from './AuthProvider';
 interface Props {
   hypothesisId: string;
   initialVotes: number;
+  initialVoted?: boolean;
   onVoteChange?: () => void;
 }
 
-export default function VoteButton({ hypothesisId, initialVotes, onVoteChange }: Props) {
+export default function VoteButton({ hypothesisId, initialVotes, initialVoted = false, onVoteChange }: Props) {
   const { user } = useAuth();
   const [votes, setVotes] = useState(initialVotes);
-  const [voted, setVoted] = useState(false);
+  const [voted, setVoted] = useState(initialVoted);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function VoteButton({ hypothesisId, initialVotes, onVoteChange }:
       setVoted(false);
       return;
     }
+    if (initialVoted) return;
     getSupabase().then((sb) =>
       sb
         .from('votes')
@@ -34,7 +36,7 @@ export default function VoteButton({ hypothesisId, initialVotes, onVoteChange }:
           setVoted((count ?? 0) > 0);
         }),
     );
-  }, [user, hypothesisId]);
+  }, [user, hypothesisId, initialVoted]);
 
   const toggle = useCallback(async () => {
     if (!user || loading) return;
