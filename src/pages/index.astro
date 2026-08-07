@@ -64,8 +64,14 @@ const recentVideos = getRecentVideos(3);
           </div>
 
           <!-- Signature -->
-          <aside class="hidden lg:flex flex-col items-center gap-4" aria-label="Identidad del canal">
-            <div class="w-[180px] h-[180px] rounded-full border-2 border-yellow/30 overflow-hidden shadow-[0_0_40px_rgba(244,201,67,0.15)]">
+          <a
+            href="https://www.youtube.com/@koiboy_OG"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hidden lg:flex flex-col items-center gap-4 group/avatar"
+            aria-label="Visitar canal de YouTube de El Hombre de Amarillo"
+          >
+            <div class="w-[180px] h-[180px] rounded-full border-2 border-yellow/30 overflow-hidden shadow-[0_0_40px_rgba(244,201,67,0.15)] group-hover/avatar:border-yellow group-hover/avatar:shadow-[0_0_60px_rgba(244,201,67,0.3)] group-hover/avatar:scale-105 transition-all duration-300">
               <img
                 src="/assets/channel-avatar-premium.jpg"
                 alt="Foto de perfil de El Hombre de Amarillo"
@@ -74,11 +80,14 @@ const recentVideos = getRecentVideos(3);
                 class="w-full h-full object-cover"
               />
             </div>
-            <div class="text-center">
+            <div class="text-center group-hover/avatar:text-yellow transition-colors">
               <div class="text-[9px] font-bold tracking-[.14em] text-text-muted uppercase font-mono">ANÁLISIS // TEORÍAS // DEBATES</div>
               <div class="text-xs font-bold tracking-widest text-yellow uppercase font-mono mt-1">+18.300 SUSCRIPTORES</div>
+              <div class="mt-2 text-[9px] font-bold tracking-[.1em] text-yellow/0 group-hover/avatar:text-yellow/80 uppercase font-mono transition-all duration-300 translate-y-1 group-hover/avatar:translate-y-0">
+                IR AL CANAL ↗
+              </div>
             </div>
-          </aside>
+          </a>
         </div>
       </div>
 

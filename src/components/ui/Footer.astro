@@ -7,8 +7,15 @@ const year = new Date().getFullYear();
     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
       <!-- Brand -->
       <div class="flex items-center gap-4">
-        <div class="w-10 h-10 rounded-full border border-border bg-surface-raised flex items-center justify-center text-yellow font-pixel text-base">
-          Y
+        <div class="w-10 h-10 rounded-full border border-border bg-surface-raised overflow-hidden p-1">
+          <svg viewBox="0 0 64 64" class="w-full h-full" aria-hidden="true">
+            <rect width="64" height="64" fill="#0b0d0c" />
+            <rect x="8" y="12" width="48" height="40" fill="#d2a62a" />
+            <rect x="14" y="18" width="36" height="28" fill="#151816" />
+            <rect x="20" y="24" width="8" height="8" fill="#e6dfca" />
+            <rect x="36" y="24" width="8" height="8" fill="#e6dfca" />
+            <rect x="28" y="34" width="8" height="6" fill="#d2a62a" />
+          </svg>
         </div>
         <div>
           <div class="text-[10px] font-bold tracking-[.14em] text-text-muted uppercase font-mono">Archivo de contenido</div>
