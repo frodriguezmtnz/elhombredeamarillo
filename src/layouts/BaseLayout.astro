@@ -67,6 +67,18 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
 
     <title>{title}</title>
 
+    <!-- Apply saved zoom before render to avoid flash -->
+    <script is:inline>
+      (function() {
+        var s = localStorage.getItem('zoom-level');
+        if (s) document.documentElement.style.zoom = s + '%';
+      })();
+    </script>
+
+    <style is:global>
+      @import '../styles/global.css';
+    </style>
+
     <slot name="head" />
   </head>
   <body class:list={['bg-bg text-text font-body antialiased', bodyClass]}>
@@ -83,17 +95,13 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
     <RevealOnScroll client:visible />
     <MagneticButtons client:visible />
     <slot />
+
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' });
+        });
+      }
+    </script>
   </body>
 </html>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js', { scope: '/' });
-    });
-  }
-</script>
-
-<style is:global>
-  @import '../styles/global.css';
-</style>
