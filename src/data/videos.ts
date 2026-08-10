@@ -5,7 +5,7 @@ export const CHANNEL: ChannelData = {
   handle: '@KOIBOY_OG',
   url: 'https://www.youtube.com/@koiboy_OG',
   videosUrl: 'https://www.youtube.com/@koiboy_OG/videos',
-  subscribersFallback: 18300,
+  subscribersFallback: 19000,
   latestFallbackId: '63yacyj-o-A',
   summary: 'Análisis, explicaciones, teorías y debates sobre FROM.',
   instagram: 'https://www.instagram.com/el_hombre_de_amarillo',

@@ -47,19 +47,6 @@ import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
       </div>
     </section>
 
-    <!-- Muro de teorías -->
-    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16" aria-labelledby="archive-title">
-      <header class="flex items-end justify-between gap-6 mb-8">
-        <div>
-          <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">SALA DE INVESTIGACIÓN // EVIDENCE BOARD</p>
-          <h2 class="font-pixel text-[clamp(1.5rem,4vw,2.5rem)] uppercase" id="archive-title">MURO DE TEORÍAS</h2>
-        </div>
-      </header>
-
-      <!-- React island: Board interactivo -->
-      <ExpedientesBoard client:load dossiers={DOSSIERS} sources={SOURCES} />
-    </section>
-
     <!-- Método de archivo -->
     <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-t border-border" aria-labelledby="method-title">
       <div class="grid grid-cols-1 lg:grid-cols-[0.7fr_1.3fr] gap-10 items-center">
@@ -92,6 +79,21 @@ import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
         </div>
       </div>
     </section>
+
+
+    <!-- Muro de teorías -->
+    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16" aria-labelledby="archive-title">
+      <header class="flex items-end justify-between gap-6 mb-8">
+        <div>
+          <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">SALA DE INVESTIGACIÓN // EVIDENCE BOARD</p>
+          <h2 class="font-pixel text-[clamp(1.5rem,4vw,2.5rem)] uppercase" id="archive-title">MURO DE TEORÍAS</h2>
+        </div>
+      </header>
+
+      <!-- React island: Board interactivo -->
+      <ExpedientesBoard client:load dossiers={DOSSIERS} sources={SOURCES} />
+    </section>
+
 
     <!-- Comunidad: proceso + misterios -->
     <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-t border-border" aria-labelledby="community-title">

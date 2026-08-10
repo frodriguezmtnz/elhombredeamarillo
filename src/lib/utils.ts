@@ -22,7 +22,7 @@ export function normalizeText(value: unknown): string {
  * Formatea un número de suscriptores: 18300 → "18.3 K"
  */
 export function formatChannelNumber(count: string | null): string {
-  if (!count) return '18.3 K';
+  if (!count) return '19 K';
   const n = Number(count);
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)} M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(1)} K`;
