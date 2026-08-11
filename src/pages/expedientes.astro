@@ -2,10 +2,11 @@
 import ExpedientesBoard from '../components/cases/ExpedientesBoard';
 import CommunityBoard from '../components/community/CommunityBoard';
 import MysteryProcess from '../components/community/MysteryProcess.astro';
+import BottleTree from '../components/effects/BottleTree';
 import Footer from '../components/ui/Footer.astro';
 import Header from '../components/ui/Header.astro';
-import BaseLayout from '../layouts/BaseLayout.astro';
 import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
@@ -17,7 +18,9 @@ import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
 
   <main class="pt-[var(--header-h)]">
     <!-- Hero de expedientes -->
-    <section class="relative overflow-hidden border-b border-border" aria-labelledby="cases-title">
+    <section class="relative overflow-hidden" aria-labelledby="cases-title">
+      <BottleTree client:idle />
+      <div class="absolute inset-0 z-[1] bg-gradient-to-b from-bg/60 via-bg/10 to-bg pointer-events-none"></div>
       <div class="absolute inset-0 bg-gradient-to-br from-yellow/5 via-transparent to-rust/5"></div>
       <div class="relative mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 lg:py-24">
         <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-3">ACCESO RESTRINGIDO // ARCHIVO DE FROM</p>
@@ -48,7 +51,7 @@ import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
     </section>
 
     <!-- Método de archivo -->
-    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-t border-border" aria-labelledby="method-title">
+    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16" aria-labelledby="method-title">
       <div class="grid grid-cols-1 lg:grid-cols-[0.7fr_1.3fr] gap-10 items-center">
         <div>
           <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">MÉTODO DE ARCHIVO</p>
