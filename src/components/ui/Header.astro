@@ -10,7 +10,7 @@ const navLinks = [
 ];
 ---
 
-<header id="site-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+<header id="site-header" transition:name="site-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
   <div class="mx-auto max-w-[var(--shell)] flex items-center justify-between px-5 py-4 lg:px-8">
     <!-- Logo -->
     <a href="/" class="flex items-center gap-3 no-underline group">
@@ -101,73 +101,75 @@ const navLinks = [
 </header>
 
 <script is:inline>
-  const header = document.getElementById('site-header');
-  const toggle = document.getElementById('mobile-menu-toggle');
-  const menu = document.getElementById('mobile-menu');
+  document.addEventListener('astro:page-load', () => {
+    const header = document.getElementById('site-header');
+    const toggle = document.getElementById('mobile-menu-toggle');
+    const menu = document.getElementById('mobile-menu');
 
-  // Scroll effect
-  let lastScroll = 0;
-  window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-    if (scrollY > 80) {
-      header?.classList.add('bg-bg/90', 'backdrop-blur-lg', 'border-b', 'border-border');
-    } else {
-      header?.classList.remove('bg-bg/90', 'backdrop-blur-lg', 'border-b', 'border-border');
+    // Scroll effect
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      if (scrollY > 80) {
+        header?.classList.add('bg-bg/90', 'backdrop-blur-lg', 'border-b', 'border-border');
+      } else {
+        header?.classList.remove('bg-bg/90', 'backdrop-blur-lg', 'border-b', 'border-border');
+      }
+      lastScroll = scrollY;
+    }, { passive: true });
+
+    // Mobile menu toggle
+    toggle?.addEventListener('click', () => {
+      const isOpen = menu?.classList.toggle('hidden') === false;
+      toggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    // ── Zoom + Fullscreen ──
+    const MIN = 80;
+    const MAX = 150;
+    const STEP = 10;
+    const STORAGE_KEY = 'zoom-level';
+
+    const zoomOut = document.getElementById('zoom-out');
+    const zoomIn = document.getElementById('zoom-in');
+    const zoomDisplay = document.getElementById('zoom-display');
+    const zoomValue = document.getElementById('zoom-value');
+    const fsToggle = document.getElementById('fullscreen-toggle');
+    const fsExpand = document.getElementById('fs-expand');
+    const fsCompress = document.getElementById('fs-compress');
+
+    let zoomLevel = parseInt(localStorage.getItem(STORAGE_KEY) || '100', 10);
+
+    function applyZoom(level) {
+      zoomLevel = Math.min(MAX, Math.max(MIN, level));
+      document.documentElement.style.zoom = zoomLevel + '%';
+      if (zoomValue) zoomValue.textContent = zoomLevel + '%';
+      localStorage.setItem(STORAGE_KEY, String(zoomLevel));
     }
-    lastScroll = scrollY;
-  }, { passive: true });
 
-  // Mobile menu toggle
-  toggle?.addEventListener('click', () => {
-    const isOpen = menu?.classList.toggle('hidden') === false;
-    toggle.setAttribute('aria-expanded', String(isOpen));
-  });
+    // Apply saved zoom immediately
+    applyZoom(zoomLevel);
 
-  // ── Zoom + Fullscreen ──
-  const MIN = 80;
-  const MAX = 150;
-  const STEP = 10;
-  const STORAGE_KEY = 'zoom-level';
+    zoomOut?.addEventListener('click', () => applyZoom(zoomLevel - STEP));
+    zoomIn?.addEventListener('click', () => applyZoom(zoomLevel + STEP));
+    zoomDisplay?.addEventListener('click', () => applyZoom(100));
 
-  const zoomOut = document.getElementById('zoom-out');
-  const zoomIn = document.getElementById('zoom-in');
-  const zoomDisplay = document.getElementById('zoom-display');
-  const zoomValue = document.getElementById('zoom-value');
-  const fsToggle = document.getElementById('fullscreen-toggle');
-  const fsExpand = document.getElementById('fs-expand');
-  const fsCompress = document.getElementById('fs-compress');
-
-  let zoomLevel = parseInt(localStorage.getItem(STORAGE_KEY) || '100', 10);
-
-  function applyZoom(level) {
-    zoomLevel = Math.min(MAX, Math.max(MIN, level));
-    document.documentElement.style.zoom = zoomLevel + '%';
-    if (zoomValue) zoomValue.textContent = zoomLevel + '%';
-    localStorage.setItem(STORAGE_KEY, String(zoomLevel));
-  }
-
-  // Apply saved zoom immediately
-  applyZoom(zoomLevel);
-
-  zoomOut?.addEventListener('click', () => applyZoom(zoomLevel - STEP));
-  zoomIn?.addEventListener('click', () => applyZoom(zoomLevel + STEP));
-  zoomDisplay?.addEventListener('click', () => applyZoom(100));
-
-  // Fullscreen toggle
-  function updateFsButton() {
-    const isFs = !!document.fullscreenElement;
-    fsExpand?.classList.toggle('hidden', isFs);
-    fsCompress?.classList.toggle('hidden', !isFs);
-    fsToggle?.setAttribute('aria-label', isFs ? 'Salir de pantalla completa' : 'Pantalla completa');
-  }
-
-  fsToggle?.addEventListener('click', async () => {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-    } else {
-      await document.documentElement.requestFullscreen();
+    // Fullscreen toggle
+    function updateFsButton() {
+      const isFs = !!document.fullscreenElement;
+      fsExpand?.classList.toggle('hidden', isFs);
+      fsCompress?.classList.toggle('hidden', !isFs);
+      fsToggle?.setAttribute('aria-label', isFs ? 'Salir de pantalla completa' : 'Pantalla completa');
     }
-  });
 
-  document.addEventListener('fullscreenchange', updateFsButton);
+    fsToggle?.addEventListener('click', async () => {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
+    });
+
+    document.addEventListener('fullscreenchange', updateFsButton);
+  });
 </script>

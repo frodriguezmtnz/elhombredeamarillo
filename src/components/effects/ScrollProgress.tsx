@@ -10,8 +10,16 @@ export default function ScrollProgress() {
       setProgress(docHeight > 0 ? (scrollY / docHeight) * 100 : 0);
     };
 
+    // Update on scroll
     window.addEventListener('scroll', update, { passive: true });
-    return () => window.removeEventListener('scroll', update);
+
+    // Also update after View Transition navigation (scroll position may change)
+    document.addEventListener('astro:page-load', update);
+
+    return () => {
+      window.removeEventListener('scroll', update);
+      document.removeEventListener('astro:page-load', update);
+    };
   }, []);
 
   return (

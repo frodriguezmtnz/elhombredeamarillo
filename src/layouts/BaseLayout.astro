@@ -6,6 +6,7 @@ export interface Props {
   bodyClass?: string;
 }
 
+import { ClientRouter } from 'astro:transitions';
 import MagneticButtons from '../components/effects/MagneticButtons';
 import PointerLight from '../components/effects/PointerLight';
 import RevealOnScroll from '../components/effects/RevealOnScroll';
@@ -67,6 +68,8 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
 
     <title>{title}</title>
 
+    <ClientRouter />
+
     <!-- Apply saved zoom before render to avoid flash -->
     <script is:inline>
       (function() {
@@ -77,6 +80,35 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
 
     <style is:global>
       @import '../styles/global.css';
+
+      /* ─── View Transitions: fade personalizada ─── */
+      @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes fade-out {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+
+      ::view-transition-old(root) {
+        animation: fade-out 0.2s ease-in both;
+      }
+      ::view-transition-new(root) {
+        animation: fade-in 0.25s ease-out both;
+      }
+
+      /* Persistir header: sin animación de transición */
+      ::view-transition-old(site-header),
+      ::view-transition-new(site-header) {
+        animation: none;
+      }
+
+      /* ScrollProgress se mantiene visible durante transiciones */
+      ::view-transition-old(scroll-progress),
+      ::view-transition-new(scroll-progress) {
+        animation: none;
+      }
     </style>
 
     <slot name="head" />
@@ -99,7 +131,9 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
     <script is:inline>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js', { scope: '/' });
+          if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' });
+          }
         });
       }
     </script>
