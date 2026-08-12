@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FROM Forest — Playground (Videos hero)</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #070805;
+        overflow: hidden;
+      }
+      #app {
+        position: fixed;
+        inset: 0;
+      }
+      #app canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .lil-gui {
+        --lil-gui--width: 310px;
+        --lil-gui--background-color: rgba(12, 13, 10, 0.92);
+        --lil-gui--text-color: #f1ebdc;
+        --lil-gui--widget-color: #1a1c13;
+        --lil-gui--number-color: #e4b722;
+        --lil-gui--title-background-color: #212318;
+        --lil-gui--focus-color: #e4b722;
+      }
+      #overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.78);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      #overlay.open {
+        display: flex;
+      }
+      #overlayBox {
+        width: min(90vw, 640px);
+      }
+      #exportOut {
+        width: 100%;
+        height: 320px;
+        box-sizing: border-box;
+        background: #0c0d0a;
+        color: #f1ebdc;
+        font: 12px/1.5 'JetBrains Mono', monospace;
+        border: 1px solid #212318;
+        border-radius: 8px;
+        padding: 12px;
+        resize: none;
+      }
+      #overlayActions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        justify-content: flex-end;
+      }
+      #overlayActions button {
+        min-width: 90px;
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #212318;
+        background: #1a1c13;
+        color: #f1ebdc;
+        font: 600 12px 'JetBrains Mono', monospace;
+        cursor: pointer;
+      }
+      #overlayActions button:hover {
+        border-color: #e4b722;
+        color: #e4b722;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="overlay">
+      <div id="overlayBox">
+        <textarea id="exportOut" readonly spellcheck="false"></textarea>
+        <div id="overlayActions">
+          <button id="copyBtn">Copiar</button>
+          <button id="closeBtn">Cerrar</button>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+      import * as THREE from 'https://esm.sh/three@0.185.1';
+      import GUI from 'https://esm.sh/lil-gui@0.20.0';
+      import { GLTFExporter } from 'https://esm.sh/three@0.185.1/examples/jsm/exporters/GLTFExporter.js';
+
+      const DEFAULTS = {
+        seed: 1739,
+        camera: {
+          fov: 55,
+          startZ: -8,
+          dollyRange: 3,
+          dollySpeed: 0.19,
+          height: 3.4,
+          swayAmp: 0.44,
+          swaySpeed: 0.78,
+          lookAtX: -0.15,
+          lookAtY: 0.8,
+          lookAtZ: 2.4,
+          mouseParallax: 0.5,
+        },
+        fog: { density: 0.044, color: '#070805' },
+        lights: {
+          ambientIntensity: 11.6,
+          hemisphereIntensity: 0.88,
+          moonIntensity: 3.75,
+        },
+        forest: {
+          layers: 3,
+          treesPerLayer: 9,
+          treeScaleMin: 0.7,
+          treeScaleMax: 1.6,
+          swayAmp: 0.03,
+          swaySpeed: 1.2,
+        },
+        road: { width: 2.6, color: '#15150f' },
+        fallenTree: { posZ: 0.2, rotY: -0.17, scale: 1.42, swayAmp: 0.015 },
+        people: { count: 2, scaleMin: 1.12, scaleMax: 1.2 },
+        wind: { speed: 1.15, amp: 1.2 },
+      };
+
+      const params = structuredClone(DEFAULTS);
+
+      function mulberry32(seed) {
+        let a = seed >>> 0;
+        return () => {
+          a = (a + 0x6d2b79f5) | 0;
+          let t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function deepAssign(target, source) {
+        for (const key of Object.keys(source)) {
+          if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+            target[key] = target[key] || {};
+            deepAssign(target[key], source[key]);
+          } else {
+            target[key] = source[key];
+          }
+        }
+        return target;
+      }
+
+      const FOREST_BANDS = [
+        [-13, -8],
+        [-8, -3],
+        [-3, 0.5],
+      ];
+      const LAYER_STYLE = [
+        { trunk: 0x0b0c09, canopy: 0x080907, scale: 0.75, swayScale: 0.2 },
+        { trunk: 0x12140e, canopy: 0x0e110b, scale: 1.0, swayScale: 0.5 },
+        { trunk: 0x1c1f15, canopy: 0x161a10, scale: 1.35, swayScale: 1 },
+      ];
+
+      let rng = mulberry32(params.seed);
+
+      const app = document.getElementById('app');
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      app.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      const fog = new THREE.FogExp2(new THREE.Color(params.fog.color), params.fog.density);
+      scene.fog = fog;
+
+      const camera = new THREE.PerspectiveCamera(
+        params.camera.fov,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        60,
+      );
+
+      const ambient = new THREE.AmbientLight(0x5a5442, params.lights.ambientIntensity);
+      scene.add(ambient);
+
+      const hemisphere = new THREE.HemisphereLight(0x22333f, 0x0c0d0a, params.lights.hemisphereIntensity);
+      scene.add(hemisphere);
+
+      const moon = new THREE.DirectionalLight(0x8899bb, params.lights.moonIntensity);
+      moon.position.set(6, 9, -4);
+      scene.add(moon);
+
+      const world = new THREE.Group();
+      scene.add(world);
+
+      const swayables = [];
+
+      function buildScene() {
+        world.traverse((obj) => {
+          if (obj.isMesh) {
+            obj.geometry.dispose();
+            const material = obj.material;
+            if (Array.isArray(material)) {
+              for (const m of material) m.dispose();
+            } else {
+              material.dispose();
+            }
+          }
+        });
+        world.clear();
+        swayables.length = 0;
+        rng = mulberry32(params.seed);
+
+        const ground = new THREE.Mesh(
+          new THREE.CircleGeometry(30, 48),
+          new THREE.MeshStandardMaterial({ color: 0x0b0c09, roughness: 1 }),
+        );
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -0.02;
+        world.add(ground);
+
+        const road = new THREE.Mesh(
+          new THREE.PlaneGeometry(params.road.width, 44),
+          new THREE.MeshStandardMaterial({ color: new THREE.Color(params.road.color), roughness: 1 }),
+        );
+        road.rotation.x = -Math.PI / 2;
+        world.add(road);
+
+        for (let layer = 0; layer < params.forest.layers; layer++) {
+          const style = LAYER_STYLE[layer % LAYER_STYLE.length];
+          const [bandMin, bandMax] = FOREST_BANDS[layer % FOREST_BANDS.length];
+          const trunkMat = new THREE.MeshStandardMaterial({ color: style.trunk, roughness: 1 });
+          const canopyMat = new THREE.MeshStandardMaterial({ color: style.canopy, roughness: 1 });
+
+          for (const side of [-1, 1]) {
+            for (let i = 0; i < params.forest.treesPerLayer; i++) {
+              const z = bandMin + (bandMax - bandMin) * rng();
+              const x = side * (params.road.width / 2 + 0.45 + rng() * 3.1);
+              const s =
+                (params.forest.treeScaleMin +
+                  rng() * (params.forest.treeScaleMax - params.forest.treeScaleMin)) *
+                style.scale;
+
+              const pine = buildPine(x, z, s, trunkMat, canopyMat);
+              swayables.push({ obj: pine, sway: pine.userData.sway, ampScale: style.swayScale });
+              world.add(pine);
+
+              if (rng() < 0.35) {
+                const shrub = buildShrub(
+                  x + (rng() - 0.5) * 1.6,
+                  z + (rng() - 0.5) * 1.4,
+                  0.4 + rng() * 0.4,
+                  canopyMat,
+                );
+                swayables.push({ obj: shrub, sway: shrub.userData.sway, ampScale: style.swayScale });
+                world.add(shrub);
+              }
+            }
+          }
+        }
+
+        const fallenTree = buildFallenTree();
+        swayables.push({ obj: fallenTree, sway: fallenTree.userData.sway, ampScale: 0.5 });
+        world.add(fallenTree);
+
+        const poses = ['stand', 'crouch'];
+        for (let i = 0; i < params.people.count; i++) {
+          const figure = buildFigure(i, poses[i % poses.length]);
+          swayables.push({ obj: figure, sway: figure.userData.sway, ampScale: 1 });
+          world.add(figure);
+        }
+      }
+
+      function buildPine(x, z, s, trunkMat, canopyMat) {
+        const group = new THREE.Group();
+        group.position.set(x, 0, z);
+
+        const trunkH = 0.9 * s;
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.05 * s, 0.1 * s, trunkH, 5), trunkMat);
+        trunk.position.y = trunkH / 2;
+        group.add(trunk);
+
+        const tiers = [
+          { y: trunkH + 0.12 * s, r: 0.55 * s, h: 0.95 * s },
+          { y: trunkH + 0.62 * s, r: 0.42 * s, h: 0.85 * s },
+          { y: trunkH + 1.08 * s, r: 0.28 * s, h: 0.8 * s },
+        ];
+        for (const tier of tiers) {
+          const cone = new THREE.Mesh(new THREE.ConeGeometry(tier.r, tier.h, 6), canopyMat);
+          cone.position.y = tier.y + tier.h / 2;
+          group.add(cone);
+        }
+
+        group.userData.sway = {
+          phase: rng() * Math.PI * 2,
+          amp: params.forest.swayAmp,
+          speed: 0.7 + rng() * 0.9,
+        };
+        return group;
+      }
+
+      function buildShrub(x, z, s, material) {
+        const group = new THREE.Group();
+        group.position.set(x, 0, z);
+        const shrub = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28 * s, 0), material);
+        shrub.scale.set(1, 0.7, 1);
+        shrub.position.y = 0.18 * s;
+        group.add(shrub);
+        group.userData.sway = {
+          phase: rng() * Math.PI * 2,
+          amp: params.forest.swayAmp,
+          speed: 0.8 + rng() * 0.8,
+        };
+        return group;
+      }
+
+      function buildFallenTree() {
+        const group = new THREE.Group();
+        group.position.set(0, 0, params.fallenTree.posZ);
+        group.rotation.y = params.fallenTree.rotY;
+        group.scale.setScalar(params.fallenTree.scale);
+
+        const mat = new THREE.MeshStandardMaterial({ color: 0x15130e, roughness: 1 });
+
+        const start = new THREE.Vector3(-1.8, 0.17, 0);
+        const end = new THREE.Vector3(1.8, 0.12, 0);
+        group.add(cylinderBetween(start, end, 0.17, mat));
+
+        const root = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 8), mat);
+        root.position.set(-2.05, 0.18, 0);
+        root.scale.set(1, 0.65, 1);
+        group.add(root);
+
+        const branchDefs = [
+          { from: 0.25, to: [0.35, 0.95, -0.25], r: 0.05 },
+          { from: 0.55, to: [-0.3, 0.75, 0.2], r: 0.045 },
+          { from: 0.8, to: [0.25, 0.6, 0.3], r: 0.04 },
+        ];
+        for (const b of branchDefs) {
+          const base = start.clone().lerp(end, b.from);
+          const tip = base.clone().add(new THREE.Vector3(b.to[0], b.to[1], b.to[2]));
+          group.add(cylinderBetween(base, tip, b.r, mat));
+        }
+
+        group.userData.sway = {
+          phase: rng() * Math.PI * 2,
+          amp: params.fallenTree.swayAmp,
+          speed: 0.6 + rng() * 0.4,
+        };
+        return group;
+      }
+
+      function buildFigure(index, pose) {
+        const group = new THREE.Group();
+        const mat = new THREE.MeshStandardMaterial({ color: 0x0c0d0a, roughness: 1 });
+
+        if (pose === 'crouch') {
+          const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.5, 4, 8), mat);
+          body.position.y = 0.52;
+          body.rotation.x = -0.35;
+          group.add(body);
+          const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), mat);
+          head.position.y = 0.98;
+          group.add(head);
+        } else {
+          const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.16, 0.7, 4, 8), mat);
+          body.position.y = 0.92;
+          group.add(body);
+          const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), mat);
+          head.position.y = 1.47;
+          group.add(head);
+        }
+
+        const scale = params.people.scaleMin + rng() * (params.people.scaleMax - params.people.scaleMin);
+        group.scale.setScalar(scale);
+
+        const spots = [
+          { x: -1.5, z: 0.9 },
+          { x: 1.4, z: -0.5 },
+        ];
+        const spot = spots[index % spots.length];
+        group.position.set(spot.x + (rng() - 0.5) * 0.3, 0, params.fallenTree.posZ + spot.z + (rng() - 0.5) * 0.3);
+        group.rotation.y = Math.atan2(spot.x, spot.z) + (rng() - 0.5) * 0.4;
+
+        group.userData.sway = { phase: rng() * Math.PI * 2, amp: 0.008, speed: 0.5 + rng() * 0.4 };
+        return group;
+      }
+
+      function cylinderBetween(a, b, radius, material) {
+        const dir = b.clone().sub(a);
+        const len = dir.length();
+        const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, len, 8), material);
+        mesh.position.copy(a).add(b).multiplyScalar(0.5);
+        mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+        return mesh;
+      }
+
+      buildScene();
+
+      const timer = new THREE.Timer();
+      timer.connect(document);
+
+      const mouseTarget = { x: 0, y: 0 };
+      const mouseSmooth = { x: 0, y: 0 };
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduceMotion) {
+        window.addEventListener('mousemove', (e) => {
+          mouseTarget.x = (e.clientX / window.innerWidth) * 2 - 1;
+          mouseTarget.y = (e.clientY / window.innerHeight) * 2 - 1;
+        });
+      }
+
+      function animate(timestamp) {
+        requestAnimationFrame(animate);
+        timer.update(timestamp);
+
+        if (!reduceMotion) {
+          const dt = timer.getDelta();
+          const t = timer.getElapsed();
+
+          mouseSmooth.x += (mouseTarget.x - mouseSmooth.x) * Math.min(1, dt * 2.5);
+          mouseSmooth.y += (mouseTarget.y - mouseSmooth.y) * Math.min(1, dt * 2.5);
+
+          const dolly = 0.5 + 0.5 * Math.sin(t * params.camera.dollySpeed);
+          camera.position.set(
+            mouseSmooth.x * params.camera.mouseParallax +
+              Math.sin(t * params.camera.swaySpeed * 0.8) * params.camera.swayAmp,
+            params.camera.height +
+              Math.cos(t * params.camera.swaySpeed * 0.6) * params.camera.swayAmp * 0.4 -
+              mouseSmooth.y * params.camera.mouseParallax * 0.35,
+            params.camera.startZ + params.camera.dollyRange * dolly,
+          );
+          camera.lookAt(
+            params.camera.lookAtX,
+            params.camera.lookAtY,
+            params.camera.lookAtZ,
+          );
+
+          for (const { obj, sway, ampScale } of swayables) {
+            obj.rotation.x =
+              Math.sin(t * sway.speed * params.forest.swaySpeed * params.wind.speed + sway.phase) *
+              sway.amp *
+              ampScale *
+              params.wind.amp;
+            obj.rotation.z =
+              Math.cos(t * sway.speed * 0.85 * params.forest.swaySpeed * params.wind.speed + sway.phase * 1.3) *
+              sway.amp *
+              ampScale *
+              params.wind.amp *
+              0.7;
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      function exportGLB() {
+        const exporter = new GLTFExporter();
+        exporter.parse(
+          scene,
+          (result) => {
+            const blob = new Blob([result], { type: 'model/gltf-binary' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'from-forest.glb';
+            link.click();
+            URL.revokeObjectURL(link.href);
+          },
+          (error) => console.error(error),
+          { binary: true },
+        );
+      }
+
+      function exportSettings() {
+        const data = JSON.stringify(params, null, 2);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(data).catch(() => {});
+        }
+        const blob = new Blob([data], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'from-forest-settings.json';
+        link.click();
+        URL.revokeObjectURL(link.href);
+        document.getElementById('exportOut').value = data;
+        document.getElementById('overlay').classList.add('open');
+      }
+
+      function resetSettings() {
+        deepAssign(params, DEFAULTS);
+        gui.updateDisplay();
+        fog.color.set(params.fog.color);
+        fog.density = params.fog.density;
+        ambient.intensity = params.lights.ambientIntensity;
+        hemisphere.intensity = params.lights.hemisphereIntensity;
+        moon.intensity = params.lights.moonIntensity;
+        buildScene();
+      }
+
+      function randomizeSeed() {
+        params.seed = Math.floor(Math.random() * 1000000000) + 1;
+        gui.updateDisplay();
+        buildScene();
+      }
+
+      document.getElementById('copyBtn').addEventListener('click', () => {
+        const out = document.getElementById('exportOut');
+        out.select();
+        out.setSelectionRange(0, 999999);
+        document.execCommand('copy');
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = '¡Copiado!';
+        setTimeout(() => (btn.textContent = 'Copiar'), 1500);
+      });
+      document.getElementById('closeBtn').addEventListener('click', () => {
+        document.getElementById('overlay').classList.remove('open');
+      });
+
+      const gui = new GUI({ title: 'FROM Forest — Controles' });
+
+      const seedFolder = gui.addFolder('Semilla');
+      seedFolder.add(params, 'seed', 1, 999999999, 1).name('Semilla').onFinishChange(buildScene);
+      seedFolder.add({ randomizeSeed }, 'randomizeSeed').name('Randomizar semilla');
+
+      const cameraFolder = gui.addFolder('Cámara');
+      cameraFolder.add(params.camera, 'fov', 30, 75, 1).name('FOV').onChange((v) => {
+        camera.fov = v;
+        camera.updateProjectionMatrix();
+      });
+      cameraFolder.add(params.camera, 'startZ', -14, -3, 0.1).name('Z inicial');
+      cameraFolder.add(params.camera, 'dollyRange', 0, 6, 0.1).name('Recorrido dolly');
+      cameraFolder.add(params.camera, 'dollySpeed', 0, 0.5, 0.005).name('Velocidad dolly');
+      cameraFolder.add(params.camera, 'height', 0.5, 4, 0.05).name('Altura');
+      cameraFolder.add(params.camera, 'swayAmp', 0, 1, 0.01).name('Sway amplitud');
+      cameraFolder.add(params.camera, 'swaySpeed', 0, 2, 0.01).name('Sway velocidad');
+      cameraFolder.add(params.camera, 'lookAtX', -3, 3, 0.05).name('Mira X');
+      cameraFolder.add(params.camera, 'lookAtY', 0, 4, 0.05).name('Mira Y');
+      cameraFolder.add(params.camera, 'lookAtZ', -4, 6, 0.1).name('Mira Z');
+      cameraFolder.add(params.camera, 'mouseParallax', 0, 2, 0.05).name('Parallax ratón');
+
+      const lightFolder = gui.addFolder('Luz');
+      lightFolder.add(params.lights, 'ambientIntensity', 0, 20, 0.1).name('Ambient').onChange((v) => {
+        ambient.intensity = v;
+      });
+      lightFolder.add(params.lights, 'hemisphereIntensity', 0, 2, 0.01).name('Hemisférica').onChange((v) => {
+        hemisphere.intensity = v;
+      });
+      lightFolder.add(params.lights, 'moonIntensity', 0, 8, 0.05).name('Luna').onChange((v) => {
+        moon.intensity = v;
+      });
+
+      const forestFolder = gui.addFolder('Bosque');
+      forestFolder.add(params.forest, 'layers', 1, 5, 1).name('Capas').onFinishChange(buildScene);
+      forestFolder.add(params.forest, 'treesPerLayer', 1, 16, 1).name('Árboles / capa').onFinishChange(buildScene);
+      forestFolder.add(params.forest, 'treeScaleMin', 0.3, 2, 0.05).name('Escala mínima');
+      forestFolder.add(params.forest, 'treeScaleMax', 0.5, 3, 0.05).name('Escala máxima');
+      forestFolder.add(params.forest, 'swayAmp', 0, 0.1, 0.002).name('Viento (amp árboles)');
+      forestFolder.add(params.forest, 'swaySpeed', 0, 3, 0.05).name('Viento (vel árboles)');
+
+      const treeFolder = gui.addFolder('Tronco caído / Personas');
+      treeFolder.add(params.fallenTree, 'posZ', -2, 5, 0.05).name('Tronco Z').onFinishChange(buildScene);
+      treeFolder.add(params.fallenTree, 'rotY', -1, 1, 0.01).name('Tronco rotación Y').onFinishChange(buildScene);
+      treeFolder.add(params.fallenTree, 'scale', 0.6, 1.8, 0.02).name('Tronco escala').onFinishChange(buildScene);
+      treeFolder.add(params.fallenTree, 'swayAmp', 0, 0.05, 0.001).name('Tronco sway').onFinishChange(buildScene);
+      treeFolder.add(params.people, 'count', 0, 6, 1).name('Personas').onFinishChange(buildScene);
+      treeFolder.add(params.people, 'scaleMin', 0.7, 1.4, 0.01).name('Personas escala mín');
+      treeFolder.add(params.people, 'scaleMax', 0.8, 1.6, 0.01).name('Personas escala máx');
+
+      const windFolder = gui.addFolder('Viento');
+      windFolder.add(params.wind, 'speed', 0, 3, 0.05).name('Velocidad global');
+      windFolder.add(params.wind, 'amp', 0, 2, 0.05).name('Amplitud global');
+
+      const fogFolder = gui.addFolder('Atmósfera');
+      fogFolder.add(params.fog, 'density', 0, 0.2, 0.002).name('Niebla').onChange((v) => {
+        fog.density = v;
+      });
+      fogFolder.addColor(params.fog, 'color').name('Color niebla').onChange((v) => {
+        fog.color.set(v);
+      });
+
+      const adjustFolder = gui.addFolder('Ajustes');
+      adjustFolder.add({ exportSettings }, 'exportSettings').name('Exportar JSON');
+      adjustFolder.add({ resetSettings }, 'resetSettings').name('Reset');
+
+      const exportFolder = gui.addFolder('Exportar');
+      exportFolder.add({ exportGLB }, 'exportGLB').name('Descargar GLB');
+    </script>
+  </body>
+</html>

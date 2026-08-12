@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/ui/Header.astro';
 import Footer from '../components/ui/Footer.astro';
 import VideoGrid from '../components/videos/VideoGrid';
+import FromForest from '../components/effects/FromForest';
 import { CHANNEL, VIDEOS, getFeaturedVideo } from '../data/videos';
 import { thumbnailUrl, channelUrl } from '../lib/youtube';
 import { formatChannelNumber, relativeTime } from '../lib/utils';
@@ -20,7 +21,9 @@ const category = Astro.url.searchParams.get('category');
 
   <main class="pt-[var(--header-h)]">
     <!-- Hero de vídeos -->
-    <section class="relative overflow-hidden border-b border-border" aria-labelledby="videos-title">
+    <section class="relative overflow-hidden" aria-labelledby="videos-title">
+      <FromForest client:idle />
+      <div class="absolute inset-0 z-[1] bg-gradient-to-b from-bg/35 via-bg/10 to-bg pointer-events-none"></div>
       <div class="absolute inset-0 bg-gradient-to-br from-yellow/5 via-transparent to-rust/5"></div>
       <div class="relative mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 lg:py-24">
         <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-3">BIBLIOTECA AUDIOVISUAL</p>
