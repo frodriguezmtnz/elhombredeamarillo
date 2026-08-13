@@ -11,6 +11,7 @@ import MagneticButtons from '../components/effects/MagneticButtons';
 import PointerLight from '../components/effects/PointerLight';
 import RevealOnScroll from '../components/effects/RevealOnScroll';
 import ScrollProgress from '../components/effects/ScrollProgress';
+import Analytics from '@vercel/analytics/astro';
 
 const {
   title,
@@ -127,6 +128,8 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
     <RevealOnScroll client:visible />
     <MagneticButtons client:visible />
     <slot />
+
+    <Analytics />
 
     <script is:inline>
       if ('serviceWorker' in navigator) {
