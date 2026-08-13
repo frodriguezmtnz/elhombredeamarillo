@@ -1,5 +1,5 @@
-const CACHE_NAME = 'hda-v2';
-const STATIC_ASSETS = ['/', '/index.html', '/videos/', '/expedientes/', '/manifest.webmanifest'];
+const CACHE_NAME = 'hda-v3';
+const STATIC_ASSETS = ['/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
