@@ -12,6 +12,7 @@ import PointerLight from '../components/effects/PointerLight';
 import RevealOnScroll from '../components/effects/RevealOnScroll';
 import ScrollProgress from '../components/effects/ScrollProgress';
 import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 const {
   title,
@@ -130,6 +131,7 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
     <slot />
 
     <Analytics />
+    <SpeedInsights />
 
     <script is:inline>
       if ('serviceWorker' in navigator) {
