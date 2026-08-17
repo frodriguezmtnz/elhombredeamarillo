@@ -154,6 +154,7 @@ export default function FromForest() {
     let timer: THREE.Timer | null = null;
     let resizeObserver: ResizeObserver | null = null;
     let animationId = 0;
+    let hasFadedIn = false;
 
     const swayables: Swayable[] = [];
     const mouseTarget = { x: 0, y: 0 };
@@ -185,6 +186,8 @@ export default function FromForest() {
       renderer.domElement.style.height = '100%';
       renderer.domElement.style.display = 'block';
       container.appendChild(renderer.domElement);
+      renderer.domElement.style.opacity = '0';
+      renderer.domElement.style.transition = 'opacity 1s ease';
 
       const ambient = new THREE.AmbientLight(0x5a5442, SETTINGS.lights.ambientIntensity);
       scene.add(ambient);
@@ -209,6 +212,11 @@ export default function FromForest() {
       const animate = (timestamp?: number) => {
         animationId = requestAnimationFrame(animate);
         timer?.update(timestamp);
+
+        if (!hasFadedIn) {
+          hasFadedIn = true;
+          renderer!.domElement.style.opacity = '1';
+        }
 
         if (!reduceMotion) {
           const dt = timer!.getDelta();
@@ -278,7 +286,17 @@ export default function FromForest() {
     };
   }, []);
 
-  return <div ref={containerRef} aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none" />;
+  return (
+    <div
+      ref={containerRef}
+      aria-hidden="true"
+      className="absolute inset-0 z-0 pointer-events-none bg-bg"
+      style={{
+        background:
+          'radial-gradient(ellipse at 50% 20%, rgba(136,153,187,0.14) 0%, rgba(7,8,5,0) 60%)',
+      }}
+    />
+  );
 }
 
 function buildScene(
