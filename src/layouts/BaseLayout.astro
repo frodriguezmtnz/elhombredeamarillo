@@ -11,6 +11,10 @@ import MagneticButtons from '../components/effects/MagneticButtons';
 import PointerLight from '../components/effects/PointerLight';
 import RevealOnScroll from '../components/effects/RevealOnScroll';
 import ScrollProgress from '../components/effects/ScrollProgress';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource/vt323';
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
 
@@ -59,14 +63,6 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
 
     <!-- DNS prefetch -->
     <link rel="dns-prefetch" href="https://i.ytimg.com" />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-
-    <!-- Google Fonts (async, no render-blocking) -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet" />
-    </noscript>
 
     <title>{title}</title>
 

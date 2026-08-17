@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hda-v3';
+const CACHE_NAME = 'hda-v4';
 const STATIC_ASSETS = ['/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
@@ -54,13 +54,6 @@ self.addEventListener('fetch', (event) => {
         });
         return cached || fetched;
       }),
-    );
-    return;
-  }
-
-  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-    event.respondWith(
-      caches.match(request).then((cached) => cached || fetch(request)),
     );
     return;
   }
