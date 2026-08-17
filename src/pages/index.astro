@@ -5,6 +5,7 @@ import Footer from '../components/ui/Footer.astro';
 import { getRecentVideos } from '../data/videos';
 import { thumbnailUrl } from '../lib/youtube';
 import { relativeTime } from '../lib/utils';
+import Crows from '../components/effects/Crows';
 
 const recentVideos = getRecentVideos(3);
 ---
@@ -30,6 +31,7 @@ const recentVideos = getRecentVideos(3);
           class="w-full h-full object-cover opacity-40"
         />
       </div>
+      <!-- <Crows client:idle /> -->
       <div class="absolute inset-0 z-[1] bg-gradient-to-b from-bg/60 via-bg/40 to-bg"></div>
 
       <div class="relative z-10 mx-auto max-w-[var(--shell)] w-full px-5 lg:px-8 py-32">
