@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crows — Playground (Home hero)</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #c7cfc0;
+        overflow: hidden;
+      }
+      #app {
+        position: fixed;
+        inset: 0;
+      }
+      #heroBackdrop {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        pointer-events: none;
+        display: none;
+        opacity: 0.4;
+      }
+      #app canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        z-index: 1;
+      }
+      .lil-gui {
+        --lil-gui--width: 310px;
+        --lil-gui--background-color: rgba(12, 13, 10, 0.92);
+        --lil-gui--text-color: #f1ebdc;
+        --lil-gui--widget-color: #1a1c13;
+        --lil-gui--number-color: #e4b722;
+        --lil-gui--title-background-color: #212318;
+        --lil-gui--focus-color: #e4b722;
+      }
+      #overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.78);
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      #overlay.open {
+        display: flex;
+      }
+      #overlayBox {
+        width: min(90vw, 640px);
+      }
+      #exportOut {
+        width: 100%;
+        height: 320px;
+        box-sizing: border-box;
+        background: #0c0d0a;
+        color: #f1ebdc;
+        font: 12px/1.5 'JetBrains Mono', monospace;
+        border: 1px solid #212318;
+        border-radius: 8px;
+        padding: 12px;
+        resize: none;
+      }
+      #overlayActions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        justify-content: flex-end;
+      }
+      #overlayActions button {
+        min-width: 90px;
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #212318;
+        background: #1a1c13;
+        color: #f1ebdc;
+        font: 600 12px 'JetBrains Mono', monospace;
+        cursor: pointer;
+      }
+      #overlayActions button:hover {
+        border-color: #e4b722;
+        color: #e4b722;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <img
+        id="heroBackdrop"
+        alt=""
+        src="../public/assets/profile-landscape-hd.jpg"
+      />
+    </div>
+    <div id="overlay">
+      <div id="overlayBox">
+        <textarea id="exportOut" readonly spellcheck="false"></textarea>
+        <div id="overlayActions">
+          <button id="copyBtn">Copiar</button>
+          <button id="closeBtn">Cerrar</button>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+      import * as THREE from 'https://esm.sh/three@0.185.1';
+      import GUI from 'https://esm.sh/lil-gui@0.20.0';
+      import { GLTFExporter } from 'https://esm.sh/three@0.185.1/examples/jsm/exporters/GLTFExporter.js';
+
+      const DEFAULTS = {
+        backgroundColor: '#c7cfc0',
+        showHero: false,
+        heroOpacity: 0.4,
+        heroPath: '../public/assets/profile-landscape-hd.jpg',
+        seed: 1739,
+        camera: {
+          fov: 55,
+          posX: 0,
+          posY: 3.5,
+          posZ: -10,
+          lookX: 0,
+          lookY: 3.5,
+          lookZ: 6,
+        },
+        crows: {
+          count: 14,
+          scaleMin: 0.5,
+          scaleMax: 0.9,
+          speedMin: 0.6,
+          speedMax: 1.6,
+          flapSpeed: 14,
+          flapAmp: 0.5,
+          altitudeMin: 1.5,
+          altitudeMax: 5.5,
+          depthMin: 2,
+          depthMax: 14,
+          driftX: 26,
+          bobAmp: 0.3,
+        },
+      };
+
+      const params = structuredClone(DEFAULTS);
+
+      function mulberry32(seed) {
+        let a = seed >>> 0;
+        return () => {
+          a = (a + 0x6d2b79f5) | 0;
+          let t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      function deepAssign(target, source) {
+        for (const key of Object.keys(source)) {
+          if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+            target[key] = target[key] || {};
+            deepAssign(target[key], source[key]);
+          } else {
+            target[key] = source[key];
+          }
+        }
+        return target;
+      }
+
+      function wrap(value, range) {
+        const span = range * 2;
+        value = ((value + range) % span + span) % span - range;
+        return value;
+      }
+
+      function applyBackdrop() {
+        document.body.style.background = params.backgroundColor;
+        const img = document.getElementById('heroBackdrop');
+        img.style.opacity = String(params.heroOpacity);
+        if (params.showHero) {
+          img.src = params.heroPath;
+          img.style.display = 'block';
+        } else {
+          img.style.display = 'none';
+        }
+      }
+
+      let rng = mulberry32(params.seed);
+
+      const app = document.getElementById('app');
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      app.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+
+      const camera = new THREE.PerspectiveCamera(
+        params.camera.fov,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        60,
+      );
+
+      const crowGroup = new THREE.Group();
+      scene.add(crowGroup);
+
+      const crows = [];
+      const material = new THREE.MeshBasicMaterial({ color: 0x0c0d0a });
+
+      function buildCrow() {
+        const group = new THREE.Group();
+
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.45, 6), material);
+        body.rotation.z = -Math.PI / 2;
+        group.add(body);
+
+        const tail = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.2, 5), material);
+        tail.rotation.z = Math.PI / 2;
+        tail.position.x = -0.32;
+        group.add(tail);
+
+        const beak = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.08, 4), material);
+        beak.rotation.z = -Math.PI / 2;
+        beak.position.x = 0.26;
+        group.add(beak);
+
+        const wingGeo = new THREE.BoxGeometry(0.28, 0.02, 0.38);
+
+        const wingL = new THREE.Group();
+        const wingLMesh = new THREE.Mesh(wingGeo, material);
+        wingLMesh.position.z = -0.19;
+        wingL.add(wingLMesh);
+
+        const wingR = new THREE.Group();
+        const wingRMesh = new THREE.Mesh(wingGeo, material);
+        wingRMesh.position.z = 0.19;
+        wingR.add(wingRMesh);
+
+        group.add(wingL);
+        group.add(wingR);
+
+        return { group, wingL, wingR };
+      }
+
+      function buildFlock() {
+        crowGroup.traverse((obj) => {
+          if (obj.isMesh) {
+            obj.geometry.dispose();
+          }
+        });
+        crowGroup.clear();
+        crows.length = 0;
+        rng = mulberry32(params.seed);
+
+        for (let i = 0; i < params.crows.count; i++) {
+          const { group, wingL, wingR } = buildCrow();
+
+          const scale =
+            params.crows.scaleMin +
+            rng() * (params.crows.scaleMax - params.crows.scaleMin);
+          const speed =
+            params.crows.speedMin +
+            rng() * (params.crows.speedMax - params.crows.speedMin);
+          const altitude =
+            params.crows.altitudeMin +
+            rng() * (params.crows.altitudeMax - params.crows.altitudeMin);
+          const depth =
+            params.crows.depthMin +
+            rng() * (params.crows.depthMax - params.crows.depthMin);
+          const phase = rng() * Math.PI * 2;
+          const xStart = -params.crows.driftX + rng() * params.crows.driftX * 2;
+          const dir = rng() < 0.5 ? -1 : 1;
+
+          group.scale.setScalar(scale);
+          group.position.z = depth;
+          if (dir === -1) group.rotation.y = Math.PI;
+
+          group.userData = { phase, speed, altitude, xStart, dir, wingL, wingR };
+
+          crowGroup.add(group);
+          crows.push(group);
+        }
+      }
+
+      buildFlock();
+
+      const timer = new THREE.Timer();
+      timer.connect(document);
+
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function animate(timestamp) {
+        requestAnimationFrame(animate);
+        timer.update(timestamp);
+
+        if (!reduceMotion) {
+          const t = timer.getElapsed();
+
+          for (const crow of crows) {
+            const { phase, speed, altitude, xStart, dir, wingL, wingR } = crow.userData;
+            crow.position.x = wrap(xStart + t * speed * dir, params.crows.driftX);
+            crow.position.y =
+              altitude + Math.sin(t * speed * 1.7 + phase) * params.crows.bobAmp;
+
+            const flap =
+              Math.sin(t * params.crows.flapSpeed + phase) * params.crows.flapAmp;
+            wingL.rotation.x = flap;
+            wingR.rotation.x = flap;
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      function updateCamera() {
+        camera.position.set(params.camera.posX, params.camera.posY, params.camera.posZ);
+        camera.lookAt(params.camera.lookX, params.camera.lookY, params.camera.lookZ);
+      }
+      updateCamera();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      function exportGLB() {
+        const exporter = new GLTFExporter();
+        exporter.parse(
+          crowGroup,
+          (result) => {
+            const blob = new Blob([result], { type: 'model/gltf-binary' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'crows.glb';
+            link.click();
+            URL.revokeObjectURL(link.href);
+          },
+          (error) => console.error(error),
+          { binary: true },
+        );
+      }
+
+      function exportSettings() {
+        const data = JSON.stringify(params, null, 2);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(data).catch(() => {});
+        }
+        const blob = new Blob([data], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'crows-settings.json';
+        link.click();
+        URL.revokeObjectURL(link.href);
+        document.getElementById('exportOut').value = data;
+        document.getElementById('overlay').classList.add('open');
+      }
+
+function resetSettings() {
+        deepAssign(params, DEFAULTS);
+        gui.updateDisplay();
+        buildFlock();
+        updateCamera();
+        applyBackdrop();
+      }
+
+      function randomizeSeed() {
+        params.seed = Math.floor(Math.random() * 1000000000) + 1;
+        gui.updateDisplay();
+        buildFlock();
+      }
+
+      document.getElementById('copyBtn').addEventListener('click', () => {
+        const out = document.getElementById('exportOut');
+        out.select();
+        out.setSelectionRange(0, 999999);
+        document.execCommand('copy');
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = '¡Copiado!';
+        setTimeout(() => (btn.textContent = 'Copiar'), 1500);
+      });
+      document.getElementById('closeBtn').addEventListener('click', () => {
+        document.getElementById('overlay').classList.remove('open');
+      });
+
+      const gui = new GUI({ title: 'Crows — Controles' });
+
+      const seedFolder = gui.addFolder('Semilla');
+      seedFolder.add(params, 'seed', 1, 999999999, 1).name('Semilla').onFinishChange(buildFlock);
+      seedFolder.add({ randomizeSeed }, 'randomizeSeed').name('Randomizar semilla');
+
+      const crowFolder = gui.addFolder('Cuervos');
+      crowFolder.add(params.crows, 'count', 1, 40, 1).name('Cantidad').onFinishChange(buildFlock);
+      crowFolder.add(params.crows, 'scaleMin', 0.2, 2, 0.05).name('Escala mín').onFinishChange(buildFlock);
+      crowFolder.add(params.crows, 'scaleMax', 0.2, 2, 0.05).name('Escala máx').onFinishChange(buildFlock);
+      crowFolder.add(params.crows, 'speedMin', 0.1, 5, 0.1).name('Velocidad mín').onFinishChange(buildFlock);
+      crowFolder.add(params.crows, 'speedMax', 0.1, 5, 0.1).name('Velocidad máx').onFinishChange(buildFlock);
+      crowFolder.add(params.crows, 'flapSpeed', 1, 30, 1).name('Batido velocidad');
+      crowFolder.add(params.crows, 'flapAmp', 0, 1.5, 0.05).name('Batido amplitud');
+      crowFolder.add(params.crows, 'altitudeMin', 0, 10, 0.1).name('Altitud mín').onFinishChange(buildFlock);
+      crowFolder.add(params.crows, 'altitudeMax', 0, 10, 0.1).name('Altitud máx').onFinishChange(buildFlock);
+      crowFolder.add(params.crows, 'depthMin', 0, 20, 0.5).name('Profundidad mín').onFinishChange(buildFlock);
+      crowFolder.add(params.crows, 'depthMax', 0, 20, 0.5).name('Profundidad máx').onFinishChange(buildFlock);
+      crowFolder.add(params.crows, 'driftX', 5, 50, 1).name('Recorrido X (drift)').onFinishChange(buildFlock);
+      crowFolder.add(params.crows, 'bobAmp', 0, 1, 0.05).name('Onda vertical');
+
+      const cameraFolder = gui.addFolder('Cámara');
+      cameraFolder.add(params.camera, 'fov', 30, 75, 1).name('FOV').onChange((v) => {
+        camera.fov = v;
+        camera.updateProjectionMatrix();
+      });
+      cameraFolder.add(params.camera, 'posX', -10, 10, 0.1).name('Pos X').onFinishChange(updateCamera);
+      cameraFolder.add(params.camera, 'posY', 0, 10, 0.1).name('Pos Y').onFinishChange(updateCamera);
+      cameraFolder.add(params.camera, 'posZ', -20, 0, 0.5).name('Pos Z').onFinishChange(updateCamera);
+      cameraFolder.add(params.camera, 'lookX', -5, 5, 0.1).name('Mira X').onFinishChange(updateCamera);
+      cameraFolder.add(params.camera, 'lookY', 0, 10, 0.1).name('Mira Y').onFinishChange(updateCamera);
+      cameraFolder.add(params.camera, 'lookZ', 0, 15, 0.5).name('Mira Z').onFinishChange(updateCamera);
+
+      const fondoFolder = gui.addFolder('Fondo');
+      fondoFolder.addColor(params, 'backgroundColor').name('Color fondo').onChange(applyBackdrop);
+      fondoFolder.add(params, 'showHero').name('Mostrar fondo del hero').onChange(applyBackdrop);
+      fondoFolder.add(params, 'heroOpacity', 0, 1, 0.05).name('Opacidad del hero').onChange(applyBackdrop);
+      fondoFolder.add(params, 'heroPath').name('Ruta imagen').onFinishChange(applyBackdrop);
+
+      const adjustFolder = gui.addFolder('Ajustes');
+      adjustFolder.add({ exportSettings }, 'exportSettings').name('Exportar JSON');
+      adjustFolder.add({ resetSettings }, 'resetSettings').name('Reset');
+
+      const exportFolder = gui.addFolder('Exportar');
+      exportFolder.add({ exportGLB }, 'exportGLB').name('Descargar GLB');
+    </script>
+  </body>
+</html>
