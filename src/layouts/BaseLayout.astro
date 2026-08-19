@@ -65,8 +65,9 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
       <link rel="preload" as="image" href="/assets/profile-landscape-hd.jpg" fetchpriority="high" />
     )}
 
-    <!-- DNS prefetch -->
+    <!-- DNS prefetch + preconnect para thumbnails de YouTube -->
     <link rel="dns-prefetch" href="https://i.ytimg.com" />
+    <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
 
     <title>{title}</title>
 
