@@ -97,6 +97,7 @@ export default function LoginForm({ isOpen, onClose }: Props) {
               <input
                 id="auth-email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.currentTarget.value)}
                 placeholder="tu@email.com"
@@ -115,6 +116,7 @@ export default function LoginForm({ isOpen, onClose }: Props) {
               <input
                 id="auth-password"
                 type="password"
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 value={password}
                 onChange={(e) => setPassword(e.currentTarget.value)}
                 placeholder="••••••••"
