@@ -44,6 +44,7 @@ const category = Astro.url.searchParams.get('category');
               width="120"
               height="120"
               class="w-full h-full object-cover"
+              decoding="async"
             />
           </div>
           <div>
@@ -78,6 +79,7 @@ const category = Astro.url.searchParams.get('category');
               width="1280"
               height="720"
               class="w-full aspect-video object-cover group-hover:scale-[1.02] transition-transform duration-700"
+              decoding="async"
               onerror={`this.src='${thumbnailUrl(featured.videoId, 'hqdefault')}'`}
             />
             <div class="absolute inset-0 bg-gradient-to-t from-bg/80 via-transparent to-transparent"></div>
@@ -114,6 +116,7 @@ const category = Astro.url.searchParams.get('category');
                       width="80"
                       height="45"
                       loading="lazy"
+                      decoding="async"
                       class="w-20 h-12 object-cover rounded-lg flex-shrink-0"
                       onerror={ref.imageFallback ? `this.src='${ref.imageFallback}'` : undefined}
                     />

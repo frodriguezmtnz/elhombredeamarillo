@@ -57,6 +57,7 @@ export default function CaseTimeline({ dossiers, sources, onOpenCase }: Props) {
                       width="96"
                       height="54"
                       loading="lazy"
+                      decoding="async"
                       className="w-full aspect-video object-cover group-hover/img:scale-105 transition-transform"
                       onError={(e) => {
                         const img = e.currentTarget;
