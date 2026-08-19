@@ -14,6 +14,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   description="Archivo interactivo de teorías de FROM: expedientes, pruebas, dudas y evolución a través de los vídeos."
   ogImage="/assets/profile-landscape-hd.jpg"
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://elhombredeamarillo.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Expedientes', item: 'https://elhombredeamarillo.com/expedientes/' },
+      ],
+    })} />
+  </Fragment>
   <Header />
 
   <main class="pt-[var(--header-h)]">

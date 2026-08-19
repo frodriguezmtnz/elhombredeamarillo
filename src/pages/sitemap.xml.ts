@@ -2,13 +2,18 @@ import type { APIRoute } from 'astro';
 
 const BASE_URL = 'https://elhombredeamarillo.com';
 
-const staticPages = ['', '/videos', '/expedientes'];
+const staticPages = [
+  { path: '', lastmod: '2026-08-19' },
+  { path: '/videos', lastmod: '2026-08-19' },
+  { path: '/expedientes', lastmod: '2026-08-19' },
+];
 
 export const GET: APIRoute = () => {
   const pages = staticPages
     .map(
-      (path) => `  <url>
+      ({ path, lastmod }) => `  <url>
     <loc>${BASE_URL}${path}</loc>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>${path === '' ? '1.0' : '0.8'}</priority>
   </url>`,
