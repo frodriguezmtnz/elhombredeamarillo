@@ -4,6 +4,7 @@ export interface Props {
   description?: string;
   ogImage?: string;
   bodyClass?: string;
+  preloadHero?: boolean;
 }
 
 import { ClientRouter } from 'astro:transitions';
@@ -23,6 +24,7 @@ const {
   description = 'Análisis, explicaciones, teorías y debates sobre FROM.',
   ogImage = '/assets/profile-landscape-hd.jpg',
   bodyClass = '',
+  preloadHero = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://elhombredeamarillo.com');
@@ -58,8 +60,10 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <!-- Preload hero image (LCP) -->
-    <link rel="preload" as="image" href="/assets/profile-landscape-hd.jpg" fetchpriority="high" />
+    <!-- Preload hero image (LCP), solo en páginas que la renderizan -->
+    {preloadHero && (
+      <link rel="preload" as="image" href="/assets/profile-landscape-hd.jpg" fetchpriority="high" />
+    )}
 
     <!-- DNS prefetch -->
     <link rel="dns-prefetch" href="https://i.ytimg.com" />
