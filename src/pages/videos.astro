@@ -64,7 +64,7 @@ const category = Astro.url.searchParams.get('category');
 
     <!-- Vídeo destacado -->
     {featured && (
-      <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-b border-border" aria-label="Vídeo destacado">
+      <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-b border-border reveal-item" aria-label="Vídeo destacado">
         <div class="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 items-start">
           <a
             href={`https://www.youtube.com/watch?v=${featured.videoId}`}
@@ -133,13 +133,15 @@ const category = Astro.url.searchParams.get('category');
 
     <!-- Grid de vídeos (React island) -->
     <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16" aria-labelledby="all-title">
-      <header class="flex items-end justify-between gap-6 mb-8">
+      <header class="flex items-end justify-between gap-6 mb-8 reveal-item">
         <div>
           <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">ARCHIVO COMPLETO</p>
           <h2 class="font-pixel text-[clamp(1.5rem,4vw,2.5rem)] uppercase" id="all-title">TODOS LOS VÍDEOS</h2>
         </div>
       </header>
-      <VideoGrid client:load videos={VIDEOS} initialCategory={category ?? undefined} />
+      <div class="reveal-item">
+        <VideoGrid client:load videos={VIDEOS} initialCategory={category ?? undefined} />
+      </div>
     </section>
 
     <Footer />

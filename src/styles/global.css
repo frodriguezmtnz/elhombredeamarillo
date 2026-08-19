@@ -80,6 +80,12 @@ html {
   opacity: 1;
   transform: translateY(0);
 }
+.reveal-item.stagger:nth-child(2) {
+  transition-delay: 80ms;
+}
+.reveal-item.stagger:nth-child(3) {
+  transition-delay: 160ms;
+}
 
 /* ─── Visually hidden ─── */
 .sr-only {

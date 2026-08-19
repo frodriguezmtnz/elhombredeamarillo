@@ -102,7 +102,7 @@ const recentVideos = getRecentVideos(3);
 
     <!-- Portals -->
     <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-20" aria-labelledby="portals-title">
-      <header class="flex items-end justify-between gap-6 mb-10">
+      <header class="flex items-end justify-between gap-6 mb-10 reveal-item">
         <div>
           <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">TRES FORMAS DE ENTRAR</p>
           <h2 class="font-pixel text-[clamp(2rem,4.5vw,3.5rem)] uppercase" id="portals-title">EXPLORA EL ARCHIVO</h2>
@@ -111,7 +111,7 @@ const recentVideos = getRecentVideos(3);
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
         <!-- Análisis -->
-        <a href="/videos?category=analysis" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all">
+        <a href="/videos?category=analysis" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all reveal-item stagger">
           <img
             src="https://i.ytimg.com/vi/n89wAW_gT3Q/maxresdefault.jpg"
             alt="Miniatura de un análisis"
@@ -129,7 +129,7 @@ const recentVideos = getRecentVideos(3);
         </a>
 
         <!-- Debates -->
-        <a href="/videos?category=debate" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all">
+        <a href="/videos?category=debate" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all reveal-item stagger">
           <img
             src="https://i.ytimg.com/vi/Kc0SnZH6KPY/maxresdefault.jpg"
             alt="Miniatura de un debate con creadores"
@@ -147,7 +147,7 @@ const recentVideos = getRecentVideos(3);
         </a>
 
         <!-- Expedientes -->
-        <a href="/expedientes" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all">
+        <a href="/expedientes" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all reveal-item stagger">
           <img
             src="/assets/references/bosslogic-from-t5-fanart.png"
             alt="Fanart de FROM"
@@ -168,7 +168,7 @@ const recentVideos = getRecentVideos(3);
 
     <!-- Recent videos (estático por ahora, será React island en Fase 2) -->
     <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-20 border-t border-border" aria-labelledby="recent-title">
-      <header class="flex items-end justify-between gap-6 mb-10">
+      <header class="flex items-end justify-between gap-6 mb-10 reveal-item">
         <div>
           <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">ÚLTIMAS PUBLICACIONES</p>
           <h2 class="font-pixel text-[clamp(2rem,4.5vw,3.5rem)] uppercase" id="recent-title">AHORA EN EL CANAL</h2>
@@ -184,7 +184,7 @@ const recentVideos = getRecentVideos(3);
             href={`https://www.youtube.com/watch?v=${video.videoId}`}
             target="_blank"
             rel="noopener noreferrer"
-            class="group block rounded-xl border border-border bg-surface overflow-hidden hover:border-yellow/30 transition-all"
+            class="group block rounded-xl border border-border bg-surface overflow-hidden hover:border-yellow/30 transition-all reveal-item stagger"
           >
             <div class="relative">
               <img
@@ -219,7 +219,7 @@ const recentVideos = getRecentVideos(3);
 
     <!-- Manifesto -->
     <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-20 border-t border-border" aria-label="Manifiesto del canal">
-      <div class="max-w-3xl mx-auto text-center">
+      <div class="max-w-3xl mx-auto text-center reveal-item">
         <blockquote class="font-pixel text-[clamp(1.5rem,3.5vw,2.5rem)] leading-snug">
           "En todo ese caos hay un <em class="text-yellow not-italic">orden</em>."
         </blockquote>
