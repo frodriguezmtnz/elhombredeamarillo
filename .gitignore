@@ -22,3 +22,7 @@ Thumbs.db
 
 # archive (referencia, no desplegar)
 _archive/
+
+# auditorías locales (Lighthouse report, referencias/iteraciones)
+reports/
+docs/
