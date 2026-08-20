@@ -91,6 +91,7 @@ const category = Astro.url.searchParams.get('category');
               alt={featured.title}
               width="1280"
               height="720"
+              fetchpriority="high"
               class="w-full aspect-video object-cover group-hover:scale-[1.02] transition-transform duration-700"
               decoding="async"
               onerror={`this.src='${thumbnailUrl(featured.videoId, 'hqdefault')}'`}

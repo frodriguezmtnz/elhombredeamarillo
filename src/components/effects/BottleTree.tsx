@@ -93,7 +93,7 @@ export default function BottleTree() {
       camera.lookAt(SETTINGS.offsetX, SETTINGS.lookAtY, 0);
 
       renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       renderer.setSize(container.clientWidth, container.clientHeight);
       renderer.domElement.style.width = '100%';
       renderer.domElement.style.height = '100%';

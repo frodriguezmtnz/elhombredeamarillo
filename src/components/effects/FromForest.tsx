@@ -180,7 +180,7 @@ export default function FromForest() {
       camera.lookAt(SETTINGS.camera.lookAtX, SETTINGS.camera.lookAtY, SETTINGS.camera.lookAtZ);
 
       renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       renderer.setSize(w, h);
       renderer.domElement.style.width = '100%';
       renderer.domElement.style.height = '100%';
