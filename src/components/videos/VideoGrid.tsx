@@ -151,6 +151,7 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
 
           {/* Sort */}
           <select
+            aria-label="Ordenar vídeos"
             value={sort}
             onChange={(e) => { setSort(e.currentTarget.value as Sort); setPage(1); }}
             className="min-h-[42px] px-3 border border-border bg-surface text-text text-[10px] font-bold tracking-[.06em] uppercase font-mono rounded-lg outline-none focus:border-yellow transition-colors cursor-pointer"

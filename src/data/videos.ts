@@ -13,14 +13,14 @@ export const CHANNEL: ChannelData = {
 };
 
 export const CREATORS: Record<string, CreatorData> = {
-  host: { name: 'El Hombre de Amarillo', handle: '@koiboy_OG', url: 'https://www.youtube.com/@koiboy_OG', image: 'assets/creators/el-hombre-de-amarillo-hd.jpg' },
-  piroxeno: { name: 'PiroxenoReviews', handle: '@Piroxeno', url: 'https://www.youtube.com/@Piroxeno', image: 'assets/creators/piroxeno-reviews.png', featured: true },
-  cafe: { name: 'Café Con Series', handle: '@cafeconseries', url: 'https://www.youtube.com/@cafeconseries', image: 'assets/creators/cafe-con-series.png', featured: true },
-  andrea: { name: 'Andrea Mantilla', handle: '@AndreaMantilla', url: 'https://www.youtube.com/@AndreaMantilla', image: 'assets/creators/andrea-mantilla.png' },
-  reinos: { name: 'Reinos Ocultos', handle: '@ReinosOcultosPodcast', url: 'https://www.youtube.com/@ReinosOcultosPodcast', image: 'assets/creators/reinos-ocultos.png' },
-  burri: { name: 'Burri Harp', handle: '@BurriHarp', url: 'https://www.youtube.com/@BurriHarp', image: 'assets/creators/burri-harp.png' },
-  cine: { name: 'CineMagia', handle: '@cinemagia.psicologia', url: 'https://www.tiktok.com/@cinemagia.psicologia', image: 'assets/creators/cine-magia.png' },
-  charlemos: { name: 'Charlemos sobre Cine', handle: '@CharlemosSobreCine', url: 'https://www.youtube.com/@CharlemosSobreCine', image: 'assets/creators/charlemos-sobre-series.png' }
+  host: { name: 'El Hombre de Amarillo', handle: '@koiboy_OG', url: 'https://www.youtube.com/@koiboy_OG', image: '/assets/creators/el-hombre-de-amarillo-hd.jpg' },
+  piroxeno: { name: 'PiroxenoReviews', handle: '@Piroxeno', url: 'https://www.youtube.com/@Piroxeno', image: '/assets/creators/piroxeno-reviews.png', featured: true },
+  cafe: { name: 'Café Con Series', handle: '@cafeconseries', url: 'https://www.youtube.com/@cafeconseries', image: '/assets/creators/cafe-con-series.png', featured: true },
+  andrea: { name: 'Andrea Mantilla', handle: '@AndreaMantilla', url: 'https://www.youtube.com/@AndreaMantilla', image: '/assets/creators/andrea-mantilla.png' },
+  reinos: { name: 'Reinos Ocultos', handle: '@ReinosOcultosPodcast', url: 'https://www.youtube.com/@ReinosOcultosPodcast', image: '/assets/creators/reinos-ocultos.png' },
+  burri: { name: 'Burri Harp', handle: '@BurriHarp', url: 'https://www.youtube.com/@BurriHarp', image: '/assets/creators/burri-harp.png' },
+  cine: { name: 'CineMagia', handle: '@cinemagia.psicologia', url: 'https://www.tiktok.com/@cinemagia.psicologia', image: '/assets/creators/cine-magia.png' },
+  charlemos: { name: 'Charlemos sobre Cine', handle: '@CharlemosSobreCine', url: 'https://www.youtube.com/@CharlemosSobreCine', image: '/assets/creators/charlemos-sobre-series.png' }
 };
 
 export const VIDEOS: VideoData[] = [
@@ -42,7 +42,7 @@ export const VIDEOS: VideoData[] = [
         handle: '@bosslogic',
         url: 'https://www.instagram.com/p/DaQX8tZjyT8/?utm_source=ig_web_button_share_sheet&igsh=MzRlODBiNWFlZA%3D%3D',
         profileUrl: 'https://www.instagram.com/bosslogic/',
-        image: 'assets/references/bosslogic-from-t5-fanart.png',
+        image: '/assets/references/bosslogic-from-t5-fanart.png',
         imageAlt: 'Fanart de FROM para la temporada 5 creado por Bosslogic',
         action: 'VER PUBLICACIÓN',
         description: 'La imagen de la miniatura y la utilizada en el vídeo pertenece a Bosslogic. Tremendo fanart de la temporada 5.'

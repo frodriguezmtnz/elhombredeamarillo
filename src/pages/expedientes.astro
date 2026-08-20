@@ -105,7 +105,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <!-- React island: Board interactivo -->
       <div class="reveal-item">
-        <ExpedientesBoard client:load dossiers={DOSSIERS} sources={SOURCES} />
+        <ExpedientesBoard client:visible dossiers={DOSSIERS} sources={SOURCES} />
       </div>
     </section>
 
@@ -129,7 +129,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <!-- React island: Board comunitario -->
       <div class="reveal-item">
-        <CommunityBoard client:load />
+        <CommunityBoard client:visible />
       </div>
     </section>
 
