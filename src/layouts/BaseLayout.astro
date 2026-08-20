@@ -8,10 +8,6 @@ export interface Props {
 }
 
 import { ClientRouter } from 'astro:transitions';
-import MagneticButtons from '../components/effects/MagneticButtons';
-import PointerLight from '../components/effects/PointerLight';
-import RevealOnScroll from '../components/effects/RevealOnScroll';
-import ScrollProgress from '../components/effects/ScrollProgress';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
@@ -130,14 +126,99 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
       description: 'Análisis, explicaciones, teorías y debates sobre FROM.',
       inLanguage: 'es',
     })} />
-    <ScrollProgress client:idle />
-    <PointerLight client:idle />
-    <RevealOnScroll client:idle />
-    <MagneticButtons client:visible />
+    <div
+      id="scroll-progress"
+      class="fixed top-0 left-0 h-[2px] bg-yellow z-[60] transition-none"
+      style="width:0%"
+      aria-hidden="true"
+    />
     <slot />
 
     <Analytics />
     <SpeedInsights />
+
+    <script is:inline>
+      // ── ScrollProgress: barra superior de lectura ──
+      (function () {
+        var bar = document.getElementById('scroll-progress');
+        if (!bar) return;
+        var update = function () {
+          var y = window.scrollY || 0;
+          var doc = document.documentElement.scrollHeight - window.innerHeight;
+          bar.style.width = (doc > 0 ? (y / doc) * 100 : 0) + '%';
+        };
+        window.addEventListener('scroll', update, { passive: true });
+        document.addEventListener('astro:page-load', update);
+      })();
+    </script>
+
+    <script is:inline>
+      // ── PointerLight: luz reactiva al cursor ──
+      (function () {
+        var root = document.documentElement;
+        window.addEventListener(
+          'mousemove',
+          function (e) {
+            root.style.setProperty('--cursor-x', e.clientX + 'px');
+            root.style.setProperty('--cursor-y', e.clientY + 'px');
+          },
+          { passive: true },
+        );
+      })();
+    </script>
+
+    <script is:inline>
+      // ── RevealOnScroll ──
+      (function () {
+        var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduced) return;
+        var observer;
+        function init() {
+          var els = document.querySelectorAll('.reveal-item:not(.in-view)');
+          if (els.length === 0) return;
+          if (!observer) {
+            observer = new IntersectionObserver(
+              function (entries) {
+                for (var i = 0; i < entries.length; i++) {
+                  var en = entries[i];
+                  if (en.isIntersecting) {
+                    en.target.classList.add('in-view');
+                    observer.unobserve(en.target);
+                  }
+                }
+              },
+              { threshold: 0.15 },
+            );
+          }
+          for (var j = 0; j < els.length; j++) observer.observe(els[j]);
+        }
+        init();
+        document.addEventListener('astro:page-load', init);
+      })();
+    </script>
+
+    <script is:inline>
+      // ── MagneticButtons ──
+      (function () {
+        if (window.innerWidth <= 768) return;
+        var btns = document.querySelectorAll('.magnetic');
+        if (btns.length === 0) return;
+        var move = function (e) {
+          var b = e.currentTarget;
+          var r = b.getBoundingClientRect();
+          var x = e.clientX - r.left - r.width / 2;
+          var y = e.clientY - r.top - r.height / 2;
+          b.style.transform = 'translate(' + x * 0.2 + 'px, ' + y * 0.2 + 'px)';
+        };
+        var leave = function (e) {
+          e.currentTarget.style.transform = 'translate(0, 0)';
+        };
+        for (var i = 0; i < btns.length; i++) {
+          btns[i].addEventListener('mousemove', move);
+          btns[i].addEventListener('mouseleave', leave);
+        }
+      })();
+    </script>
 
     <script is:inline>
       if ('serviceWorker' in navigator) {
