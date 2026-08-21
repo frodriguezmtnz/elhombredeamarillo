@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-const BASE_URL = 'https://elhombredeamarillo.com';
+const BASE_URL = 'https://elhombredeamarillo.vercel.app';
 
 const staticPages = [
   { path: '', lastmod: '2026-08-19' },

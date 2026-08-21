@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://elhombredeamarillo.com/sitemap.xml
+Sitemap: https://elhombredeamarillo.vercel.app/sitemap.xml

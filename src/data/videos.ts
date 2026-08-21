@@ -13,7 +13,7 @@ export const CHANNEL: ChannelData = {
 };
 
 export const CREATORS: Record<string, CreatorData> = {
-  host: { name: 'El Hombre de Amarillo', handle: '@koiboy_OG', url: 'https://www.youtube.com/@koiboy_OG', image: '/assets/creators/el-hombre-de-amarillo-hd.jpg' },
+  host: { name: 'El Hombre de Amarillo', handle: '@koiboy_OG', url: 'https://www.youtube.com/@koiboy_OG', image: '/assets/channel-avatar-premium.jpg' },
   piroxeno: { name: 'PiroxenoReviews', handle: '@Piroxeno', url: 'https://www.youtube.com/@Piroxeno', image: '/assets/creators/piroxeno-reviews.png', featured: true },
   cafe: { name: 'Café Con Series', handle: '@cafeconseries', url: 'https://www.youtube.com/@cafeconseries', image: '/assets/creators/cafe-con-series.png', featured: true },
   andrea: { name: 'Andrea Mantilla', handle: '@AndreaMantilla', url: 'https://www.youtube.com/@AndreaMantilla', image: '/assets/creators/andrea-mantilla.png' },
@@ -42,7 +42,7 @@ export const VIDEOS: VideoData[] = [
         handle: '@bosslogic',
         url: 'https://www.instagram.com/p/DaQX8tZjyT8/?utm_source=ig_web_button_share_sheet&igsh=MzRlODBiNWFlZA%3D%3D',
         profileUrl: 'https://www.instagram.com/bosslogic/',
-        image: '/assets/references/bosslogic-from-t5-fanart.png',
+        image: '/assets/references/bosslogic-from-t5-fanart.webp',
         imageAlt: 'Fanart de FROM para la temporada 5 creado por Bosslogic',
         action: 'VER PUBLICACIÓN',
         description: 'La imagen de la miniatura y la utilizada en el vídeo pertenece a Bosslogic. Tremendo fanart de la temporada 5.'

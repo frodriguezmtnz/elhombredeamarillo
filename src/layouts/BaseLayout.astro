@@ -9,7 +9,6 @@ export interface Props {
 
 import { ClientRouter } from 'astro:transitions';
 import '@fontsource-variable/inter';
-import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
 import '@fontsource/vt323';
 import Analytics from '@vercel/analytics/astro';
@@ -23,8 +22,8 @@ const {
   preloadHero = false,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://elhombredeamarillo.com');
-const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://elhombredeamarillo.vercel.app');
+const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.vercel.app';
 ---
 
 <!doctype html>
@@ -40,7 +39,7 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
     <meta property="og:url" content={canonicalURL.href} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(ogImage, Astro.site ?? 'https://elhombredeamarillo.com').href} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site ?? 'https://elhombredeamarillo.vercel.app').href} />
     <meta property="og:image:width" content="1268" />
     <meta property="og:image:height" content="622" />
     <meta property="og:site_name" content="El Hombre de Amarillo" />
@@ -52,7 +51,7 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.com';
     <meta name="twitter:creator" content="@koiboy_OG" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(ogImage, Astro.site ?? 'https://elhombredeamarillo.com').href} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site ?? 'https://elhombredeamarillo.vercel.app').href} />
 
     <link rel="canonical" href={canonicalURL.href} />
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
