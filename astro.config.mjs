@@ -6,6 +6,9 @@ export default defineConfig({
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      chunkSizeWarningLimit: 800,
+    },
   },
   output: 'static',
 });
