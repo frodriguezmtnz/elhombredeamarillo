@@ -1,0 +1,281 @@
+---
+const TALISMAN_IMG = '/assets/references/talisman-404.webp';
+---
+
+<div
+  class="ts-scene group relative w-[min(72vw,340px)] aspect-square mx-auto select-none"
+  style="width:min(72vw,340px);aspect-ratio:1/1"
+  aria-hidden="true"
+>
+  <!-- Aura / resplandor -->
+  <div
+    class="ts-glow absolute -inset-12 -z-10 rounded-full pointer-events-none"
+    style="background: radial-gradient(circle, rgba(228,183,34,0.18) 0%, rgba(228,183,34,0) 62%)"
+  ></div>
+
+  <!-- Núcleo: SVG del talismán + textura fanart + grieta -->
+  <div class="ts-float absolute inset-0">
+    <div class="ts-core absolute inset-0 rounded-full border border-[#3a3a28]">
+      <!-- SVG: talismán estructural (anillos + runas + ojo) -->
+      <svg viewBox="0 0 400 400" class="absolute inset-0 w-full h-full -z-[1]" role="presentation">
+        <defs>
+          <radialGradient id="talisman-disc" cx="50%" cy="42%" r="62%">
+            <stop offset="0%" stop-color="#2a2d1f" />
+            <stop offset="55%" stop-color="#1a1c14" />
+            <stop offset="100%" stop-color="#12140f" />
+          </radialGradient>
+        </defs>
+
+        <!-- Disco -->
+        <circle cx="200" cy="200" r="176" fill="url(#talisman-disc)" stroke="#2c2d1f" stroke-width="1.5" />
+
+        <!-- Anillo de runas (banda grabada) -->
+        <circle
+          cx="200"
+          cy="200"
+          r="150"
+          fill="none"
+          stroke="#e4b722"
+          stroke-opacity="0.85"
+          stroke-width="26"
+          stroke-linecap="round"
+          stroke-dasharray="3 20 9 15 5 26 13 18 7 12 16 24 4 22 11 17 6 19 8 16"
+        />
+
+        <!-- Líneas que flanquean el cinturón de runas -->
+        <circle cx="200" cy="200" r="166" fill="none" stroke="#8f824c" stroke-opacity="0.6" stroke-width="1" />
+        <circle cx="200" cy="200" r="133" fill="none" stroke="#8f824c" stroke-opacity="0.6" stroke-width="1" />
+
+        <!-- Glifos radiales (textura) -->
+        <g stroke="#e4b722" stroke-opacity="0.55" stroke-width="2" line-cap="round">
+          <line x1="200" y1="66" x2="200" y2="82" />
+          <line x1="200" y1="318" x2="200" y2="334" transform="rotate(180 200 200)" />
+          <line x1="66" y1="200" x2="82" y2="200" transform="rotate(90 200 200)" />
+          <line x1="334" y1="200" x2="318" y2="200" transform="rotate(-90 200 200)" />
+          <line x1="105" y1="105" x2="118" y2="118" />
+          <line x1="295" y1="105" x2="282" y2="118" transform="rotate(90 200 200)" />
+          <line x1="295" y1="295" x2="282" y2="282" />
+          <line x1="105" y1="295" x2="118" y2="282" />
+        </g>
+
+        <!-- Ojo central -->
+        <ellipse cx="200" cy="200" rx="58" ry="36" fill="none" stroke="#e4b722" stroke-opacity="0.8" stroke-width="2" />
+        <circle cx="200" cy="200" r="22" fill="none" stroke="#e4b722" stroke-opacity="0.65" stroke-width="1.5" />
+        <circle cx="200" cy="200" r="11" fill="#0a0a08" stroke="#d8b33c" stroke-width="1.6" />
+        <circle cx="200" cy="200" r="3.5" fill="#e4b722" />
+        <path d="M148 168 q52 -7 104 0" fill="none" stroke="#e4b722" stroke-opacity="0.35" stroke-width="1.5" stroke-linecap="round" />
+        <path d="M148 232 q52 7 104 0" fill="none" stroke="#e4b722" stroke-opacity="0.35" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+
+      <!-- Textura fanart (se activa automáticamente si existe el archivo) -->
+      <img
+        src={TALISMAN_IMG}
+        alt=""
+        width="340"
+        height="340"
+        decoding="async"
+        class="ts-img absolute inset-0 h-full w-full rounded-full"
+        onerror="this.style.display='none'"
+      />
+
+      <!-- Grieta que se dibuja al hacer hover -->
+      <svg viewBox="0 0 400 400" class="absolute inset-0 h-full w-full z-10 pointer-events-none" role="presentation">
+        <polyline
+          points="200,26 184,94 210,156 186,220 214,288 188,374"
+          fill="none"
+          stroke="#e4b722"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-opacity="0.9"
+          class="ts-crack"
+        />
+        <polyline
+          points="210,156 252,194 236,252"
+          fill="none"
+          stroke="#e4b722"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-opacity="0.6"
+          class="ts-crack"
+        />
+        <line x1="186" y1="220" x2="140" y2="246" stroke="#e4b722" stroke-width="1.5" stroke-opacity="0.4" class="ts-crack" />
+      </svg>
+
+      <!-- Overlay de scanline (parpadeo sobre hover) -->
+      <div class="ts-scan absolute inset-0 z-[11] rounded-full pointer-events-none"></div>
+    </div>
+
+    <!-- Esquirlas de fractura -->
+    <div class="ts-slice ts-s1 absolute inset-0 rounded-full"></div>
+    <div class="ts-slice ts-s2 absolute inset-0 rounded-full"></div>
+    <div class="ts-slice ts-s3 absolute inset-0 rounded-full"></div>
+  </div>
+</div>
+
+<style>
+  .ts-scene {
+    filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.7));
+  }
+
+  @keyframes ts-float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-1.4deg);
+    }
+    50% {
+      transform: translateY(-9px) rotate(1.4deg);
+    }
+  }
+  @keyframes ts-breathe {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.85;
+      transform: scale(1.07);
+    }
+  }
+
+  .ts-float {
+    animation: ts-float 7s ease-in-out infinite;
+  }
+  .ts-glow {
+    animation: ts-breathe 6s ease-in-out infinite;
+  }
+
+  .ts-img {
+    object-fit: cover;
+  }
+
+  /* ── Esquirlas ── */
+  .ts-slice {
+    background: url('/assets/references/talisman-404.webp') center / cover no-repeat;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    will-change: transform;
+  }
+  .ts-s1 {
+    clip-path: polygon(0 0, 40% 0, 30% 54%, 0 62%);
+  }
+  .ts-s2 {
+    clip-path: polygon(38% 0, 100% 0, 100% 100%, 62% 70%, 40% 46%);
+  }
+  .ts-s3 {
+    clip-path: polygon(0 56%, 30% 44%, 42% 100%, 0 100%);
+  }
+
+  @keyframes ts-shard1 {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(-7px, 5px, 0) rotate(-2.5deg);
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  @keyframes ts-shard2 {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(6px, -6px, 0) rotate(2.6deg);
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  @keyframes ts-shard3 {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(-4px, 7px, 0) rotate(1.8deg);
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes ts-jitter {
+    0% {
+      transform: translate(0, 0);
+    }
+    33% {
+      transform: translate(1.5px, -1px);
+    }
+    66% {
+      transform: translate(-1px, 1.5px);
+    }
+    100% {
+      transform: translate(0, 0);
+    }
+  }
+
+  /* ── Grieta: se dibuja al hover ── */
+  .ts-crack {
+    stroke-dasharray: 900;
+    stroke-dashoffset: 900;
+    transition: stroke-dashoffset 0.75s ease;
+  }
+
+  .ts-scan {
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(228, 183, 34, 0) 0 3px,
+      rgba(228, 183, 34, 0.07) 3px 4px
+    );
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .ts-scene:hover .ts-crack {
+    stroke-dashoffset: 0;
+  }
+  .ts-scene:hover .ts-slice {
+    opacity: 1;
+    transition-delay: 0.35s;
+  }
+  .ts-scene:hover .ts-s1 {
+    animation: ts-shard1 0.34s steps(2, end) 0s infinite;
+  }
+  .ts-scene:hover .ts-s2 {
+    animation: ts-shard2 0.3s steps(2, end) 0.08s infinite;
+  }
+  .ts-scene:hover .ts-s3 {
+    animation: ts-shard3 0.38s steps(2, end) 0.16s infinite;
+  }
+  .ts-scene:hover .ts-core {
+    animation: ts-jitter 0.26s steps(2, end) 0s infinite;
+  }
+  .ts-scene:hover .ts-scan {
+    opacity: 0.9;
+  }
+
+  /* ── Reducción de movimiento ── */
+  @media (prefers-reduced-motion: reduce) {
+    .ts-float,
+    .ts-glow {
+      animation: none;
+    }
+    .ts-scene:hover .ts-crack {
+      stroke-dashoffset: 0;
+      transition: none;
+    }
+    .ts-scene:hover .ts-slice {
+      opacity: 1;
+    }
+    .ts-scene:hover .ts-s1,
+    .ts-scene:hover .ts-s2,
+    .ts-scene:hover .ts-s3,
+    .ts-scene:hover .ts-core {
+      animation: none;
+    }
+  }
+</style>
