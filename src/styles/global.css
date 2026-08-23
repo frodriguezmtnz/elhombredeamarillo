@@ -24,9 +24,9 @@
 
   --color-ivory: #f1ebdc;
 
-  --font-display: 'Inter Variable', sans-serif;
-  --font-body: 'Inter Variable', sans-serif;
-  --font-mono: 'JetBrains Mono Variable', monospace;
+  --font-display: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
   --font-pixel: 'VT323', monospace;
 
   --spacing-header: 72px;
