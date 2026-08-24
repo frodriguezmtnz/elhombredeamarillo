@@ -78,7 +78,7 @@ const category = Astro.url.searchParams.get('category');
 
     <!-- Vídeo destacado -->
     {featured && (
-      <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-b border-border reveal-item" aria-label="Vídeo destacado">
+      <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 border-b border-border" aria-label="Vídeo destacado">
         <div class="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 items-start">
           <a
             href={`https://www.youtube.com/watch?v=${featured.videoId}`}
@@ -157,7 +157,7 @@ const category = Astro.url.searchParams.get('category');
         </div>
       </header>
       <div class="reveal-item">
-        <VideoGrid client:load videos={VIDEOS} initialCategory={category ?? undefined} />
+        <VideoGrid client:visible videos={VIDEOS} initialCategory={category ?? undefined} />
       </div>
     </section>
 
