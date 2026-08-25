@@ -2,11 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/ui/Header.astro';
 import Footer from '../components/ui/Footer.astro';
+import { Image, getImage } from 'astro:assets';
+import heroLandscape from '../assets/profile-landscape-hd.jpg';
 import { getRecentVideos } from '../data/videos';
 import { thumbnailUrl } from '../lib/youtube';
 import { relativeTime } from '../lib/utils';
 import Crows from '../components/effects/Crows';
 
+const heroImg = await getImage({ src: heroLandscape, width: 1268, height: 622 });
 const recentVideos = getRecentVideos(3);
 ---
 
@@ -14,8 +17,8 @@ const recentVideos = getRecentVideos(3);
   title="El Hombre de Amarillo"
   description="Página oficial de El Hombre de Amarillo: análisis, teorías y debates sobre FROM y otras historias de misterio."
   ogImage="/assets/profile-landscape-hd.jpg"
-  preloadHero
 >
+  <link slot="head" rel="preload" as="image" href={heroImg.src} fetchpriority="high" />
   <Header />
 
   <main>
@@ -23,12 +26,13 @@ const recentVideos = getRecentVideos(3);
     <section class="relative min-h-screen flex items-center overflow-hidden" aria-labelledby="home-title">
       <!-- Background image -->
       <div class="absolute inset-0 z-0">
-        <img
-          src="/assets/profile-landscape-hd.jpg"
+        <Image
+          src={heroLandscape}
           alt=""
           width="1268"
           height="622"
           fetchpriority="high"
+          loading="eager"
           decoding="async"
           class="w-full h-full object-cover opacity-40"
         />

@@ -4,18 +4,13 @@ export interface Props {
   description?: string;
   ogImage?: string;
   bodyClass?: string;
-  preloadHero?: boolean;
 }
 
 import { ClientRouter } from 'astro:transitions';
 import '@fontsource/inter/latin-400.css';
-import '@fontsource/inter/latin-ext-400.css';
 import '@fontsource/inter/latin-700.css';
-import '@fontsource/inter/latin-ext-700.css';
 import '@fontsource/jetbrains-mono/latin-400.css';
-import '@fontsource/jetbrains-mono/latin-ext-400.css';
 import '@fontsource/jetbrains-mono/latin-700.css';
-import '@fontsource/jetbrains-mono/latin-ext-700.css';
 import '@fontsource/vt323/latin.css';
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
@@ -25,7 +20,6 @@ const {
   description = 'Análisis, explicaciones, teorías y debates sobre FROM.',
   ogImage = '/assets/profile-landscape-hd.jpg',
   bodyClass = '',
-  preloadHero = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://elhombredeamarillo.vercel.app');
@@ -65,11 +59,6 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.vercel.app';
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-    <!-- Preload hero image (LCP), solo en páginas que la renderizan -->
-    {preloadHero && (
-      <link rel="preload" as="image" href="/assets/profile-landscape-hd.jpg" fetchpriority="high" />
-    )}
 
     <!-- DNS prefetch + preconnect para thumbnails de YouTube -->
     <link rel="dns-prefetch" href="https://i.ytimg.com" />

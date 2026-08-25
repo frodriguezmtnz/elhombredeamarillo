@@ -48,7 +48,7 @@ export default function VideoCard({ video, layout = 'grid', index = 0 }: Props) 
         )}
       >
         <img
-          src={thumbnailUrl(video.videoId, 'maxresdefault')}
+          src={thumbnailUrl(video.videoId, isWide ? 'maxresdefault' : 'hqdefault')}
           alt={`Miniatura de ${video.title}`}
           width="1280"
           height="720"
@@ -58,7 +58,7 @@ export default function VideoCard({ video, layout = 'grid', index = 0 }: Props) 
           onError={(e) => {
             const img = e.currentTarget;
             img.onerror = null;
-            img.src = thumbnailUrl(video.videoId, 'hqdefault');
+            img.src = thumbnailUrl(video.videoId, 'mqdefault');
           }}
         />
         <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
