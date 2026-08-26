@@ -124,8 +124,8 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.vercel.app';
     />
     <slot />
 
-    <Analytics />
-    <SpeedInsights />
+    {import.meta.env.PROD && <Analytics />}
+    {import.meta.env.PROD && <SpeedInsights />}
 
     <script is:inline>
       // ── ScrollProgress: barra superior de lectura ──
