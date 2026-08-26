@@ -1,4 +1,24 @@
 import { useEffect, useRef } from 'react';
+import {
+  AmbientLight,
+  CircleGeometry,
+  CylinderGeometry,
+  DirectionalLight,
+  DoubleSide,
+  FogExp2,
+  Group,
+  HemisphereLight,
+  Mesh,
+  MeshPhongMaterial,
+  MeshStandardMaterial,
+  PerspectiveCamera,
+  PointLight,
+  Scene,
+  Timer,
+  TorusGeometry,
+  Vector3,
+  WebGLRenderer,
+} from 'three';
 import type * as THREE from 'three';
 
 interface Sway {
@@ -63,77 +83,73 @@ export default function BottleTree() {
     if (!container) return;
 
     let disposed = false;
-    let threeMod: typeof THREE | null = null;
-    let renderer: THREE.WebGLRenderer | null = null;
-    let scene: THREE.Scene | null = null;
-    let camera: THREE.PerspectiveCamera | null = null;
-    let warmLight: THREE.PointLight | null = null;
-    let holeLight: THREE.PointLight | null = null;
-    let timer: THREE.Timer | null = null;
+    let renderer: WebGLRenderer | null = null;
+    let scene: Scene | null = null;
+    let camera: PerspectiveCamera | null = null;
+    let warmLight: PointLight | null = null;
+    let holeLight: PointLight | null = null;
+    let timer: Timer | null = null;
     let resizeObserver: ResizeObserver | null = null;
     let animationId = 0;
     let cameraAngle = Math.PI * 0.2;
 
-    const bottles: THREE.Group[] = [];
+    const bottles: Group[] = [];
 
-    void (async () => {
-      const THREE = await import('three');
-      if (disposed || !container.isConnected) return;
-      threeMod = THREE;
+    if (disposed || !container.isConnected) return;
 
-      scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x070805, SETTINGS.fogDensity);
+    scene = new Scene();
+    scene.fog = new FogExp2(0x070805, SETTINGS.fogDensity);
 
-      camera = new THREE.PerspectiveCamera(SETTINGS.fov, container.clientWidth / container.clientHeight, 0.1, 100);
-      camera.position.set(
-        Math.sin(cameraAngle) * SETTINGS.cameraDistance + SETTINGS.offsetX,
-        SETTINGS.cameraHeight,
-        Math.cos(cameraAngle) * SETTINGS.cameraDistance,
-      );
-      camera.lookAt(SETTINGS.offsetX, SETTINGS.lookAtY, 0);
+    camera = new PerspectiveCamera(SETTINGS.fov, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(
+      Math.sin(cameraAngle) * SETTINGS.cameraDistance + SETTINGS.offsetX,
+      SETTINGS.cameraHeight,
+      Math.cos(cameraAngle) * SETTINGS.cameraDistance,
+    );
+    camera.lookAt(SETTINGS.offsetX, SETTINGS.lookAtY, 0);
 
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.domElement.style.width = '100%';
-      renderer.domElement.style.height = '100%';
-      renderer.domElement.style.display = 'block';
-      container.appendChild(renderer.domElement);
+    renderer = new WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.display = 'block';
+    container.appendChild(renderer.domElement);
 
-      const ambient = new THREE.AmbientLight(0x5a5442, SETTINGS.ambientIntensity);
-      scene.add(ambient);
+    const ambient = new AmbientLight(0x5a5442, SETTINGS.ambientIntensity);
+    scene.add(ambient);
 
-      const hemisphere = new THREE.HemisphereLight(0x887766, 0x0c0d0a, SETTINGS.hemisphereIntensity);
-      scene.add(hemisphere);
+    const hemisphere = new HemisphereLight(0x887766, 0x0c0d0a, SETTINGS.hemisphereIntensity);
+    scene.add(hemisphere);
 
-      const moon = new THREE.DirectionalLight(0x8899bb, SETTINGS.moonIntensity);
-      moon.position.set(4, 7, -3);
-      scene.add(moon);
+    const moon = new DirectionalLight(0x8899bb, SETTINGS.moonIntensity);
+    moon.position.set(4, 7, -3);
+    scene.add(moon);
 
-      warmLight = new THREE.PointLight(0xf4c943, SETTINGS.warmIntensity, 15, 2);
-      warmLight.position.set(0.6, 2.4, 1.6);
-      scene.add(warmLight);
+    warmLight = new PointLight(0xf4c943, SETTINGS.warmIntensity, 15, 2);
+    warmLight.position.set(0.6, 2.4, 1.6);
+    scene.add(warmLight);
 
-      const root = new THREE.Group();
-      root.position.x = SETTINGS.offsetX;
-      scene.add(root);
+    const root = new Group();
+    root.position.x = SETTINGS.offsetX;
+    scene.add(root);
 
-      const ground = new THREE.Mesh(
-        new THREE.CircleGeometry(20, 48),
-        new THREE.MeshStandardMaterial({ color: 0x0b0c09, roughness: 1 }),
-      );
-      ground.rotation.x = -Math.PI / 2;
-      ground.position.y = -0.01;
-      root.add(ground);
+    const ground = new Mesh(
+      new CircleGeometry(20, 48),
+      new MeshStandardMaterial({ color: 0x0b0c09, roughness: 1 }),
+    );
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -0.01;
+    root.add(ground);
 
-      const rng = mulberry32(SETTINGS.seed);
-      const { group: tree, holeLight: buildHoleLight } = buildTree(THREE, bottles, rng);
-      holeLight = buildHoleLight;
-      root.add(tree);
+    const rng = mulberry32(SETTINGS.seed);
+    const { group: tree, holeLight: buildHoleLight } = buildTree(bottles, rng);
+    holeLight = buildHoleLight;
+    root.add(tree);
 
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      timer = new THREE.Timer();
-      timer.connect(document);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    timer = new Timer();
+    timer.connect(document);
 
       const animate = (timestamp?: number) => {
         animationId = requestAnimationFrame(animate);
@@ -175,15 +191,14 @@ export default function BottleTree() {
         renderer.setSize(w, h);
       });
       resizeObserver.observe(container);
-    })();
 
     return () => {
       disposed = true;
       cancelAnimationFrame(animationId);
       resizeObserver?.disconnect();
-      if (threeMod && scene) {
+      if (scene) {
         scene.traverse((obj) => {
-          if (obj instanceof threeMod!.Mesh) {
+          if (obj instanceof Mesh) {
             obj.geometry.dispose();
             const material = obj.material;
             if (Array.isArray(material)) {
@@ -204,14 +219,13 @@ export default function BottleTree() {
 }
 
 function buildTree(
-  THREE: typeof import('three'),
-  bottles: THREE.Group[],
+  bottles: Group[],
   rng: () => number,
-): { group: THREE.Group; holeLight: THREE.PointLight } {
-  const group = new THREE.Group();
+): { group: Group; holeLight: PointLight } {
+  const group = new Group();
 
-  const barkMat = new THREE.MeshStandardMaterial({ color: 0x2b2015, roughness: 0.95, metalness: 0.05 });
-  const rimMat = new THREE.MeshStandardMaterial({ color: 0x3a2c1c, roughness: 0.9 });
+  const barkMat = new MeshStandardMaterial({ color: 0x2b2015, roughness: 0.95, metalness: 0.05 });
+  const rimMat = new MeshStandardMaterial({ color: 0x3a2c1c, roughness: 0.9 });
 
   const trunkSegments = [
     { y: 0.9, r: 0.42, h: 1.9, rx: 0.02, rz: 0.03 },
@@ -221,7 +235,7 @@ function buildTree(
     { y: 4.75, r: 0.16, h: 1.2, rx: 0.05, rz: -0.04 },
   ];
   for (const seg of trunkSegments) {
-    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(seg.r * 0.85, seg.r, seg.h, 10), barkMat);
+    const mesh = new Mesh(new CylinderGeometry(seg.r * 0.85, seg.r, seg.h, 10), barkMat);
     mesh.position.y = seg.y;
     mesh.rotation.x = seg.rx;
     mesh.rotation.z = seg.rz;
@@ -229,19 +243,19 @@ function buildTree(
   }
 
   const holeY = 2.62;
-  const tunnel = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.26, 0.26, 0.55, 12, 1, true),
-    new THREE.MeshStandardMaterial({ color: 0x0a0906, roughness: 1, side: THREE.DoubleSide }),
+  const tunnel = new Mesh(
+    new CylinderGeometry(0.26, 0.26, 0.55, 12, 1, true),
+    new MeshStandardMaterial({ color: 0x0a0906, roughness: 1, side: DoubleSide }),
   );
   tunnel.position.y = holeY;
   group.add(tunnel);
 
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.045, 10, 24), rimMat);
+  const rim = new Mesh(new TorusGeometry(0.3, 0.045, 10, 24), rimMat);
   rim.position.y = holeY;
   rim.rotation.x = Math.PI / 2;
   group.add(rim);
 
-  const holeLight = new THREE.PointLight(0xf4c943, SETTINGS.holeIntensity, 4, 2);
+  const holeLight = new PointLight(0xf4c943, SETTINGS.holeIntensity, 4, 2);
   holeLight.position.set(0.25, holeY, 0.35);
   group.add(holeLight);
 
@@ -252,24 +266,24 @@ function buildTree(
     const tiltUp = 0.3 + rng() * 0.45;
     const len = 1.15 + rng() * 0.9;
 
-    const start = new THREE.Vector3(0, attachY, 0);
-    const end = new THREE.Vector3(
+    const start = new Vector3(0, attachY, 0);
+    const end = new Vector3(
       Math.sin(angle) * Math.cos(tiltUp) * len,
       attachY + Math.sin(tiltUp) * len,
       Math.cos(angle) * Math.cos(tiltUp) * len,
     );
 
-    group.add(cylinderBetween(THREE, start, end, 0.055, barkMat));
+    group.add(cylinderBetween(start, end, 0.055, barkMat));
 
     if (i % 2 === 0) {
       const subStart = start.clone().lerp(end, 0.7);
-      const subEnd = subStart.clone().addScaledVector(new THREE.Vector3(0.3, 1, 0).normalize(), 0.55);
-      group.add(cylinderBetween(THREE, subStart, subEnd, 0.032, barkMat));
+      const subEnd = subStart.clone().addScaledVector(new Vector3(0.3, 1, 0).normalize(), 0.55);
+      group.add(cylinderBetween(subStart, subEnd, 0.032, barkMat));
     }
 
     const attach = end.clone();
     attach.y += 0.05;
-    const bottle = createBottle(THREE, attach, rng);
+    const bottle = createBottle(attach, rng);
     bottles.push(bottle);
     group.add(bottle);
   }
@@ -277,14 +291,14 @@ function buildTree(
   return { group, holeLight };
 }
 
-function createBottle(THREE: typeof import('three'), attach: THREE.Vector3, rng: () => number): THREE.Group {
-  const group = new THREE.Group();
+function createBottle(attach: Vector3, rng: () => number): Group {
+  const group = new Group();
   group.position.copy(attach);
 
   const ropeLen = 0.65 + rng() * 0.5;
-  const rope = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.014, 0.014, ropeLen, 6),
-    new THREE.MeshStandardMaterial({ color: 0x1a1c12, roughness: 0.8 }),
+  const rope = new Mesh(
+    new CylinderGeometry(0.014, 0.014, ropeLen, 6),
+    new MeshStandardMaterial({ color: 0x1a1c12, roughness: 0.8 }),
   );
   rope.position.y = -ropeLen / 2;
   group.add(rope);
@@ -292,25 +306,25 @@ function createBottle(THREE: typeof import('three'), attach: THREE.Vector3, rng:
   const palette = [0x2f6b43, 0x8a6a2f, 0x3a5f7a, 0x6b3a3a, 0x4f6b2f, 0x7a5a4a];
   const color = palette[Math.floor(rng() * palette.length)];
 
-  const glassMat = new THREE.MeshPhongMaterial({
+  const glassMat = new MeshPhongMaterial({
     color,
     specular: 0xcbbf9a,
     shininess: 110,
     transparent: true,
     opacity: 0.5,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
     depthWrite: false,
   });
 
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.7, 12), glassMat);
+  const body = new Mesh(new CylinderGeometry(0.15, 0.15, 0.7, 12), glassMat);
   body.position.y = -(ropeLen + 0.35);
   group.add(body);
 
-  const shoulder = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.15, 0.32, 12), glassMat);
+  const shoulder = new Mesh(new CylinderGeometry(0.05, 0.15, 0.32, 12), glassMat);
   shoulder.position.y = -(ropeLen + 0.85);
   group.add(shoulder);
 
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, 0.28, 10), glassMat);
+  const neck = new Mesh(new CylinderGeometry(0.03, 0.05, 0.28, 10), glassMat);
   neck.position.y = -(ropeLen + 1.14);
   group.add(neck);
 
@@ -324,16 +338,15 @@ function createBottle(THREE: typeof import('three'), attach: THREE.Vector3, rng:
 }
 
 function cylinderBetween(
-  THREE: typeof import('three'),
-  a: THREE.Vector3,
-  b: THREE.Vector3,
+  a: Vector3,
+  b: Vector3,
   radius: number,
   material: THREE.Material,
-): THREE.Mesh {
+): Mesh {
   const dir = b.clone().sub(a);
   const len = dir.length();
-  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, len, 8), material);
+  const mesh = new Mesh(new CylinderGeometry(radius, radius, len, 8), material);
   mesh.position.copy(a).add(b).multiplyScalar(0.5);
-  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+  mesh.quaternion.setFromUnitVectors(new Vector3(0, 1, 0), dir.clone().normalize());
   return mesh;
 }

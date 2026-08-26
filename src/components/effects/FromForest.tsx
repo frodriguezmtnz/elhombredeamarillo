@@ -1,4 +1,26 @@
 import { useEffect, useRef } from 'react';
+import {
+  AmbientLight,
+  CapsuleGeometry,
+  CircleGeometry,
+  Color,
+  ConeGeometry,
+  CylinderGeometry,
+  DirectionalLight,
+  FogExp2,
+  Group,
+  HemisphereLight,
+  IcosahedronGeometry,
+  Mesh,
+  MeshStandardMaterial,
+  PerspectiveCamera,
+  PlaneGeometry,
+  Scene,
+  SphereGeometry,
+  Timer,
+  Vector3,
+  WebGLRenderer,
+} from 'three';
 import type * as THREE from 'three';
 
 interface Sway {
@@ -147,11 +169,10 @@ export default function FromForest() {
     if (!container) return;
 
     let disposed = false;
-    let threeMod: typeof THREE | null = null;
-    let renderer: THREE.WebGLRenderer | null = null;
-    let scene: THREE.Scene | null = null;
-    let camera: THREE.PerspectiveCamera | null = null;
-    let timer: THREE.Timer | null = null;
+    let renderer: WebGLRenderer | null = null;
+    let scene: Scene | null = null;
+    let camera: PerspectiveCamera | null = null;
+    let timer: Timer | null = null;
     let resizeObserver: ResizeObserver | null = null;
     let animationId = 0;
     let hasFadedIn = false;
@@ -164,50 +185,47 @@ export default function FromForest() {
       mouseTarget.y = (e.clientY / window.innerHeight) * 2 - 1;
     };
 
-    void (async () => {
-      const THREE = await import('three');
-      if (disposed || !container.isConnected) return;
-      threeMod = THREE;
+    if (disposed || !container.isConnected) return;
 
-      scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(new THREE.Color(SETTINGS.fog.color), SETTINGS.fog.density);
+    scene = new Scene();
+    scene.fog = new FogExp2(new Color(SETTINGS.fog.color), SETTINGS.fog.density);
 
-      const w = Math.max(container.clientWidth, 1);
-      const h = Math.max(container.clientHeight, 1);
+    const w = Math.max(container.clientWidth, 1);
+    const h = Math.max(container.clientHeight, 1);
 
-      camera = new THREE.PerspectiveCamera(SETTINGS.camera.fov, w / h, 0.1, 60);
-      camera.position.set(0, SETTINGS.camera.height, SETTINGS.camera.startZ);
-      camera.lookAt(SETTINGS.camera.lookAtX, SETTINGS.camera.lookAtY, SETTINGS.camera.lookAtZ);
+    camera = new PerspectiveCamera(SETTINGS.camera.fov, w / h, 0.1, 60);
+    camera.position.set(0, SETTINGS.camera.height, SETTINGS.camera.startZ);
+    camera.lookAt(SETTINGS.camera.lookAtX, SETTINGS.camera.lookAtY, SETTINGS.camera.lookAtZ);
 
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-      renderer.setSize(w, h);
-      renderer.domElement.style.width = '100%';
-      renderer.domElement.style.height = '100%';
-      renderer.domElement.style.display = 'block';
-      container.appendChild(renderer.domElement);
-      renderer.domElement.style.opacity = '0';
-      renderer.domElement.style.transition = 'opacity 1s ease';
+    renderer = new WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setSize(w, h);
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.display = 'block';
+    container.appendChild(renderer.domElement);
+    renderer.domElement.style.opacity = '0';
+    renderer.domElement.style.transition = 'opacity 1s ease';
 
-      const ambient = new THREE.AmbientLight(0x5a5442, SETTINGS.lights.ambientIntensity);
-      scene.add(ambient);
+    const ambient = new AmbientLight(0x5a5442, SETTINGS.lights.ambientIntensity);
+    scene.add(ambient);
 
-      const hemisphere = new THREE.HemisphereLight(0x22333f, 0x0c0d0a, SETTINGS.lights.hemisphereIntensity);
-      scene.add(hemisphere);
+    const hemisphere = new HemisphereLight(0x22333f, 0x0c0d0a, SETTINGS.lights.hemisphereIntensity);
+    scene.add(hemisphere);
 
-      const moon = new THREE.DirectionalLight(0x8899bb, SETTINGS.lights.moonIntensity);
-      moon.position.set(6, 9, -4);
-      scene.add(moon);
+    const moon = new DirectionalLight(0x8899bb, SETTINGS.lights.moonIntensity);
+    moon.position.set(6, 9, -4);
+    scene.add(moon);
 
-      const { world, swayableList } = buildScene(THREE, mulberry32(SETTINGS.seed));
-      scene.add(world);
-      swayables.push(...swayableList);
+    const { world, swayableList } = buildScene(mulberry32(SETTINGS.seed));
+    scene.add(world);
+    swayables.push(...swayableList);
 
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!reduceMotion) window.addEventListener('mousemove', onMouseMove);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion) window.addEventListener('mousemove', onMouseMove);
 
-      timer = new THREE.Timer();
-      timer.connect(document);
+    timer = new Timer();
+    timer.connect(document);
 
       const animate = (timestamp?: number) => {
         animationId = requestAnimationFrame(animate);
@@ -260,16 +278,15 @@ export default function FromForest() {
         renderer.setSize(cw, ch);
       });
       resizeObserver.observe(container);
-    })();
 
     return () => {
       disposed = true;
       cancelAnimationFrame(animationId);
       window.removeEventListener('mousemove', onMouseMove);
       resizeObserver?.disconnect();
-      if (threeMod && scene) {
+      if (scene) {
         scene.traverse((obj) => {
-          if (obj instanceof threeMod!.Mesh) {
+          if (obj instanceof Mesh) {
             obj.geometry.dispose();
             const material = obj.material;
             if (Array.isArray(material)) {
@@ -299,27 +316,24 @@ export default function FromForest() {
   );
 }
 
-function buildScene(
-  THREE: typeof import('three'),
-  rng: () => number,
-): {
-  world: THREE.Group;
+function buildScene(rng: () => number): {
+  world: Group;
   swayableList: Swayable[];
 } {
-  const world = new THREE.Group();
+  const world = new Group();
   const outSwayables: Swayable[] = [];
 
-  const ground = new THREE.Mesh(
-    new THREE.CircleGeometry(30, 48),
-    new THREE.MeshStandardMaterial({ color: 0x0b0c09, roughness: 1 }),
+  const ground = new Mesh(
+    new CircleGeometry(30, 48),
+    new MeshStandardMaterial({ color: 0x0b0c09, roughness: 1 }),
   );
   ground.rotation.x = -Math.PI / 2;
   ground.position.y = -0.02;
   world.add(ground);
 
-  const road = new THREE.Mesh(
-    new THREE.PlaneGeometry(SETTINGS.road.width, 44),
-    new THREE.MeshStandardMaterial({ color: new THREE.Color(SETTINGS.road.color), roughness: 1 }),
+  const road = new Mesh(
+    new PlaneGeometry(SETTINGS.road.width, 44),
+    new MeshStandardMaterial({ color: new Color(SETTINGS.road.color), roughness: 1 }),
   );
   road.rotation.x = -Math.PI / 2;
   road.position.y = 0.0;
@@ -328,8 +342,8 @@ function buildScene(
   for (let layer = 0; layer < SETTINGS.forest.layers; layer++) {
     const style = LAYER_STYLE[layer % LAYER_STYLE.length];
     const [bandMin, bandMax] = FOREST_BANDS[layer % FOREST_BANDS.length];
-    const trunkMat = new THREE.MeshStandardMaterial({ color: style.trunk, roughness: 1 });
-    const canopyMat = new THREE.MeshStandardMaterial({ color: style.canopy, roughness: 1 });
+    const trunkMat = new MeshStandardMaterial({ color: style.trunk, roughness: 1 });
+    const canopyMat = new MeshStandardMaterial({ color: style.canopy, roughness: 1 });
 
     for (const side of [-1, 1]) {
       for (let i = 0; i < SETTINGS.forest.treesPerLayer; i++) {
@@ -339,7 +353,7 @@ function buildScene(
           (SETTINGS.forest.treeScaleMin + rng() * (SETTINGS.forest.treeScaleMax - SETTINGS.forest.treeScaleMin)) *
           style.scale;
 
-        const pine = buildPine(THREE, x, z, scale, trunkMat, canopyMat, {
+        const pine = buildPine(x, z, scale, trunkMat, canopyMat, {
           phase: rng() * Math.PI * 2,
           amp: SETTINGS.forest.swayAmp,
           speed: 0.7 + rng() * 0.9,
@@ -349,7 +363,6 @@ function buildScene(
 
         if (rng() < 0.35) {
           const shrub = buildShrub(
-            THREE,
             x + (rng() - 0.5) * 1.6,
             z + (rng() - 0.5) * 1.4,
             0.4 + rng() * 0.4,
@@ -367,13 +380,13 @@ function buildScene(
     }
   }
 
-  const fallenTree = buildFallenTree(THREE, rng);
+  const fallenTree = buildFallenTree(rng);
   outSwayables.push({ obj: fallenTree, sway: fallenTree.userData.sway as Sway, ampScale: 0.5 });
   world.add(fallenTree);
 
   const poses: Array<'stand' | 'crouch'> = ['stand', 'crouch'];
   for (let i = 0; i < SETTINGS.people.count; i++) {
-    const figure = buildFigure(THREE, rng, i, poses[i % poses.length]);
+    const figure = buildFigure(rng, i, poses[i % poses.length]);
     outSwayables.push({ obj: figure, sway: figure.userData.sway as Sway, ampScale: 1 });
     world.add(figure);
   }
@@ -382,19 +395,18 @@ function buildScene(
 }
 
 function buildPine(
-  THREE: typeof import('three'),
   x: number,
   z: number,
   s: number,
   trunkMat: THREE.Material,
   canopyMat: THREE.Material,
   sway: Sway,
-): THREE.Group {
-  const group = new THREE.Group();
+): Group {
+  const group = new Group();
   group.position.set(x, 0, z);
 
   const trunkH = 0.9 * s;
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.05 * s, 0.1 * s, trunkH, 5), trunkMat);
+  const trunk = new Mesh(new CylinderGeometry(0.05 * s, 0.1 * s, trunkH, 5), trunkMat);
   trunk.position.y = trunkH / 2;
   group.add(trunk);
 
@@ -404,7 +416,7 @@ function buildPine(
     { y: trunkH + 1.08 * s, r: 0.28 * s, h: 0.8 * s },
   ];
   for (const tier of tiers) {
-    const cone = new THREE.Mesh(new THREE.ConeGeometry(tier.r, tier.h, 6), canopyMat);
+    const cone = new Mesh(new ConeGeometry(tier.r, tier.h, 6), canopyMat);
     cone.position.y = tier.y + tier.h / 2;
     group.add(cone);
   }
@@ -414,16 +426,15 @@ function buildPine(
 }
 
 function buildShrub(
-  THREE: typeof import('three'),
   x: number,
   z: number,
   s: number,
   material: THREE.Material,
   sway: Sway,
-): THREE.Group {
-  const group = new THREE.Group();
+): Group {
+  const group = new Group();
   group.position.set(x, 0, z);
-  const shrub = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28 * s, 0), material);
+  const shrub = new Mesh(new IcosahedronGeometry(0.28 * s, 0), material);
   shrub.scale.set(1, 0.7, 1);
   shrub.position.y = 0.18 * s;
   group.add(shrub);
@@ -431,19 +442,19 @@ function buildShrub(
   return group;
 }
 
-function buildFallenTree(THREE: typeof import('three'), rng: () => number): THREE.Group {
-  const group = new THREE.Group();
+function buildFallenTree(rng: () => number): Group {
+  const group = new Group();
   group.position.set(0, 0, SETTINGS.fallenTree.posZ);
   group.rotation.y = SETTINGS.fallenTree.rotY;
   group.scale.setScalar(SETTINGS.fallenTree.scale);
 
-  const mat = new THREE.MeshStandardMaterial({ color: 0x15130e, roughness: 1 });
+  const mat = new MeshStandardMaterial({ color: 0x15130e, roughness: 1 });
 
-  const start = new THREE.Vector3(-1.8, 0.17, 0);
-  const end = new THREE.Vector3(1.8, 0.12, 0);
-  group.add(cylinderBetween(THREE, start, end, 0.17, mat));
+  const start = new Vector3(-1.8, 0.17, 0);
+  const end = new Vector3(1.8, 0.12, 0);
+  group.add(cylinderBetween(start, end, 0.17, mat));
 
-  const root = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 8), mat);
+  const root = new Mesh(new SphereGeometry(0.5, 10, 8), mat);
   root.position.set(-2.05, 0.18, 0);
   root.scale.set(1, 0.65, 1);
   group.add(root);
@@ -455,8 +466,8 @@ function buildFallenTree(THREE: typeof import('three'), rng: () => number): THRE
   ];
   for (const b of branchDefs) {
     const base = start.clone().lerp(end, b.from);
-    const tip = base.clone().add(new THREE.Vector3(b.to[0], b.to[1], b.to[2]));
-    group.add(cylinderBetween(THREE, base, tip, b.r, mat));
+    const tip = base.clone().add(new Vector3(b.to[0], b.to[1], b.to[2]));
+    group.add(cylinderBetween(base, tip, b.r, mat));
   }
 
   group.userData.sway = {
@@ -469,27 +480,26 @@ function buildFallenTree(THREE: typeof import('three'), rng: () => number): THRE
 }
 
 function buildFigure(
-  THREE: typeof import('three'),
   rng: () => number,
   index: number,
   pose: 'stand' | 'crouch',
-): THREE.Group {
-  const group = new THREE.Group();
-  const mat = new THREE.MeshStandardMaterial({ color: 0x0c0d0a, roughness: 1 });
+): Group {
+  const group = new Group();
+  const mat = new MeshStandardMaterial({ color: 0x0c0d0a, roughness: 1 });
 
   if (pose === 'crouch') {
-    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.5, 4, 8), mat);
+    const body = new Mesh(new CapsuleGeometry(0.17, 0.5, 4, 8), mat);
     body.position.y = 0.52;
     body.rotation.x = -0.35;
     group.add(body);
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), mat);
+    const head = new Mesh(new SphereGeometry(0.14, 10, 8), mat);
     head.position.y = 0.98;
     group.add(head);
   } else {
-    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.16, 0.7, 4, 8), mat);
+    const body = new Mesh(new CapsuleGeometry(0.16, 0.7, 4, 8), mat);
     body.position.y = 0.92;
     group.add(body);
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), mat);
+    const head = new Mesh(new SphereGeometry(0.14, 10, 8), mat);
     head.position.y = 1.47;
     group.add(head);
   }
@@ -515,16 +525,15 @@ function buildFigure(
 }
 
 function cylinderBetween(
-  THREE: typeof import('three'),
-  a: THREE.Vector3,
-  b: THREE.Vector3,
+  a: Vector3,
+  b: Vector3,
   radius: number,
   material: THREE.Material,
-): THREE.Mesh {
+): Mesh {
   const dir = b.clone().sub(a);
   const len = dir.length();
-  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, len, 8), material);
+  const mesh = new Mesh(new CylinderGeometry(radius, radius, len, 8), material);
   mesh.position.copy(a).add(b).multiplyScalar(0.5);
-  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+  mesh.quaternion.setFromUnitVectors(new Vector3(0, 1, 0), dir.clone().normalize());
   return mesh;
 }
