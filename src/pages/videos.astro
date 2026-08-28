@@ -10,6 +10,14 @@ import { formatChannelNumber, relativeTime } from '../lib/utils';
 
 const featured = getFeaturedVideo();
 const category = Astro.url.searchParams.get('category');
+
+const SITE = Astro.site?.origin ?? 'https://elhombredeamarillo.vercel.app';
+const lastVideoDate = VIDEOS.reduce((max, v) => {
+  if (!v.publishedAt) return max;
+  const t = new Date(v.publishedAt).getTime();
+  return Number.isNaN(t) || t < max ? max : t;
+}, 0);
+const dateModified = new Date(lastVideoDate).toISOString().slice(0, 10);
 ---
 
 <BaseLayout
@@ -20,10 +28,36 @@ const category = Astro.url.searchParams.get('category');
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://elhombredeamarillo.vercel.app/' },
-        { '@type': 'ListItem', position: 2, name: 'Vídeos', item: 'https://elhombredeamarillo.vercel.app/videos/' },
+      '@graph': [
+        {
+          '@type': 'BreadcrumbList',
+          '@id': `${SITE}/videos/#breadcrumb`,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE}/` },
+            { '@type': 'ListItem', position: 2, name: 'Vídeos', item: `${SITE}/videos/` },
+          ],
+        },
+        {
+          '@type': 'CollectionPage',
+          '@id': `${SITE}/videos/#page`,
+          url: `${SITE}/videos/`,
+          name: 'Vídeos — El Hombre de Amarillo',
+          description: 'Todos los vídeos del canal: análisis, explicaciones, teorías y debates sobre FROM.',
+          inLanguage: 'es',
+          dateModified,
+          isPartOf: { '@id': `${SITE}/#website` },
+          breadcrumb: { '@id': `${SITE}/videos/#breadcrumb` },
+          mainEntity: {
+            '@type': 'ItemList',
+            itemListElement: VIDEOS.map((v, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              name: v.title,
+              url: `https://www.youtube.com/watch?v=${v.videoId}`,
+              image: thumbnailUrl(v.videoId, 'hqdefault'),
+            })),
+          },
+        },
       ],
     })} />
     {featured && (

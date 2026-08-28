@@ -19,6 +19,7 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://elhombredeamarillo.vercel.app');
+const SITE_URL = Astro.site?.origin ?? 'https://elhombredeamarillo.vercel.app';
 const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.vercel.app';
 ---
 
@@ -110,11 +111,33 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.vercel.app';
   <body class:list={['bg-bg text-text font-body antialiased', bodyClass]}>
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: 'El Hombre de Amarillo',
-      url: BASE_URL,
-      description: 'Análisis, explicaciones, teorías y debates sobre FROM.',
-      inLanguage: 'es',
+      '@graph': [
+        {
+          '@type': 'Organization',
+          '@id': `${SITE_URL}/#organization`,
+          name: 'El Hombre de Amarillo',
+          url: `${SITE_URL}/`,
+          logo: {
+            '@type': 'ImageObject',
+            url: `${SITE_URL}/assets/channel-avatar-premium.jpg`,
+          },
+          email: 'koiboyttv@gmail.com',
+          sameAs: [
+            'https://www.youtube.com/@koiboy_OG',
+            'https://www.instagram.com/el_hombre_de_amarillo',
+            'https://discord.com/invite/Nq855qtNFX',
+          ],
+        },
+        {
+          '@type': 'WebSite',
+          '@id': `${SITE_URL}/#website`,
+          url: `${SITE_URL}/`,
+          name: 'El Hombre de Amarillo',
+          description: 'Análisis, explicaciones, teorías y debates sobre FROM.',
+          inLanguage: 'es',
+          publisher: { '@id': `${SITE_URL}/#organization` },
+        },
+      ],
     })} />
     <div
       id="scroll-progress"

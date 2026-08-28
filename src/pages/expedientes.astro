@@ -7,6 +7,8 @@ import Footer from '../components/ui/Footer.astro';
 import Header from '../components/ui/Header.astro';
 import { CASES_META, DOSSIERS, SOURCES } from '../data/cases';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const SITE = Astro.site?.origin ?? 'https://elhombredeamarillo.vercel.app';
 ---
 
 <BaseLayout
@@ -17,10 +19,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://elhombredeamarillo.vercel.app/' },
-        { '@type': 'ListItem', position: 2, name: 'Expedientes', item: 'https://elhombredeamarillo.vercel.app/expedientes/' },
+      '@graph': [
+        {
+          '@type': 'BreadcrumbList',
+          '@id': `${SITE}/expedientes/#breadcrumb`,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE}/` },
+            { '@type': 'ListItem', position: 2, name: 'Expedientes', item: `${SITE}/expedientes/` },
+          ],
+        },
+        {
+          '@type': 'CollectionPage',
+          '@id': `${SITE}/expedientes/#page`,
+          url: `${SITE}/expedientes/`,
+          name: 'Expedientes — El Hombre de Amarillo',
+          description: 'Archivo interactivo de teorías de FROM: expedientes, pruebas, dudas y evolución a través de los vídeos.',
+          inLanguage: 'es',
+          isPartOf: { '@id': `${SITE}/#website` },
+          breadcrumb: { '@id': `${SITE}/expedientes/#breadcrumb` },
+        },
       ],
     })} />
   </Fragment>
