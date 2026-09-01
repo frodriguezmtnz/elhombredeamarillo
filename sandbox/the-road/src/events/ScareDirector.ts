@@ -11,6 +11,7 @@ export interface ScareContext {
   driving: boolean;
   inVillage: boolean;
   inTunnel: boolean;
+  inEscape: boolean;
   speed: number;
   playerPos: THREE.Vector3;
   forward: THREE.Vector3;
@@ -25,9 +26,22 @@ export interface ScareCallbacks {
   thunder(): void;
   doorSlam(at: THREE.Vector3): void;
   phone(at: THREE.Vector3): void;
+  spider(): void;
+  crossingFigure(): void;
+  falseCrash(): void;
 }
 
-type Kind = 'crows' | 'eyes' | 'whisper' | 'stall' | 'thunder' | 'doorSlam' | 'phone';
+type Kind =
+  | 'crows'
+  | 'eyes'
+  | 'whisper'
+  | 'stall'
+  | 'thunder'
+  | 'doorSlam'
+  | 'phone'
+  | 'spider'
+  | 'crossingFigure'
+  | 'falseCrash';
 
 export class ScareDirector {
   private readonly callbacks: ScareCallbacks;
@@ -36,6 +50,7 @@ export class ScareDirector {
   private thunderTimer = 22;
   private lastKind: Kind | null = null;
   private stallDone = false;
+  private spiderUsed = false;
 
   constructor(callbacks: ScareCallbacks, seed: number) {
     this.callbacks = callbacks;
@@ -50,18 +65,28 @@ export class ScareDirector {
     }
   }
 
+  /** marca la araña como vista (evita doble susto tras la aparición garantizada) */
+  markSpiderUsed(): void {
+    this.spiderUsed = true;
+  }
+
+  /** nuevo intento de fuga: rearmar los eventos únicos-por-intento */
+  beginAttempt(): void {
+    this.spiderUsed = false;
+  }
+
   update(dt: number, context: ScareContext): void {
     // ---- truenos: cadencia propia ----
     this.thunderTimer -= dt;
     if (this.thunderTimer <= 0) {
-      this.thunderTimer = this.rand.range(45, 90);
+      this.thunderTimer = this.rand.range(context.night ? 30 : 45, context.night ? 60 : 90);
       this.callbacks.thunder();
     }
 
     // ---- latido principal ----
     this.beatTimer -= dt;
     if (this.beatTimer > 0) return;
-    this.beatTimer = this.rand.range(18, 35);
+    this.beatTimer = context.inEscape ? this.rand.range(12, 22) : this.rand.range(14, 26);
 
     if (context.inVillage) {
       this.fireVillage(context);
@@ -87,14 +112,14 @@ export class ScareDirector {
   }
 
   private fireDriving(context: ScareContext): void {
-    const pool: Kind[] = ['crows', 'eyes', 'whisper', 'thunder'];
+    const pool: Kind[] = ['crows', 'eyes', 'whisper', 'thunder', 'spider', 'crossingFigure', 'falseCrash'];
     if (context.speed > 5 && !context.inTunnel) pool.push('stall');
     if (context.inTunnel && !this.stallDone) {
       this.stallDone = true;
       this.callbacks.stall();
       return;
     }
-    if (context.night) pool.push('eyes', 'whisper');
+    if (context.night) pool.push('eyes', 'whisper', 'crossingFigure');
     const kind = this.pick(pool);
     switch (kind) {
       case 'crows':
@@ -107,6 +132,20 @@ export class ScareDirector {
       case 'stall':
         this.stallDone = true;
         this.callbacks.stall();
+        break;
+      case 'spider':
+        if (!this.spiderUsed) {
+          this.spiderUsed = true;
+          this.callbacks.spider();
+        } else {
+          this.callbacks.crossingFigure();
+        }
+        break;
+      case 'crossingFigure':
+        this.callbacks.crossingFigure();
+        break;
+      case 'falseCrash':
+        this.callbacks.falseCrash();
         break;
       case 'thunder':
         this.callbacks.thunder();

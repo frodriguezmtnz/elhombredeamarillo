@@ -136,6 +136,8 @@ export function buildVillage(
   let motelUpperWindow: THREE.MeshStandardMaterial | null = null;
   let dinerSignMaterial: THREE.MeshStandardMaterial | null = null;
   let dinnerMat: THREE.MeshStandardMaterial | null = null;
+  let priceSignMaterial: THREE.MeshStandardMaterial | null = null;
+  let tvOn = false;
   const flickerMaterials: THREE.MeshStandardMaterial[] = [];
   const lightMaterials: { mat: THREE.MeshStandardMaterial; base: number }[] = [];
   const registerLight = (mat: THREE.MeshStandardMaterial, base: number): void => {
@@ -150,7 +152,8 @@ export function buildVillage(
     object.position.set(pose.x + pose.nx * lateral, 0, pose.z + pose.nz * lateral);
     const roadYaw = Math.atan2(pose.tx, pose.tz);
     const side = lateral >= 0 ? 1 : -1;
-    object.rotation.y = faceRoad ? roadYaw + (side > 0 ? -Math.PI / 2 : Math.PI / 2) : roadYaw;
+    // la fachada (local +Z) debe mirar HACIA la carretera en ambos lados
+    object.rotation.y = faceRoad ? roadYaw + (side > 0 ? Math.PI / 2 : -Math.PI / 2) : roadYaw;
     group.add(object);
     return object.position.clone();
   };
@@ -194,6 +197,7 @@ export function buildVillage(
       );
       priceSign.position.set(-4.2, 3.4, 3.4);
       station.add(priceSign);
+      priceSignMaterial = priceSign.material as THREE.MeshStandardMaterial;
       const pos = place(station, spec.s, spec.lateral);
       collisions.addBox(pos.x, pos.z, 3.4, 5.4);
       continue;
@@ -415,13 +419,28 @@ export function buildVillage(
         motelUpperWindow.emissiveIntensity = 1.1;
         if (lightsOn) motelUpperWindow.emissiveIntensity = 1.1;
       }
-      // vuelta 2: el letrero del diner parpadea (update lo anima)
+      // vuelta 2: el pueblo despierta — gasolinera encendida y TV azul
+      if (loops >= 2) {
+        if (priceSignMaterial) priceSignMaterial.emissiveIntensity = 1.5;
+        tvOn = true;
+        if (motelUpperWindow) {
+          motelUpperWindow.color.set('#6f95b5');
+          motelUpperWindow.emissive.set('#3f6f95');
+          if (lightsOn) motelUpperWindow.emissiveIntensity = 1.2;
+        }
+      }
+      // vuelta 2+: el letrero del diner parpadea (update lo anima)
       if (loops >= 2 && dinerSignMaterial) {
         flickerLoop = true;
       }
     },
     update(dt: number): void {
       flickerTime += dt;
+      // TV parpadeante en el motel
+      if (tvOn && motelUpperWindow) {
+        const flicker = 0.9 + (Math.sin(flickerTime * 17) > 0.55 ? 0.5 : 0) + Math.random() * 0.15;
+        motelUpperWindow.emissiveIntensity = lightsOn ? flicker : 0.02;
+      }
       if (lightsOn && dinnerMat) {
         // el neón DINNER respira: parpadeos raros, nunca apagones largos
         const dip = Math.sin(flickerTime * 7.3) > 0.965 || Math.sin(flickerTime * 23.7) > 0.988 ? 0.2 : 1;

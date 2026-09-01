@@ -11,6 +11,10 @@ export const LANDMARK_S = {
   barrier: 225,
   lake: 620,
   lighthouse: 1900,
+  swing: 700,
+  markers: 300,
+  skids: 480,
+  bicycle: 300,
 } as const;
 
 const near = (s: number, target: number, ringLength: number, margin = 12): boolean =>
@@ -45,6 +49,30 @@ export function roadEvents(): GameEventDef[] {
       condition: (ctx) => ctx.phase === 'INTRO' && near(ctx.s, 500, ctx.ringLength, 60),
       fire: (api) =>
         api.caption('The radio finds a station for half a second. Numbers, read slowly. Then static.', 5.5),
+    },
+    {
+      id: 'swing-first',
+      once: true,
+      condition: (ctx) => near(ctx.s, LANDMARK_S.swing, ctx.ringLength, 24),
+      fire: (api) => api.caption('A playground. One swing is moving. There is no wind.', 5.5),
+    },
+    {
+      id: 'markers-first',
+      once: true,
+      condition: (ctx) => near(ctx.s, LANDMARK_S.markers, ctx.ringLength, 16),
+      fire: (api) => api.caption('A mile marker: 3. They all say 3. Every single one of them says 3.', 5),
+    },
+    {
+      id: 'skids-first',
+      once: true,
+      condition: (ctx) => near(ctx.s, LANDMARK_S.skids, ctx.ringLength, 22),
+      fire: (api) => api.caption('Fresh skid marks. They end in the middle of the road. There is no impact.', 5),
+    },
+    {
+      id: 'bicycle-first',
+      once: true,
+      condition: (ctx) => near(ctx.s, LANDMARK_S.bicycle, ctx.ringLength, 18),
+      fire: (api) => api.caption("A child's bicycle on the shoulder. The front wheel is still turning.", 5),
     },
     {
       id: 'lighthouse-first',

@@ -285,6 +285,116 @@ export class AudioManager {
     }
   }
 
+  /** bramido del coche fantasma al adelantar (sweep con pseudo-doppler) */
+  ghostPass(): void {
+    const context = this.context;
+    if (!context || !this.effects) return;
+    const t0 = context.currentTime;
+    const osc = context.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(150, t0);
+    osc.frequency.exponentialRampToValueAtTime(820, t0 + 1.9);
+    osc.frequency.exponentialRampToValueAtTime(240, t0 + 3.4);
+    const filter = context.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(900, t0);
+    filter.frequency.exponentialRampToValueAtTime(2400, t0 + 1.9);
+    filter.frequency.exponentialRampToValueAtTime(500, t0 + 3.4);
+    const gain = context.createGain();
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(0.22, t0 + 1.2);
+    gain.gain.exponentialRampToValueAtTime(0.3, t0 + 2.0);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 3.5);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.effects);
+    osc.start(t0);
+    osc.stop(t0 + 3.6);
+  }
+
+  /** radio: cama de estática (devuelve el gain para modularla) */
+  radioStaticBed(): GainNode | null {
+    const context = this.context;
+    if (!context || !this.effects) return null;
+    const loop = this.noiseLoop(false);
+    if (!loop) return null;
+    loop.filter.type = 'bandpass';
+    loop.filter.frequency.value = 1100;
+    loop.filter.Q.value = 0.4;
+    loop.gain.gain.value = 0.0001;
+    loop.gain.connect(this.effects);
+    loop.source.start();
+    return loop.gain;
+  }
+
+  /** radio: pitido de morse */
+  radioBeep(duration: number): void {
+    const context = this.context;
+    if (!context || !this.effects) return;
+    const t0 = context.currentTime;
+    const osc = context.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = 780;
+    const gain = context.createGain();
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(0.07, t0 + 0.015);
+    gain.gain.setValueAtTime(0.07, t0 + duration);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration + 0.05);
+    osc.connect(gain);
+    gain.connect(this.effects);
+    osc.start(t0);
+    osc.stop(t0 + duration + 0.1);
+  }
+
+  /** radio: nota de la nana (doble oscilador detunado, apagada) */
+  radioNote(frequency: number): void {
+    const context = this.context;
+    if (!context || !this.effects) return;
+    const t0 = context.currentTime;
+    const gain = context.createGain();
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(0.035, t0 + 0.08);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.1);
+    const filter = context.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 900;
+    for (const detune of [-7, 7]) {
+      const osc = context.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.value = frequency;
+      osc.detune.value = detune;
+      osc.connect(filter);
+      osc.start(t0);
+      osc.stop(t0 + 1.2);
+    }
+    filter.connect(gain);
+    gain.connect(this.effects);
+  }
+
+  /** goteo dentro del túnel / surtidor */
+  drip(): void {
+    this.burst({ duration: 0.06, frequency: 2600 + Math.random() * 1200, q: 9, gain: 0.3 });
+  }
+
+  /** cama de lluvia: ruido blanco filtrado, gain por factor */
+  private rainGain: GainNode | null = null;
+  setRainLevel(level: number): void {
+    const context = this.context;
+    if (!context) return;
+    if (!this.rainGain) {
+      const loop = this.noiseLoop(false);
+      if (!loop) return;
+      loop.filter.type = 'highpass';
+      loop.filter.frequency.value = 2400;
+      this.rainGain = loop.gain;
+      this.rainGain.gain.value = 0.0001;
+      this.routeTo(this.rainGain, 'ambient');
+      loop.source.start();
+    }
+    const target = Math.max(0.0001, level * 0.16);
+    this.rainGain.gain.value += (target - this.rainGain.gain.value) * 0.02;
+  }
+
   suspend(): void {
     void this.context?.suspend();
   }

@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 import { CarAudio } from '../audio/CarAudio';
+import { Radio } from '../audio/Radio';
 import { SpatialAudio } from '../audio/SpatialAudio';
 import { EventManager } from '../events/EventManager';
 import type { EventApi, EventContext } from '../events/GameEvent';
+import { GhostCar } from '../events/GhostCar';
 import { LANDMARK_S, roadEvents } from '../events/RoadEvents';
 import { ScareDirector } from '../events/ScareDirector';
 import { villageEvents } from '../events/VillageEvents';
@@ -21,15 +23,25 @@ import { clamp, damp, ringDelta } from '../utils/MathUtils';
 import { CarController } from '../vehicle/CarController';
 import { CollisionSystem } from '../world/CollisionSystem';
 import { buildFallenTree } from '../world/FallenTree';
+import { buildGiantSpider } from '../world/GiantSpider';
 import {
   buildBarrier,
+  buildBicycle,
+  buildDeadBirds,
+  buildDirtPath,
   buildLake,
   buildLandmarks,
   buildLighthouse,
+  buildMannequin,
+  buildMileMarkers,
+  buildPlayground,
+  buildSchoolBus,
   buildSignTexture,
+  buildSkidMarks,
   buildTunnel,
 } from '../world/Props';
 import type { BarrierResult, LandmarksResult } from '../world/Props';
+import { Rain } from '../world/Rain';
 import { buildVillage } from '../world/Village';
 import type { VillageResult } from '../world/Village';
 import { World } from '../world/World';
@@ -85,9 +97,157 @@ export class Game {
   private barrier: BarrierResult | null = null;
   private barrierGone = false;
   private lighthouse: { group: THREE.Group; beam: THREE.Group } | null = null;
+  private lighthouseDoor: Interactable | null = null;
+  private readonly spider = buildGiantSpider();
+  private spiderActive = false;
+  private spiderFrom = new THREE.Vector3();
+  private spiderTo = new THREE.Vector3();
+  private spiderProgress = 0;
+  private spiderEver = false;
+  private crossingFigure: THREE.Mesh | null = null;
+  private crossingActive = false;
+  private crossingFrom = new THREE.Vector3();
+  private crossingTo = new THREE.Vector3();
+  private crossingProgress = 0;
+  private falseCrashCaptionDone = false;
+  private radioStaysDone = false;
   private nightFell = false;
   private treeGone = false;
   private fallenTree: { group: THREE.Group; colliderRefs?: { x: number; z: number; r: number }[] } | null = null;
+  /** latidos de ambiente compartidos: a pie y conduciendo */
+  private updateAmbientBeats(dt: number, _world: World, focus: THREE.Vector3): void {
+    // ---- araña gigante cruzando ----
+    if (this.spiderActive) {
+      this.spiderProgress = Math.min(1, this.spiderProgress + dt / 3.4);
+      this.spider.group.position.lerpVectors(this.spiderFrom, this.spiderTo, this.spiderProgress);
+      this.spider.animate(dt, true);
+      if (this.spiderProgress >= 1) {
+        this.spiderActive = false;
+        this.spider.group.visible = false;
+      }
+    }
+
+    // ---- silueta que cruza la carretera ----
+    if (this.crossingActive && this.crossingFigure) {
+      this.crossingProgress = Math.min(1, this.crossingProgress + dt / 1.9);
+      this.crossingFigure.position.lerpVectors(this.crossingFrom, this.crossingTo, this.crossingProgress);
+      this.crossingFigure.rotation.y = Math.atan2(
+        this.crossingTo.x - this.crossingFrom.x,
+        this.crossingTo.z - this.crossingFrom.z,
+      );
+      if (this.crossingProgress >= 1) {
+        this.crossingActive = false;
+        this.crossingFigure.visible = false;
+      }
+    }
+
+    // cuervos en vuelo
+    for (let i = this.crows.length - 1; i >= 0; i--) {
+      const crow = this.crows[i];
+      crow.life -= dt;
+      crow.mesh.position.addScaledVector(crow.velocity, dt);
+      crow.mesh.rotation.z += dt * 9;
+      if (crow.life <= 0) {
+        this.scene.remove(crow.mesh);
+        this.crows.splice(i, 1);
+      }
+    }
+
+    // ojos en la oscuridad
+    if (this.eyes?.visible) {
+      this.eyesTimer -= dt;
+      const eyeDist = Math.hypot(this.eyes.position.x - focus.x, this.eyes.position.z - focus.z);
+      if (eyeDist < 12 || this.eyesTimer <= 0) {
+        this.eyes.visible = false;
+        this.audio.burst({ duration: 0.3, frequency: 1400, q: 1.5, gain: 0.12 });
+      }
+    }
+
+    // columpio meciéndose solo
+    if (this.swing) {
+      this.swingTime += dt;
+      this.swing.rotation.x = Math.sin(this.swingTime * 1.35) * 0.42;
+      const squeak = Math.sin(this.swingTime * 1.35);
+      if (squeak > 0.995 || squeak < -0.995) {
+        const squeakDist = Math.hypot(focus.x - this.swingWorld.x, focus.z - this.swingWorld.z);
+        if (squeakDist < 45) this.audio.burst({ duration: 0.07, frequency: 1900, q: 10, gain: 0.05 });
+      }
+    }
+
+    // bicicleta: rueda aún girando
+    if (this.bicycleWheel) this.bicycleWheel.rotation.x += dt * 7;
+    if (this.bicycleWheel) {
+      this.bicycleTick -= dt;
+      const bikeDist = Math.hypot(focus.x - this.bicycleWorld.x, focus.z - this.bicycleWorld.z);
+      if (bikeDist < 9 && this.bicycleTick <= 0) {
+        this.bicycleTick = 1.1;
+        this.audio.burst({ duration: 0.04, frequency: 2400, q: 8, gain: 0.05 });
+      }
+    }
+
+    // pueblo despierto (loops 2-3)
+    if (this.npcGone && this.loops >= 3) {
+      this.phoneLoopTimer -= dt;
+      if (this.phoneLoopTimer <= 0) {
+        this.phoneLoopTimer = 40;
+        this.audio.phone();
+      }
+    }
+    if (this.loops >= 2 && this.village) {
+      const gasPos = this.village.npcSpots.gas;
+      const gasDist = Math.hypot(focus.x - gasPos.x, focus.z - gasPos.z);
+      this.gasDripTimer -= dt;
+      if (gasDist < 9 && this.gasDripTimer <= 0) {
+        this.gasDripTimer = 1.6 + Math.random() * 2.4;
+        this.audio.drip();
+      }
+    }
+  }
+
+  /** la araña: aparece delante y cruza corriendo al otro lado */
+  private spawnSpiderAhead(): void {
+    const car = this.car;
+    if (!car || this.spiderActive) return;
+    this.spiderEver = true;
+    const forward = car.forwardInto(this.scratchC);
+    const aheadX = car.position.x + forward.x * 45;
+    const aheadZ = car.position.z + forward.z * 45;
+    this.spiderFrom.set(aheadX - forward.z * 7, 0, aheadZ + forward.x * 7);
+    this.spiderTo.set(aheadX + forward.z * 24, 0, aheadZ - forward.x * 24);
+    this.spiderProgress = 0;
+    this.spiderActive = true;
+    this.spider.group.visible = true;
+    this.spider.group.position.copy(this.spiderFrom);
+    this.spider.group.rotation.y = Math.atan2(this.spiderTo.x - this.spiderFrom.x, this.spiderTo.z - this.spiderFrom.z);
+    this.audio.burst({ duration: 0.5, frequency: 310, q: 2.2, gain: 0.32 });
+    this.hud.caption('Something crossed the road. Something with too many legs.', 5);
+  }
+
+  /** silueta rápida cruzando la carretera */
+  private spawnCrossingFigure(): void {
+    const car = this.car;
+    if (!car || this.crossingActive || !this.crossingFigure) return;
+    const forward = car.forwardInto(this.scratchC);
+    const aheadX = car.position.x + forward.x * 30;
+    const aheadZ = car.position.z + forward.z * 30;
+    this.crossingFrom.set(aheadX - forward.z * 5.5, 0, aheadZ + forward.x * 5.5);
+    this.crossingTo.set(aheadX + forward.z * 5.5, 0, aheadZ - forward.x * 5.5);
+    this.crossingProgress = 0;
+    this.crossingActive = true;
+    this.crossingFigure.visible = true;
+    this.crossingFigure.position.copy(this.crossingFrom);
+    this.audio.whisper(Math.random() < 0.5 ? -1 : 1);
+  }
+
+  /** estática de la radio: sube al pasar junto a la silueta */
+  private radioStaticBoost(position: THREE.Vector3): number {
+    const figure = this.figure;
+    if (!figure) return 0;
+    const dist = Math.hypot(figure.position.x - position.x, figure.position.z - position.z);
+    return Math.max(0, 1 - dist / 55);
+  }
+
+  /** rango de arco del túnel */
   private tunnelRange: [number, number] = [0, -1];
   private tunnelInside = false;
   private highBeams = false;
@@ -100,6 +260,25 @@ export class Game {
   private doorSlamCaptionDone = false;
   private phoneCaptionDone = false;
   private readonly scares: ScareDirector;
+  private ghost: GhostCar | null = null;
+  private ghostDone = false;
+  private ghostParkedPending = -1;
+  private ghostParkedDone = false;
+  private ghostDir = 1;
+  private ghostPrevS = 0;
+  private rain: Rain | null = null;
+  private rainOn = false;
+  private readonly radio: Radio;
+  private swing: THREE.Group | null = null;
+  private swingTime = 0;
+  private bicycleWheel: THREE.Mesh | null = null;
+  private bicycleTick = 0;
+  private readonly swingWorld = new THREE.Vector3();
+  private readonly bicycleWorld = new THREE.Vector3();
+  private npcGone = false;
+  private npcInteractables: Interactable[] = [];
+  private phoneLoopTimer = 20;
+  private gasDripTimer = 2;
   private readonly events = new EventManager();
   private readonly npcController = new NPCController();
   private readonly dialogue = new DialogueSystem();
@@ -155,6 +334,15 @@ export class Game {
             this.hud.caption('A telephone is ringing inside the diner. Nobody moves to answer it.', 6);
           }
         },
+        spider: () => this.spawnSpiderAhead(),
+        crossingFigure: () => this.spawnCrossingFigure(),
+        falseCrash: () => {
+          this.audio.burst({ duration: 0.35, frequency: 80, q: 0.6, gain: 0.85, type: 'lowpass' });
+          if (!this.falseCrashCaptionDone) {
+            this.falseCrashCaptionDone = true;
+            this.hud.caption('That was not your car.', 3.5);
+          }
+        },
       },
       this.seed,
     );
@@ -165,6 +353,7 @@ export class Game {
     this.renderer = new Renderer(sceneRoot, this.settings.get());
     this.input = new InputManager(this.renderer.domElement);
     this.audio = new AudioManager(this.settings);
+    this.radio = new Radio(this.audio);
     this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 2000);
 
     this.loading = new LoadingScreen(uiRoot);
@@ -327,11 +516,14 @@ export class Game {
   }
 
   private onPhotoClosed(): void {
-    if (this.photoViews >= 2) this.startEnding();
+    // la foto ya no acaba el juego: empuja hacia el faro
+    if (this.photoViews >= 2) {
+      this.hud.caption('The photograph is watching you back. The lighthouse is the only way.', 6.5);
+    }
   }
 
-  /** ENDING del MVP: corte a negro + tarjeta final */
-  private startEnding(): void {
+  /** ENDING: fade + tarjeta final (variante faro = final canónico) */
+  private startEnding(variant: 'photo' | 'lighthouse' = 'lighthouse'): void {
     if (this.state.current === 'ENDING') return;
     this.setState('ENDING');
     this.input.releaseLock();
@@ -345,13 +537,13 @@ export class Game {
       const ending = document.createElement('div');
       ending.id = 'ending';
       ending.className = 'open';
+      const lines =
+        variant === 'lighthouse'
+          ? `Sorry.<br/>This is the only way...<br/><br/><span style="letter-spacing:0.5em;font-size:1.6rem;color:#d7dbdf">THE END</span>`
+          : `You never learned who developed the film.<br/>The tally under the sign has twelve marks now.<br/><br/>TO BE CONTINUED`;
       ending.innerHTML = `
         <div class="title">THE ROAD</div>
-        <div class="lines">
-          You never learned who developed the film.<br/>
-          The tally under the sign has twelve marks now.<br/><br/>
-          TO BE CONTINUED
-        </div>
+        <div class="lines">${lines}</div>
         <button id="ending-menu">Return to Title</button>
       `;
       document.getElementById('ui-root')?.appendChild(ending);
@@ -414,7 +606,7 @@ export class Game {
       world.group.add(npc.visual.group);
       const collider = this.collisions.add(spawn.position.x, spawn.position.z, 0.45, `npc-${spawn.key}`);
       npc.collider = collider;
-      this.interactions.add({
+      const npcInteractable = this.interactions.add({
         id: `npc-${spawn.key}`,
         position: npc.interactablePosition,
         radius: 3,
@@ -422,6 +614,7 @@ export class Game {
         active: true,
         use: () => this.startDialogue(spawn.key),
       });
+      this.npcInteractables.push(npcInteractable);
     }
   }
 
@@ -453,11 +646,67 @@ export class Game {
     for (const c of tunnel.colliders) this.collisions.add(c.x, c.z, c.r, 'tunnel');
     this.tunnelRange = tunnel.range;
 
-    // faro lejano (visible desde la 1ª fuga, nunca alcanzable)
-    const pose = world.curve.at(1900, { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 });
-    this.lighthouse = buildLighthouse(new THREE.Vector3(pose.x + pose.nx * 520, 0, pose.z + pose.nz * 520));
+    // coche fantasma (aparece tras abrirse el anillo)
+    this.ghost = new GhostCar(world.curve);
+    world.group.add(this.ghost.group);
+
+    // lluvia (loop 2)
+    this.rain = new Rain();
+    this.scene.add(this.rain.group);
+
+    // micro-set-pieces: columpio, hitos "3", marcas de frenada, bicicleta
+    const playground = buildPlayground(world.curve, 700, -16);
+    this.swing = playground.swing;
+    this.swingWorld.copy(playground.group.position);
+    world.group.add(playground.group);
+    world.group.add(buildMileMarkers(world.curve, this.assets).group);
+    world.group.add(buildSkidMarks(world.curve, 470));
+    const bicycle = buildBicycle(world.curve, 300, -5.4);
+    this.bicycleWheel = bicycle.frontWheel;
+    this.bicycleWorld.copy(bicycle.group.position);
+    world.group.add(bicycle.group);
+
+    // faro lejano: ahora alcanzable ANDANDO por el camino de tierra
+    const lighthousePose = world.curve.at(1900, { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 });
+    this.lighthouse = buildLighthouse(
+      new THREE.Vector3(
+        lighthousePose.x + lighthousePose.nx * WORLD.lighthouseLateral,
+        0,
+        lighthousePose.z + lighthousePose.nz * WORLD.lighthouseLateral,
+      ),
+    );
     this.lighthouse.group.visible = false;
     world.group.add(this.lighthouse.group);
+    world.group.add(buildDirtPath(world.curve, 1900, 4.2, WORLD.lighthouseLateral, 3.2));
+    // puerta del faro (lado que mira a la carretera) + interactuable de final
+    const doorX = lighthousePose.x + lighthousePose.nx * (WORLD.lighthouseLateral - 3.4);
+    const doorZ = lighthousePose.z + lighthousePose.nz * (WORLD.lighthouseLateral - 3.4);
+    this.lighthouseDoor = this.interactions.add({
+      id: 'lighthouse-door',
+      position: new THREE.Vector3(doorX, 1.4, doorZ),
+      radius: 5,
+      label: 'Enter the lighthouse',
+      active: false,
+      use: () => this.startEnding('lighthouse'),
+    });
+
+    // set-pieces fijas de carretera
+    world.group.add(buildMannequin(world.curve, 1350, 5.2));
+    world.group.add(buildDeadBirds(world.curve, 1600));
+    const bus = buildSchoolBus(world.curve, 1700);
+    world.group.add(bus.group);
+    for (const c of bus.colliders) this.collisions.add(c.x, c.z, c.r, 'bus');
+
+    // araña gigante (oculta hasta su aparición)
+    world.group.add(this.spider.group);
+    const crossFigure = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.24, 1.15, 4, 8),
+      new THREE.MeshStandardMaterial({ color: '#0a0c0e', roughness: 1 }),
+    );
+    crossFigure.position.y = 0.95;
+    crossFigure.visible = false;
+    this.crossingFigure = crossFigure;
+    world.group.add(crossFigure);
   }
 
   /** cuervos que estallan desde el arcén */
@@ -842,28 +1091,8 @@ export class Game {
 
     if (this.state.current === 'ON_FOOT') player.update(dt);
     this.hud.setClickHint(this.state.current === 'ON_FOOT' && !this.input.locked);
-
-    // ---- cuervos en vuelo ----
-    for (let i = this.crows.length - 1; i >= 0; i--) {
-      const crow = this.crows[i];
-      crow.life -= dt;
-      crow.mesh.position.addScaledVector(crow.velocity, dt);
-      crow.mesh.rotation.z += dt * 9;
-      if (crow.life <= 0) {
-        this.scene.remove(crow.mesh);
-        this.crows.splice(i, 1);
-      }
-    }
-
-    // ---- ojos en la oscuridad ----
-    if (this.eyes?.visible) {
-      this.eyesTimer -= dt;
-      const eyeDist = Math.hypot(this.eyes.position.x - player.position.x, this.eyes.position.z - player.position.z);
-      if (eyeDist < 12 || this.eyesTimer <= 0) {
-        this.eyes.visible = false;
-        this.audio.burst({ duration: 0.3, frequency: 1400, q: 1.5, gain: 0.12 });
-      }
-    }
+    this.rain?.update(dt, this.camera);
+    this.updateAmbientBeats(dt, world, player.position);
 
     // ---- director de sustos a pie (el pueblo tiene los suyos) ----
     if (this.state.current === 'ON_FOOT' && !this.dialogue.open && !this.photo.isOpen) {
@@ -872,6 +1101,7 @@ export class Game {
         driving: false,
         inVillage: ringDelta(footProjection.s, WORLD.villageS, world.curve.length) < 170,
         inTunnel: false,
+        inEscape: false,
         speed: 0,
         playerPos: player.position,
         forward: player.lookDirection,
@@ -937,12 +1167,77 @@ export class Game {
     car.update(dt, carInput);
     this.playerRoadHint = car.roadHint;
 
-    // ---- túnel: dentro/fuera, eco y goteos ----
+    // ---- radio: R cicla estaciones ----
+    if (this.input.actionPressed('radio')) {
+      const station = this.radio.cycle();
+      const names = { off: 'Radio off', numbers: 'Radio: numbers station', lullaby: 'Radio: lullaby' } as const;
+      this.hud.caption(names[station], 2);
+    }
+    this.radio.update(dt, this.radioStaticBoost(car.position));
+    // la lluvia también cae a pie
+    this.rain?.update(dt, this.camera);
+
+    // ---- coche fantasma: adelantamiento + aparición aparcada ----
+    if (this.ghost?.visible) {
+      const ghostEvent = this.ghost.update(dt, car.s, Math.abs(car.speed), car.position);
+      if (ghostEvent === 'passed') {
+        this.audio.ghostPass();
+        this.hud.caption('It did not even slow down.', 3);
+        this.ghostParkedPending = 60 + Math.random() * 30;
+      }
+    }
+    if (this.ghostParkedPending > 0 && !this.ghostParkedDone) {
+      this.ghostParkedPending -= dt;
+      if (this.ghostParkedPending <= 0 && this.ghost) {
+        this.ghostParkedDone = true;
+        this.ghost.park(car.s + this.ghostDir * 260, this.ghostDir * 5.9);
+        this.interactions.add({
+          id: 'ghost-car-parked',
+          position: this.ghost.group.position.clone().setY(1.1),
+          radius: 3.4,
+          label: 'Examine parked car',
+          active: true,
+          use: () =>
+            this.hud.caption(
+              'Accelerator jammed wide open. Trunk open. The engine is cold. It has been cold for years.',
+              7,
+            ),
+        });
+      }
+    }
+    if (!this.ghostDone && this.treeGone && this.state.phase === 'ESCAPE') {
+      const gapForGhost = ringDelta(car.s, WORLD.villageS, world.curve.length);
+      if (gapForGhost > 300 && gapForGhost < 520) {
+        this.ghostDone = true;
+        this.ghost?.start(car.s, Math.abs(car.speed));
+      }
+    }
+    // dirección de marcha (para aparcar DELANTE del jugador)
+    const sDelta = car.s - this.ghostPrevS;
+    if (sDelta !== 0 && Math.abs(sDelta) < world.curve.length / 2) {
+      this.ghostDir = Math.sign(sDelta);
+    }
+    this.ghostPrevS = car.s;
+
+    // ---- lluvia (activa desde la 2ª vuelta) ----
+    if (!this.rainOn && this.loops >= 1) {
+      this.rainOn = true;
+      this.rain?.setTarget(1);
+      this.hud.narration('It starts to rain.', 4);
+    }
+    if (this.rain?.active) this.audio.setRainLevel(this.rain.level);
+
+    // ---- túnel: dentro/fuera, eco, goteos y la araña de salida ----
     const [tunnelStart, tunnelEnd] = this.tunnelRange;
     const inside = tunnelEnd > tunnelStart && car.s > tunnelStart && car.s < tunnelEnd;
     if (inside !== this.tunnelInside) {
       this.tunnelInside = inside;
       this.carAudio?.setTunnel(inside);
+      if (!inside && !this.spiderEver) {
+        this.spiderEver = true;
+        this.scares.markSpiderUsed();
+        this.spawnSpiderAhead();
+      }
     }
     if (inside) {
       this.dripTimer -= dt;
@@ -984,6 +1279,7 @@ export class Game {
       driving: true,
       inVillage: false,
       inTunnel: inside,
+      inEscape: this.state.phase === 'ESCAPE',
       speed: Math.abs(car.speed),
       playerPos: car.position,
       forward: car.forwardInto(this.scratchC),
@@ -1053,7 +1349,9 @@ export class Game {
     if (this.state.phase === 'VILLAGE' && gapVillage > WORLD.villageHalf + 110) {
       this.attempts++;
       this.events.beginAttempt();
+      this.scares.beginAttempt();
       if (this.lighthouse) this.lighthouse.group.visible = true;
+      if (this.lighthouseDoor) this.lighthouseDoor.active = true;
       this.setPhase('ESCAPE');
       this.hud.narration(this.attempts === 1 ? 'The road out.' : 'Out again.', 3.5);
     }
@@ -1063,6 +1361,20 @@ export class Game {
       this.npcController.applyLoops(this.loops);
       this.dialogue.setLoops(this.loops);
       if (this.photoInteractable) this.photoInteractable.active = this.loops >= 2;
+      // loop 3: el pueblo se vacía
+      if (this.loops >= 3 && !this.npcGone) {
+        this.npcGone = true;
+        this.npcController.hideAll();
+        for (const item of this.npcInteractables) item.active = false;
+        this.audio.phone();
+        this.hud.narration('The town is empty. The phone is still ringing.', 6);
+      }
+      // loop 2: la radio cambia de palabra
+      if (this.loops >= 2 && !this.radioStaysDone) {
+        this.radioStaysDone = true;
+        this.radio.setWord('STAY');
+        this.hud.caption('The radio spells a different word now. STAY. STAY. STAY.', 6);
+      }
       this.setPhase('VILLAGE');
       this.hud.narration(this.loops === 1 ? 'Marrow Falls. Again.' : 'Marrow Falls.', 5);
       this.audio.lowStinger();

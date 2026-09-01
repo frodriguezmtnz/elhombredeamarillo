@@ -22,6 +22,7 @@ export class NPCInstance {
   readonly visual: NPCVisual;
   readonly interactablePosition = new THREE.Vector3();
   collider: { x: number; z: number; r: number } | null = null;
+  hidden = false;
 
   private readonly spawn: NPCSpawn;
   private readonly group: THREE.Group;
@@ -60,6 +61,7 @@ export class NPCInstance {
   }
 
   update(dt: number, playerPos: THREE.Vector3): void {
+    if (this.hidden) return;
     // idle: leve balanceo
     this.bobPhase += dt * 1.4;
     this.visual.head.position.y = 1.48 + Math.sin(this.bobPhase) * 0.012;
@@ -88,6 +90,19 @@ export class NPCController {
 
   applyLoops(loops: number): void {
     for (const npc of this.npcs) npc.applyLoops(loops);
+  }
+
+  /** desaparición total (loop 3): nadie en las calles */
+  hideAll(): void {
+    for (const npc of this.npcs) {
+      npc.visual.group.visible = false;
+      npc.hidden = true;
+    }
+  }
+
+  /** interactuables activos (para desactivar el diálogo de los desaparecidos) */
+  get instances(): NPCInstance[] {
+    return this.npcs;
   }
 
   update(dt: number, playerPos: THREE.Vector3): void {

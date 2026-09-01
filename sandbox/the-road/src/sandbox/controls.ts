@@ -244,9 +244,10 @@ const ACTION_LABELS: Record<ActionKey, string> = {
   back: 'Back (S)',
   left: 'Left (A)',
   right: 'Right (D)',
-  run: 'Run',
+  run: 'Run / high beams',
   interact: 'Interact',
   camera: 'Camera toggle',
+  radio: 'Radio (driving)',
   debug: 'Debug overlay',
 };
 

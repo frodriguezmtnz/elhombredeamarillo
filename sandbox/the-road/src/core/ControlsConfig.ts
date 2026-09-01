@@ -12,6 +12,7 @@ export interface ControlBindings {
   run: string;
   interact: string;
   camera: string;
+  radio: string;
   debug: string;
 }
 
@@ -55,6 +56,7 @@ export const DEFAULT_CONTROLS: ControlsConfigData = {
     run: 'ShiftLeft',
     interact: 'KeyE',
     camera: 'KeyC',
+    radio: 'KeyR',
     debug: 'F3',
   },
   // defaults afinados en el sandbox (v0.2 — test de usuario 1)

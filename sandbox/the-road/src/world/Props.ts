@@ -162,8 +162,18 @@ export interface TunnelResult {
 export function buildTunnel(curve: RoadCurve, tunnelS: number, length = 120): TunnelResult {
   const group = new THREE.Group();
   const pose = { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 };
-  const rockMaterial = new THREE.MeshStandardMaterial({ color: '#232a24', roughness: 1, flatShading: true });
-  const wallMaterial = new THREE.MeshStandardMaterial({ color: '#2e3134', roughness: 0.95 });
+  const rockMaterial = new THREE.MeshStandardMaterial({ color: '#262e27', roughness: 1, flatShading: true });
+  const wallMaterial = new THREE.MeshStandardMaterial({ color: '#3a3e42', roughness: 0.9 });
+  const guideMaterial = new THREE.MeshStandardMaterial({
+    color: '#1a1e22',
+    emissive: '#9fb8c8',
+    emissiveIntensity: 1.3,
+  });
+  const lampMaterial = new THREE.MeshStandardMaterial({
+    color: '#16181a',
+    emissive: '#cfe0e8',
+    emissiveIntensity: 1.5,
+  });
   const stripeMaterials = [
     new THREE.MeshStandardMaterial({ color: '#c9c4b8', roughness: 0.7 }),
     new THREE.MeshStandardMaterial({ color: '#a03a2c', roughness: 0.7 }),
@@ -179,28 +189,46 @@ export function buildTunnel(curve: RoadCurve, tunnelS: number, length = 120): Tu
     const at = (lateral: number, y: number): THREE.Vector3 =>
       new THREE.Vector3(pose.x + pose.nx * lateral, y, pose.z + pose.nz * lateral);
 
-    // muros laterales
+    // muros laterales (a ±4.8: el coche circula con 1.35m de margen real)
     for (const side of [1, -1]) {
       const wall = new THREE.Mesh(new THREE.BoxGeometry(0.7, 4.6, step + 0.4), wallMaterial);
-      wall.position.copy(at(side * 4.1, 2.3));
+      wall.position.copy(at(side * 4.8, 2.3));
       wall.rotation.y = yaw;
       wall.castShadow = true;
       wall.receiveShadow = true;
       group.add(wall);
+      // franja guía emisiva a la altura de los faros
+      const guide = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.1, step + 0.2), guideMaterial);
+      guide.position.copy(at(side * 4.45, 0.8));
+      guide.rotation.y = yaw;
+      group.add(guide);
     }
     // techo
-    const ceiling = new THREE.Mesh(new THREE.BoxGeometry(9, 0.6, step + 0.4), wallMaterial);
+    const ceiling = new THREE.Mesh(new THREE.BoxGeometry(10.6, 0.6, step + 0.4), wallMaterial);
     ceiling.position.copy(at(0, 4.75));
     ceiling.rotation.y = yaw;
     group.add(ceiling);
+    // luminaria de techo (segmentos alternos)
+    if (i % 2 === 0) {
+      const lamp = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.06, 0.5), lampMaterial);
+      lamp.position.copy(at(0, 4.42));
+      lamp.rotation.y = yaw;
+      group.add(lamp);
+    }
 
-    // portal con franjas en ambas entradas
+    // portal con franjas en ambas entradas (arcos completos por los lados)
     if (i === 0 || i === count) {
-      for (let k = 0; k < 8; k++) {
+      for (const side of [1, -1]) {
+        for (let k = 0; k < 4; k++) {
+          const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.45, 0.18), stripeMaterials[k % 2]);
+          stripe.position.copy(at(side * 4.55, 0.6 + k * 1.05));
+          stripe.rotation.y = yaw;
+          group.add(stripe);
+        }
+      }
+      for (let k = 0; k < 6; k++) {
         const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.45, 0.18), stripeMaterials[k % 2]);
-        const angle = (k / 8) * Math.PI - Math.PI / 2;
-        stripe.position.copy(at(Math.sin(angle * 2) * 0, 4.9));
-        stripe.position.add(new THREE.Vector3(pose.nx * (k - 3.5) * 1.05, 0, pose.nz * (k - 3.5) * 1.05));
+        stripe.position.copy(at(-4.55 + k * 1.82, 5.05));
         stripe.rotation.y = yaw;
         group.add(stripe);
       }
@@ -223,12 +251,12 @@ export function buildTunnel(curve: RoadCurve, tunnelS: number, length = 120): Tu
       group.add(rockSide2);
     }
 
-    // colliders de muros
+    // colliders de muros (fuera del carril: el borde del coche llega a 2.45m)
     for (const side of [1, -1]) {
       colliders.push({
-        x: pose.x + pose.nx * side * 4.1,
-        z: pose.z + pose.nz * side * 4.1,
-        r: 1.2,
+        x: pose.x + pose.nx * side * 4.8,
+        z: pose.z + pose.nz * side * 4.8,
+        r: 1.0,
       });
     }
   }
@@ -236,8 +264,312 @@ export function buildTunnel(curve: RoadCurve, tunnelS: number, length = 120): Tu
   return { group, range: [tunnelS, tunnelS + length], colliders };
 }
 
+/* ------------------------------------------------------------------ */
+/* maniquí colgado de un poste                                         */
+/* ------------------------------------------------------------------ */
+
 function rand_range(min: number, max: number): number {
   return min + Math.random() * (max - min);
+}
+
+export function buildMannequin(curve: RoadCurve, s: number, lateral: number): THREE.Group {
+  const group = new THREE.Group();
+  const pose = curve.at(s, { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 });
+  group.position.set(pose.x + pose.nx * lateral, 0, pose.z + pose.nz * lateral);
+  group.rotation.y = Math.atan2(pose.tx, pose.tz) + Math.PI / 2;
+
+  const post = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.09, 0.12, 3.1, 6),
+    new THREE.MeshStandardMaterial({ color: '#3a2f24', roughness: 1 }),
+  );
+  post.position.y = 1.55;
+  post.castShadow = true;
+  const pale = new THREE.MeshStandardMaterial({ color: '#cfc8b8', roughness: 0.85 });
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.22, 0.7, 4, 8), pale);
+  torso.position.y = 2.0;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 6), pale);
+  head.position.set(0, 2.55, 0.05);
+  head.rotation.z = 0.5;
+  const armL = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.55, 4, 6), pale);
+  armL.position.set(-0.3, 2.0, 0);
+  armL.rotation.z = 0.25;
+  const armR = armL.clone();
+  armR.position.x = 0.3;
+  armR.rotation.z = -0.25;
+  const rope = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.02, 0.02, 0.5, 4),
+    new THREE.MeshStandardMaterial({ color: '#4a3c2c', roughness: 1 }),
+  );
+  rope.position.y = 2.85;
+  group.add(post, torso, head, armL, armR, rope);
+  return group;
+}
+
+/* ------------------------------------------------------------------ */
+/* círculo de cuervos muertos                                          */
+/* ------------------------------------------------------------------ */
+
+export function buildDeadBirds(curve: RoadCurve, s: number): THREE.Group {
+  const group = new THREE.Group();
+  const pose = curve.at(s, { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 });
+  group.position.set(pose.x, 0.028, pose.z);
+  group.rotation.y = Math.atan2(pose.tx, pose.tz);
+  const material = new THREE.MeshStandardMaterial({ color: '#0a0c0e', roughness: 1 });
+  for (let i = 0; i < 7; i++) {
+    const angle = (i / 7) * Math.PI * 2;
+    const bird = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.42, 5), material);
+    bird.rotation.set(Math.PI / 2 + (Math.random() - 0.5) * 0.3, 0, angle);
+    bird.position.set(Math.cos(angle) * 1.15, 0.09, Math.sin(angle) * 1.15);
+    bird.rotation.z = angle + Math.PI;
+    group.add(bird);
+  }
+  return group;
+}
+
+/* ------------------------------------------------------------------ */
+/* autobús escolar abandonado cruzado en la carretera                  */
+/* ------------------------------------------------------------------ */
+
+export function buildSchoolBus(
+  curve: RoadCurve,
+  s: number,
+): { group: THREE.Group; colliders: { x: number; z: number; r: number }[] } {
+  const group = new THREE.Group();
+  const pose = curve.at(s, { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 });
+  group.position.set(pose.x + pose.nx * 1.4, 0, pose.z + pose.nz * 1.4);
+  // cruzado: sesgado respecto a la carretera
+  group.rotation.y = Math.atan2(pose.tx, pose.tz) + 1.15;
+
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(2.4, 1.9, 9.2),
+    new THREE.MeshStandardMaterial({ color: '#8a7426', roughness: 0.9 }),
+  );
+  body.position.y = 1.35;
+  body.castShadow = true;
+  const roof = new THREE.Mesh(
+    new THREE.BoxGeometry(2.42, 0.3, 9.2),
+    new THREE.MeshStandardMaterial({ color: '#5c4d1c', roughness: 0.95 }),
+  );
+  roof.position.y = 2.42;
+  const glass = new THREE.MeshStandardMaterial({ color: '#0a0d11', roughness: 0.3 });
+  for (let i = 0; i < 5; i++) {
+    for (const x of [-1.21, 1.21]) {
+      const window = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.65), glass);
+      window.position.set(x, 1.85, -3.4 + i * 1.7);
+      window.rotation.y = x > 0 ? Math.PI / 2 : -Math.PI / 2;
+      group.add(window);
+    }
+  }
+  const hood = new THREE.Mesh(
+    new THREE.BoxGeometry(2.3, 0.8, 1.6),
+    new THREE.MeshStandardMaterial({ color: '#6e5c20', roughness: 0.9 }),
+  );
+  hood.position.set(0, 0.65, 5.1);
+  group.add(body, roof, hood);
+
+  const wheelGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.3, 10);
+  wheelGeometry.rotateZ(Math.PI / 2);
+  const wheelMaterial = new THREE.MeshStandardMaterial({ color: '#0f0f11', roughness: 1 });
+  for (const [x, z] of [
+    [-1.25, 3.2],
+    [1.25, 3.2],
+    [-1.25, -2.8],
+    [1.25, -2.8],
+  ] as const) {
+    const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+    wheel.position.set(x, 0.5, z);
+    group.add(wheel);
+  }
+
+  // colliders a lo largo del autobús (bloquea medio carril)
+  const colliders: { x: number; z: number; r: number }[] = [];
+  const yaw = group.rotation.y;
+  const dirX = Math.sin(yaw);
+  const dirZ = Math.cos(yaw);
+  for (const d of [-2.6, 0, 2.6]) {
+    colliders.push({ x: group.position.x + dirX * d, z: group.position.z + dirZ * d, r: 1.35 });
+  }
+  return { group, colliders };
+}
+
+/* ------------------------------------------------------------------ */
+/* camino de tierra hasta el faro                                      */
+/* ------------------------------------------------------------------ */
+
+export function buildDirtPath(
+  curve: RoadCurve,
+  s: number,
+  lateralFrom: number,
+  lateralTo: number,
+  width: number,
+): THREE.Group {
+  const group = new THREE.Group();
+  const pose = curve.at(s, { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 });
+  const material = new THREE.MeshStandardMaterial({ color: '#39322a', roughness: 1 });
+  const segments = 8;
+  const geometry = new THREE.PlaneGeometry(width, 1);
+  geometry.rotateX(-Math.PI / 2);
+  for (let i = 0; i < segments; i++) {
+    const t0 = lateralFrom + ((lateralTo - lateralFrom) * i) / segments;
+    const t1 = lateralFrom + ((lateralTo - lateralFrom) * (i + 1)) / segments;
+    const mid = (t0 + t1) / 2;
+    const patch = new THREE.Mesh(geometry, material);
+    patch.position.set(pose.x + pose.nx * mid, 0.015, pose.z + pose.nz * mid);
+    patch.scale.z = Math.abs(t1 - t0) + 0.4;
+    // orientar a lo largo del camino (dirección de la normal)
+    patch.rotation.y = Math.atan2(pose.nx, pose.nz);
+    group.add(patch);
+  }
+  return group;
+}
+
+/* ------------------------------------------------------------------ */
+/* columpio que se mece solo                                           */
+/* ------------------------------------------------------------------ */
+
+export interface PlaygroundResult {
+  group: THREE.Group;
+  /** pivote del columpio (animar rotation.x en el Game) */
+  swing: THREE.Group;
+}
+
+export function buildPlayground(curve: RoadCurve, s: number, lateral: number): PlaygroundResult {
+  const group = new THREE.Group();
+  const pose = curve.at(s, { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 });
+  group.position.set(pose.x + pose.nx * lateral, 0, pose.z + pose.nz * lateral);
+  group.rotation.y = Math.atan2(pose.tx, pose.tz) + Math.PI / 2;
+
+  const metal = new THREE.MeshStandardMaterial({ color: '#5a5148', roughness: 0.6, metalness: 0.5 });
+  const frameTop = new THREE.Mesh(new THREE.BoxGeometry(3, 0.12, 0.12), metal);
+  frameTop.position.y = 2.3;
+  for (const x of [-1.5, 1.5]) {
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 2.35, 6), metal);
+    leg.position.set(x, 1.15, 0);
+    leg.rotation.z = x > 0 ? -0.18 : 0.18;
+    group.add(leg);
+  }
+  group.add(frameTop);
+
+  // columpio: pivota en la barra
+  const swing = new THREE.Group();
+  swing.position.set(0, 2.26, 0);
+  for (const x of [-0.28, 0.28]) {
+    const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 1.7, 4), metal);
+    rope.position.set(x, -0.85, 0);
+    swing.add(rope);
+  }
+  const seat = new THREE.Mesh(
+    new THREE.BoxGeometry(0.7, 0.07, 0.3),
+    new THREE.MeshStandardMaterial({ color: '#3d3126', roughness: 0.95 }),
+  );
+  seat.position.y = -1.72;
+  swing.add(seat);
+  group.add(swing);
+
+  const postSign = new THREE.Mesh(
+    new THREE.BoxGeometry(0.9, 0.5, 0.05),
+    new THREE.MeshStandardMaterial({ color: '#43506b', roughness: 0.7 }),
+  );
+  postSign.position.set(1.9, 1.4, 0.6);
+  group.add(postSign);
+
+  return { group, swing };
+}
+
+/* ------------------------------------------------------------------ */
+/* hitos kilométricos (todos dicen "3")                                */
+/* ------------------------------------------------------------------ */
+
+export interface MileMarkersResult {
+  group: THREE.Group;
+  /** coordenadas de arco de cada hito */
+  positions: number[];
+}
+
+export function buildMileMarkers(curve: RoadCurve, assets: AssetManager): MileMarkersResult {
+  const group = new THREE.Group();
+  const pose = { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 };
+  const positions: number[] = [];
+  const texture = buildSignTexture(assets, 'marker-3', ['3'], '#d8d4c8', '#20211f');
+  for (let s = 300; s < curve.length - 100; s += 200) {
+    positions.push(s);
+    const post = new THREE.Group();
+    const stone = new THREE.Mesh(
+      new THREE.BoxGeometry(0.36, 0.85, 0.2),
+      new THREE.MeshStandardMaterial({ map: texture, roughness: 0.85 }),
+    );
+    stone.position.y = 0.42;
+    stone.castShadow = true;
+    post.add(stone);
+    curve.at(s, pose);
+    post.position.set(pose.x + pose.nx * 4.2, 0, pose.z + pose.nz * 4.2);
+    post.rotation.y = Math.atan2(pose.tx, pose.tz);
+    group.add(post);
+  }
+  return { group, positions };
+}
+
+/* ------------------------------------------------------------------ */
+/* marcas de frenada que terminan en la nada                           */
+/* ------------------------------------------------------------------ */
+
+export function buildSkidMarks(curve: RoadCurve, sStart: number, length = 40): THREE.Group {
+  const group = new THREE.Group();
+  const pose = { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 };
+  const material = new THREE.MeshStandardMaterial({
+    color: '#0d0e10',
+    roughness: 0.8,
+    transparent: true,
+    opacity: 0.55,
+  });
+  const geometry = new THREE.PlaneGeometry(0.3, length);
+  for (const offset of [-1.1, 1.1]) {
+    curve.at(sStart + length / 2, pose);
+    const mark = new THREE.Mesh(geometry, material);
+    mark.rotation.x = -Math.PI / 2;
+    mark.rotation.z = -Math.atan2(pose.tx, pose.tz) + Math.PI / 2;
+    mark.position.set(pose.x + pose.nx * offset, 0.024, pose.z + pose.nz * offset);
+    group.add(mark);
+  }
+  // el punto donde terminan: mancha más ancha, sin coche
+  curve.at(sStart + length, pose);
+  const blob = new THREE.Mesh(new THREE.CircleGeometry(0.7, 10), material);
+  blob.rotation.x = -Math.PI / 2;
+  blob.position.set(pose.x, 0.026, pose.z);
+  group.add(blob);
+  return group;
+}
+
+/* ------------------------------------------------------------------ */
+/* bicicleta tumbada con la rueda girando                              */
+/* ------------------------------------------------------------------ */
+
+export interface BicycleResult {
+  group: THREE.Group;
+  /** rueda delantera (girar rotation.x en el Game) */
+  frontWheel: THREE.Mesh;
+}
+
+export function buildBicycle(curve: RoadCurve, s: number, lateral: number): BicycleResult {
+  const group = new THREE.Group();
+  const pose = curve.at(s, { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 });
+  group.position.set(pose.x + pose.nx * lateral, 0, pose.z + pose.nz * lateral);
+  group.rotation.y = Math.atan2(pose.tx, pose.tz) + rand_range(0.4, 0.9);
+  group.rotation.z = Math.PI / 2 - 0.06; // tumbada
+
+  const metal = new THREE.MeshStandardMaterial({ color: '#28402e', roughness: 0.5, metalness: 0.6 });
+  const wheelGeometry = new THREE.TorusGeometry(0.32, 0.035, 8, 18);
+  const rear = new THREE.Mesh(wheelGeometry, metal);
+  rear.position.set(0, 0.36, -0.42);
+  const front = new THREE.Mesh(wheelGeometry, metal);
+  front.position.set(0, 0.36, 0.45);
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.85), metal);
+  frame.position.set(0, 0.4, 0);
+  const handlebar = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.04), metal);
+  handlebar.position.set(0, 0.6, 0.42);
+  group.add(rear, front, frame, handlebar);
+
+  return { group, frontWheel: front };
 }
 
 /* ------------------------------------------------------------------ */

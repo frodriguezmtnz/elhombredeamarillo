@@ -28,6 +28,8 @@ export const WORLD = {
   /** túnel bajo la montaña (tramo de fuga) */
   tunnelS: 1430,
   tunnelLength: 120,
+  /** faro: alcanzable andando por el camino de tierra */
+  lighthouseLateral: 160,
   /** coordenada de arco del árbol caído (intro ~35-40s) */
   treeS: 820,
 } as const;
@@ -116,10 +118,11 @@ export class World {
     this.road.setShadows(quality !== 'low');
     this.group.add(this.road.group);
 
-    // ---------- bosque (excluyendo lago y túnel) ----------
+    // ---------- bosque (excluyendo lago, túnel y camino al faro) ----------
     this.forest = buildForest(this.curve, seed, WORLD.villageS, WORLD.villageHalf, WORLD.treeS, [
       { s: WORLD.lakeS, half: 75, side: -1, maxOffset: 34 },
       { s: WORLD.tunnelS + 60, half: 95, side: 0, maxOffset: 55 },
+      { s: 1900, half: 34, side: 1, maxOffset: 175 }, // claro del camino al faro
     ]);
     this.group.add(this.forest.group);
     for (const collider of this.forest.colliders) {
