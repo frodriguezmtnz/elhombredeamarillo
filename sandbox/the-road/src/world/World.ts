@@ -71,6 +71,7 @@ export class World {
   private timeTarget = 0;
   private timeApplied = -1;
   private fogBoost = false;
+  private fogDensityScale = 1;
   /** temporizador del relámpago (0 = sin flash) */
   private flashTime = 0;
 
@@ -228,6 +229,13 @@ export class World {
   /** luces largas: la niebla cede un 15% */
   setFogBoost(on: boolean): void {
     this.fogBoost = on;
+    this.applyTime(this.timeCurrent);
+  }
+
+  /** muro de niebla temporal: multiplica la densidad (1 = normal) */
+  setFogDensityScale(scale: number): void {
+    this.fogDensityScale = scale;
+    this.applyTime(this.timeCurrent);
   }
 
   /** relámpago: el cielo y las luces ambientales destellan */
@@ -239,7 +247,7 @@ export class World {
     (this.skyMat.uniforms.topColor.value as THREE.Color).lerpColors(this.duskTop, this.nightTop, t);
     (this.skyMat.uniforms.horizonColor.value as THREE.Color).lerpColors(this.duskHorizon, this.nightHorizon, t);
     this.sceneFog.color.lerpColors(this.duskFog, this.nightFog, t);
-    this.sceneFog.density = lerp(0.0044, 0.0052, t) * (this.fogBoost ? 0.85 : 1);
+    this.sceneFog.density = lerp(0.0044, 0.0052, t) * (this.fogBoost ? 0.85 : 1) * this.fogDensityScale;
     this.sun.intensity = lerp(1.6, 1.05, t);
     this.sun.color.lerpColors(this.duskSun, this.nightSun, t);
     this.hemi.intensity = lerp(0.75, 0.55, t);

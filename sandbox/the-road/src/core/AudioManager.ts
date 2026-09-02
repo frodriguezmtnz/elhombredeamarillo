@@ -376,6 +376,145 @@ export class AudioManager {
     this.burst({ duration: 0.06, frequency: 2600 + Math.random() * 1200, q: 9, gain: 0.3 });
   }
 
+  // ---- araña: drone de sub-bass mientras está en la carretera ----
+  private droneNodes: { osc1: OscillatorNode; osc2: OscillatorNode; gain: GainNode } | null = null;
+
+  startSpiderDrone(): void {
+    const context = this.context;
+    if (!context || this.droneNodes) return;
+    const gain = context.createGain();
+    gain.gain.setValueAtTime(0.0001, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.15, context.currentTime + 0.5);
+    const filter = context.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 130;
+    const osc1 = context.createOscillator();
+    osc1.type = 'sine';
+    osc1.frequency.value = 36;
+    const osc2 = context.createOscillator();
+    osc2.type = 'sine';
+    osc2.frequency.value = 37.7; // batimiento lento
+    osc1.connect(filter);
+    osc2.connect(filter);
+    filter.connect(gain);
+    const destination = this.ambient;
+    if (!destination) return;
+    gain.connect(destination);
+    osc1.start();
+    osc2.start();
+    this.droneNodes = { osc1, osc2, gain };
+  }
+
+  stopSpiderDrone(): void {
+    const nodes = this.droneNodes;
+    const context = this.context;
+    if (!nodes || !context) return;
+    this.droneNodes = null;
+    nodes.gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.5);
+    window.setTimeout(() => {
+      try {
+        nodes.osc1.stop();
+        nodes.osc2.stop();
+      } catch {
+        /* ya parados */
+      }
+    }, 700);
+  }
+
+  /** grito lejano distorsionado: wail con vibrato creciente + formante */
+  scream(pan = 0, distant = true): void {
+    const context = this.context;
+    if (!context || !this.effects) return;
+    const t0 = context.currentTime + 0.03;
+    const duration = distant ? 1.15 : 0.85;
+    const panner = context.createStereoPanner();
+    panner.pan.value = Math.max(-1, Math.min(1, pan));
+    const output = context.createGain();
+    output.gain.value = distant ? 0.55 : 1;
+    const lowpass = context.createBiquadFilter();
+    lowpass.type = 'lowpass';
+    lowpass.frequency.value = distant ? 2300 : 4200;
+    const formant = context.createBiquadFilter();
+    formant.type = 'bandpass';
+    formant.frequency.value = 1050;
+    formant.Q.value = 1.6;
+    const master = context.createGain();
+    master.gain.setValueAtTime(0.0001, t0);
+    master.gain.exponentialRampToValueAtTime(0.15, t0 + 0.07);
+    master.gain.setValueAtTime(0.15, t0 + duration * 0.45);
+    master.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+    // vibrato creciente
+    const lfo = context.createOscillator();
+    lfo.frequency.value = 6.3;
+    const lfoDepth = context.createGain();
+    lfoDepth.gain.setValueAtTime(14, t0);
+    lfoDepth.gain.linearRampToValueAtTime(85, t0 + duration);
+    lfo.connect(lfoDepth);
+    for (const det of [0, -38]) {
+      const osc = context.createOscillator();
+      osc.type = 'sawtooth';
+      osc.detune.value = det;
+      osc.frequency.setValueAtTime(740 + Math.random() * 70, t0);
+      osc.frequency.exponentialRampToValueAtTime(430 + Math.random() * 40, t0 + duration * 0.9);
+      lfoDepth.connect(osc.detune);
+      osc.connect(formant);
+      osc.start(t0);
+      osc.stop(t0 + duration + 0.1);
+    }
+    // capa de aire
+    const loop = this.noiseLoop(false);
+    if (loop) {
+      loop.filter.type = 'bandpass';
+      loop.filter.frequency.value = 1300;
+      loop.filter.Q.value = 1.2;
+      loop.gain.gain.setValueAtTime(0.0001, t0);
+      loop.gain.gain.exponentialRampToValueAtTime(0.05, t0 + 0.1);
+      loop.gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+      loop.gain.connect(lowpass);
+      loop.source.start(t0);
+      loop.source.stop(t0 + duration);
+    }
+    formant.connect(master);
+    master.connect(lowpass);
+    lowpass.connect(panner);
+    panner.connect(this.effects);
+    lfo.start(t0);
+    lfo.stop(t0 + duration + 0.1);
+  }
+
+  /** nota de caja de música: pluck de celesta con armónicos */
+  musicPluck(frequency: number, gainValue: number): void {
+    const context = this.context;
+    if (!context || !this.ambient) return;
+    const t0 = context.currentTime + 0.02;
+    const master = context.createGain();
+    master.gain.setValueAtTime(0.0001, t0);
+    master.gain.exponentialRampToValueAtTime(gainValue, t0 + 0.008);
+    master.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.15);
+    const lowpass = context.createBiquadFilter();
+    lowpass.type = 'lowpass';
+    lowpass.frequency.value = 3400;
+    const partials: [number, number][] = [
+      [1, 1],
+      [2.01, 0.32],
+      [2.98, 0.12],
+    ];
+    for (const [mult, level] of partials) {
+      const osc = context.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = frequency * mult;
+      osc.detune.value = (Math.random() - 0.5) * 16; // caja desafinada
+      const partialGain = context.createGain();
+      partialGain.gain.value = level;
+      osc.connect(partialGain);
+      partialGain.connect(lowpass);
+      osc.start(t0);
+      osc.stop(t0 + 1.2);
+    }
+    lowpass.connect(master);
+    master.connect(this.ambient);
+  }
+
   /** cama de lluvia: ruido blanco filtrado, gain por factor */
   private rainGain: GainNode | null = null;
   setRainLevel(level: number): void {

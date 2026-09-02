@@ -66,7 +66,7 @@ export class MainMenu {
         <button data-action="settings">Settings</button>
         <button data-action="exit">Exit</button>
       </nav>
-      <div class="hint">WASD drive / move · SHIFT run · high beams (driving) · mouse look · C camera · E interact · ESC pause · F3 debug</div>
+      <div class="hint">WASD drive · SHIFT run / high beams · F emergency · G siren · R radio · C camera · E interact · ESC pause · F3 debug</div>
     `;
     for (const button of el.querySelectorAll('button')) {
       button.addEventListener('click', () => {

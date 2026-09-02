@@ -13,6 +13,8 @@ export interface ControlBindings {
   interact: string;
   camera: string;
   radio: string;
+  emergency: string;
+  siren: string;
   debug: string;
 }
 
@@ -57,17 +59,19 @@ export const DEFAULT_CONTROLS: ControlsConfigData = {
     interact: 'KeyE',
     camera: 'KeyC',
     radio: 'KeyR',
+    emergency: 'KeyF',
+    siren: 'KeyG',
     debug: 'F3',
   },
-  // defaults afinados en el sandbox (v0.2 — test de usuario 1)
+  // defaults afinados en el sandbox (v0.3 — ambulancia)
   camera: {
     mode: 'chase',
-    chaseHeight: 2.55,
-    chaseDistance: 5.3,
+    chaseHeight: 2.7,
+    chaseDistance: 6.2,
     chaseLag: 0.1,
     cockpitX: 0.35,
-    cockpitY: 1.5,
-    cockpitZ: 0.2,
+    cockpitY: 1.78,
+    cockpitZ: 0.55,
     sensitivity: 0.5,
   },
   car: {
@@ -81,7 +85,7 @@ export const DEFAULT_CONTROLS: ControlsConfigData = {
   },
 };
 
-const STORAGE_KEY = 'the-road.controls.v2';
+const STORAGE_KEY = 'the-road.controls.v3';
 
 export type ActionKey = keyof ControlBindings;
 

@@ -248,6 +248,8 @@ const ACTION_LABELS: Record<ActionKey, string> = {
   interact: 'Interact',
   camera: 'Camera toggle',
   radio: 'Radio (driving)',
+  emergency: 'Emergency lights',
+  siren: 'Siren',
   debug: 'Debug overlay',
 };
 

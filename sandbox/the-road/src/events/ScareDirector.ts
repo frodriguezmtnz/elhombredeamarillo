@@ -12,6 +12,8 @@ export interface ScareContext {
   inVillage: boolean;
   inTunnel: boolean;
   inEscape: boolean;
+  /** 1 = normal; 0.75 luces o sirena; 0.6 ambas — la carretera responde */
+  emergencyFactor: number;
   speed: number;
   playerPos: THREE.Vector3;
   forward: THREE.Vector3;
@@ -26,9 +28,14 @@ export interface ScareCallbacks {
   thunder(): void;
   doorSlam(at: THREE.Vector3): void;
   phone(at: THREE.Vector3): void;
+  scream(): void;
   spider(): void;
   crossingFigure(): void;
   falseCrash(): void;
+  crowRoadblock(at: THREE.Vector3): void;
+  trailLights(): void;
+  fogWall(): void;
+  stagedFigure(): void;
 }
 
 type Kind =
@@ -39,9 +46,14 @@ type Kind =
   | 'thunder'
   | 'doorSlam'
   | 'phone'
+  | 'scream'
   | 'spider'
   | 'crossingFigure'
-  | 'falseCrash';
+  | 'falseCrash'
+  | 'crowRoadblock'
+  | 'trailLights'
+  | 'fogWall'
+  | 'stagedFigure';
 
 export class ScareDirector {
   private readonly callbacks: ScareCallbacks;
@@ -86,7 +98,8 @@ export class ScareDirector {
     // ---- latido principal ----
     this.beatTimer -= dt;
     if (this.beatTimer > 0) return;
-    this.beatTimer = context.inEscape ? this.rand.range(12, 22) : this.rand.range(14, 26);
+    const base = context.inEscape ? this.rand.range(12, 22) : this.rand.range(14, 26);
+    this.beatTimer = base * context.emergencyFactor;
 
     if (context.inVillage) {
       this.fireVillage(context);
@@ -100,9 +113,11 @@ export class ScareDirector {
   }
 
   private fireVillage(context: ScareContext): void {
-    const kinds: Kind[] = ['doorSlam', 'phone', 'whisper', 'doorSlam'];
+    const kinds: Kind[] = ['scream', 'scream', 'doorSlam', 'phone', 'scream', 'whisper'];
     const kind = this.pick(kinds);
-    if (kind === 'doorSlam') {
+    if (kind === 'scream') {
+      this.callbacks.scream();
+    } else if (kind === 'doorSlam') {
       this.callbacks.doorSlam(randomOffset(context.playerPos, this.rand, 18));
     } else if (kind === 'phone') {
       this.callbacks.phone(randomOffset(context.playerPos, this.rand, 12));
@@ -112,14 +127,26 @@ export class ScareDirector {
   }
 
   private fireDriving(context: ScareContext): void {
-    const pool: Kind[] = ['crows', 'eyes', 'whisper', 'thunder', 'spider', 'crossingFigure', 'falseCrash'];
+    const pool: Kind[] = [
+      'crows',
+      'eyes',
+      'whisper',
+      'thunder',
+      'spider',
+      'crossingFigure',
+      'falseCrash',
+      'crowRoadblock',
+      'trailLights',
+      'fogWall',
+      'stagedFigure',
+    ];
     if (context.speed > 5 && !context.inTunnel) pool.push('stall');
     if (context.inTunnel && !this.stallDone) {
       this.stallDone = true;
       this.callbacks.stall();
       return;
     }
-    if (context.night) pool.push('eyes', 'whisper', 'crossingFigure');
+    if (context.night) pool.push('eyes', 'whisper', 'crossingFigure', 'trailLights', 'stagedFigure');
     const kind = this.pick(pool);
     switch (kind) {
       case 'crows':
@@ -146,6 +173,18 @@ export class ScareDirector {
         break;
       case 'falseCrash':
         this.callbacks.falseCrash();
+        break;
+      case 'crowRoadblock':
+        this.callbacks.crowRoadblock(aheadOf(context.playerPos, context.forward, this.rand, 26));
+        break;
+      case 'trailLights':
+        this.callbacks.trailLights();
+        break;
+      case 'fogWall':
+        this.callbacks.fogWall();
+        break;
+      case 'stagedFigure':
+        this.callbacks.stagedFigure();
         break;
       case 'thunder':
         this.callbacks.thunder();

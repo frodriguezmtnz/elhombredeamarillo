@@ -17,6 +17,10 @@ export class CarAudio {
   /** timestamp hasta el que el motor está calado */
   private stalledUntil = 0;
   private tunnel = false;
+  private sirenOsc: OscillatorNode | null = null;
+  private sirenLfo: OscillatorNode | null = null;
+  private sirenGain: GainNode | null = null;
+  private sirenOn = false;
 
   constructor(audio: AudioManager) {
     this.audio = audio;
@@ -61,6 +65,34 @@ export class CarAudio {
       tires.source.start();
       this.tires = tires;
     }
+
+    // ---- sirena wail (siempre viva, gain a 0 hasta activarla) ----
+    this.sirenGain = context.createGain();
+    this.sirenGain.gain.value = 0.0001;
+    const sirenFilter = context.createBiquadFilter();
+    sirenFilter.type = 'lowpass';
+    sirenFilter.frequency.value = 1900;
+    sirenFilter.Q.value = 2.5;
+    this.sirenOsc = context.createOscillator();
+    this.sirenOsc.type = 'sawtooth';
+    this.sirenOsc.frequency.value = 950;
+    this.sirenLfo = context.createOscillator();
+    this.sirenLfo.type = 'sine';
+    this.sirenLfo.frequency.value = 0.14; // barrido clásico subir/bajar
+    const lfoDepth = context.createGain();
+    lfoDepth.gain.value = 330;
+    this.sirenLfo.connect(lfoDepth);
+    lfoDepth.connect(this.sirenOsc.frequency);
+    this.sirenOsc.connect(sirenFilter);
+    sirenFilter.connect(this.sirenGain);
+    this.audio.routeTo(this.sirenGain, 'effects');
+    this.sirenOsc.start();
+    this.sirenLfo.start();
+  }
+
+  /** sirena de emergencias on/off */
+  setSiren(on: boolean): void {
+    this.sirenOn = on;
   }
 
   /** cala el motor durante `seconds` (eventos de susto) */
@@ -93,6 +125,10 @@ export class CarAudio {
       this.tires.gain.gain.value = damp(this.tires.gain.gain.value, Math.max(0.0001, roll), 0.12, dt);
       this.tires.filter.frequency.value = 180 + speedRatio * 240 + offroad * 120;
     }
+    if (this.sirenGain) {
+      const target = this.sirenOn && !stalled ? 0.055 : 0.0001;
+      this.sirenGain.gain.value = damp(this.sirenGain.gain.value, target, 0.2, dt);
+    }
   }
 
   stop(): void {
@@ -102,6 +138,8 @@ export class CarAudio {
       this.osc1?.stop();
       this.osc2?.stop();
       this.tires?.source.stop();
+      this.sirenOsc?.stop();
+      this.sirenLfo?.stop();
     } catch {
       /* ignore */
     }
@@ -110,5 +148,9 @@ export class CarAudio {
     this.tires = null;
     this.engineGain = null;
     this.engineFilter = null;
+    this.sirenOsc = null;
+    this.sirenLfo = null;
+    this.sirenGain = null;
+    this.sirenOn = false;
   }
 }

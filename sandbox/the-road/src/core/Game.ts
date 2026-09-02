@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { CarAudio } from '../audio/CarAudio';
+import { MusicBox } from '../audio/MusicBox';
 import { Radio } from '../audio/Radio';
 import { SpatialAudio } from '../audio/SpatialAudio';
 import { EventManager } from '../events/EventManager';
@@ -35,6 +36,7 @@ import {
   buildMannequin,
   buildMileMarkers,
   buildPlayground,
+  buildSaggingWire,
   buildSchoolBus,
   buildSignTexture,
   buildSkidMarks,
@@ -99,11 +101,12 @@ export class Game {
   private lighthouse: { group: THREE.Group; beam: THREE.Group } | null = null;
   private lighthouseDoor: Interactable | null = null;
   private readonly spider = buildGiantSpider();
-  private spiderActive = false;
+  private spiderState: 'idle' | 'approach' | 'watch' | 'dash' = 'idle';
+  private spiderT = 0;
   private spiderFrom = new THREE.Vector3();
   private spiderTo = new THREE.Vector3();
-  private spiderProgress = 0;
   private spiderEver = false;
+  private chitterTimer = 0;
   private crossingFigure: THREE.Mesh | null = null;
   private crossingActive = false;
   private crossingFrom = new THREE.Vector3();
@@ -111,22 +114,22 @@ export class Game {
   private crossingProgress = 0;
   private falseCrashCaptionDone = false;
   private radioStaysDone = false;
+  private emergencyLights = false;
+  private sirenOn = false;
+  private crows: { mesh: THREE.Mesh; velocity: THREE.Vector3; life: number; flying: boolean }[] = [];
+  private crowBlock: { center: THREE.Vector3; active: boolean } | null = null;
+  private trail: { group: THREE.Group; timer: number } | null = null;
+  private fogWall: { mesh: THREE.Mesh; timer: number } | null = null;
+  private stagedMesh: THREE.Mesh | null = null;
+  private stagedIndex = 0;
+  private stagedActive = false;
+  private sagWireS = 2050;
+  private sagWireScraped = false;
   private nightFell = false;
   private treeGone = false;
   private fallenTree: { group: THREE.Group; colliderRefs?: { x: number; z: number; r: number }[] } | null = null;
   /** latidos de ambiente compartidos: a pie y conduciendo */
   private updateAmbientBeats(dt: number, _world: World, focus: THREE.Vector3): void {
-    // ---- araña gigante cruzando ----
-    if (this.spiderActive) {
-      this.spiderProgress = Math.min(1, this.spiderProgress + dt / 3.4);
-      this.spider.group.position.lerpVectors(this.spiderFrom, this.spiderTo, this.spiderProgress);
-      this.spider.animate(dt, true);
-      if (this.spiderProgress >= 1) {
-        this.spiderActive = false;
-        this.spider.group.visible = false;
-      }
-    }
-
     // ---- silueta que cruza la carretera ----
     if (this.crossingActive && this.crossingFigure) {
       this.crossingProgress = Math.min(1, this.crossingProgress + dt / 1.9);
@@ -141,9 +144,26 @@ export class Game {
       }
     }
 
-    // cuervos en vuelo
+    // cuervos en vuelo (y bandada esperando en la calzada)
+    if (this.crowBlock?.active) {
+      const blockDist = Math.hypot(this.crowBlock.center.x - focus.x, this.crowBlock.center.z - focus.z);
+      if (blockDist < 18) {
+        this.crowBlock.active = false;
+        this.audio.wingFlaps(10);
+        this.audio.burst({ duration: 0.5, frequency: 700, q: 2, gain: 0.25 });
+        this.hud.caption('They were waiting. All of them.', 4.5);
+        for (const crow of this.crows) {
+          if (!crow.flying) {
+            crow.flying = true;
+            crow.life = 1.7;
+            crow.mesh.rotation.x = 0;
+          }
+        }
+      }
+    }
     for (let i = this.crows.length - 1; i >= 0; i--) {
       const crow = this.crows[i];
+      if (!crow.flying) continue;
       crow.life -= dt;
       crow.mesh.position.addScaledVector(crow.velocity, dt);
       crow.mesh.rotation.z += dt * 9;
@@ -204,23 +224,24 @@ export class Game {
     }
   }
 
-  /** la araña: aparece delante y cruza corriendo al otro lado */
+  /** la araña: aparece al borde, se planta EN la calzada mirándote y dispara */
   private spawnSpiderAhead(): void {
     const car = this.car;
-    if (!car || this.spiderActive) return;
+    if (!car || this.spiderState !== 'idle') return;
     this.spiderEver = true;
     const forward = car.forwardInto(this.scratchC);
-    const aheadX = car.position.x + forward.x * 45;
-    const aheadZ = car.position.z + forward.z * 45;
-    this.spiderFrom.set(aheadX - forward.z * 7, 0, aheadZ + forward.x * 7);
-    this.spiderTo.set(aheadX + forward.z * 24, 0, aheadZ - forward.x * 24);
-    this.spiderProgress = 0;
-    this.spiderActive = true;
+    const aheadX = car.position.x + forward.x * 36;
+    const aheadZ = car.position.z + forward.z * 36;
+    const rightX = forward.z;
+    const rightZ = -forward.x;
+    this.spiderFrom.set(aheadX + rightX * 7, 0, aheadZ + rightZ * 7);
+    this.spiderTo.set(aheadX, 0, aheadZ);
+    this.spiderState = 'approach';
+    this.spiderT = 1.2;
     this.spider.group.visible = true;
     this.spider.group.position.copy(this.spiderFrom);
     this.spider.group.rotation.y = Math.atan2(this.spiderTo.x - this.spiderFrom.x, this.spiderTo.z - this.spiderFrom.z);
-    this.audio.burst({ duration: 0.5, frequency: 310, q: 2.2, gain: 0.32 });
-    this.hud.caption('Something crossed the road. Something with too many legs.', 5);
+    this.audio.burst({ duration: 0.4, frequency: 310, q: 2.2, gain: 0.3 });
   }
 
   /** silueta rápida cruzando la carretera */
@@ -239,12 +260,16 @@ export class Game {
     this.audio.whisper(Math.random() < 0.5 ? -1 : 1);
   }
 
-  /** estática de la radio: sube al pasar junto a la silueta */
+  /** estática de la radio: sube con la silueta y con los faros traseros */
   private radioStaticBoost(position: THREE.Vector3): number {
+    let boost = 0;
     const figure = this.figure;
-    if (!figure) return 0;
-    const dist = Math.hypot(figure.position.x - position.x, figure.position.z - position.z);
-    return Math.max(0, 1 - dist / 55);
+    if (figure) {
+      const dist = Math.hypot(figure.position.x - position.x, figure.position.z - position.z);
+      boost = Math.max(boost, Math.max(0, 1 - dist / 55));
+    }
+    if (this.trail) boost = Math.max(boost, 0.85);
+    return boost;
   }
 
   /** rango de arco del túnel */
@@ -253,7 +278,6 @@ export class Game {
   private highBeams = false;
   private stallState: 'none' | 'off' | 'flicker' = 'none';
   private stallTimer = 0;
-  private crows: { mesh: THREE.Mesh; velocity: THREE.Vector3; life: number }[] = [];
   private eyes: THREE.Group | null = null;
   private eyesTimer = 0;
   private dripTimer = 3;
@@ -269,6 +293,8 @@ export class Game {
   private rain: Rain | null = null;
   private rainOn = false;
   private readonly radio: Radio;
+  private readonly musicBox: MusicBox;
+  private villageScreamDone = false;
   private swing: THREE.Group | null = null;
   private swingTime = 0;
   private bicycleWheel: THREE.Mesh | null = null;
@@ -334,6 +360,10 @@ export class Game {
             this.hud.caption('A telephone is ringing inside the diner. Nobody moves to answer it.', 6);
           }
         },
+        scream: () => {
+          const pan = (Math.random() - 0.5) * 1.8;
+          this.audio.scream(pan, true);
+        },
         spider: () => this.spawnSpiderAhead(),
         crossingFigure: () => this.spawnCrossingFigure(),
         falseCrash: () => {
@@ -343,6 +373,10 @@ export class Game {
             this.hud.caption('That was not your car.', 3.5);
           }
         },
+        crowRoadblock: (at) => this.spawnCrowRoadblock(at),
+        trailLights: () => this.spawnTrailLights(),
+        fogWall: () => this.spawnFogWall(),
+        stagedFigure: () => this.fireStagedFigure(),
       },
       this.seed,
     );
@@ -354,6 +388,7 @@ export class Game {
     this.input = new InputManager(this.renderer.domElement);
     this.audio = new AudioManager(this.settings);
     this.radio = new Radio(this.audio);
+    this.musicBox = new MusicBox(this.audio);
     this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 2000);
 
     this.loading = new LoadingScreen(uiRoot);
@@ -530,6 +565,8 @@ export class Game {
     this.hud.setVisible(false);
     this.carAudio?.stop();
     this.world?.ambientAudio.stop();
+    // el faro cierra con la nana completa; variante foto, con eco mínimo
+    this.musicBox.play(variant === 'lighthouse' ? 'full' : 'ambient');
     const fade = document.getElementById('fade');
     fade?.classList.add('on');
     setTimeout(() => {
@@ -699,6 +736,16 @@ export class Game {
 
     // araña gigante (oculta hasta su aparición)
     world.group.add(this.spider.group);
+    // cables combados en el tramo de huida
+    world.group.add(buildSaggingWire(world.curve, this.sagWireS));
+    // silueta de la escalera progresiva (misma figura, 3 apariciones)
+    this.stagedMesh = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.24, 1.15, 4, 8),
+      new THREE.MeshStandardMaterial({ color: '#0a0c0e', roughness: 1 }),
+    );
+    this.stagedMesh.position.y = 0.95;
+    this.stagedMesh.visible = false;
+    world.group.add(this.stagedMesh);
     const crossFigure = new THREE.Mesh(
       new THREE.CapsuleGeometry(0.24, 1.15, 4, 8),
       new THREE.MeshStandardMaterial({ color: '#0a0c0e', roughness: 1 }),
@@ -726,7 +773,101 @@ export class Game {
         mesh,
         velocity: new THREE.Vector3((Math.random() - 0.5) * 5, 4.5 + Math.random() * 3.5, (Math.random() - 0.5) * 5),
         life: 1.9,
+        flying: true,
       });
+    }
+  }
+
+  /** bandada posada EN la calzada que estalla al acercarse */
+  private spawnCrowRoadblock(at: THREE.Vector3): void {
+    this.crowGeometry ??= new THREE.ConeGeometry(0.13, 0.42, 4);
+    this.crowMaterial ??= new THREE.MeshStandardMaterial({ color: '#0a0c0e', roughness: 1 });
+    this.crowBlock = { center: at.clone(), active: true };
+    for (let i = 0; i < 22; i++) {
+      const angle = (i / 22) * Math.PI * 2 + Math.random() * 0.4;
+      const radius = i < 6 ? Math.random() * 1.2 : 1.6 + Math.random() * 2.6;
+      const mesh = new THREE.Mesh(this.crowGeometry, this.crowMaterial);
+      mesh.position.set(at.x + Math.cos(angle) * radius, 0.16, at.z + Math.sin(angle) * radius);
+      mesh.rotation.x = Math.PI / 2;
+      this.scene.add(mesh);
+      this.crows.push({
+        mesh,
+        velocity: new THREE.Vector3((Math.random() - 0.5) * 6, 5 + Math.random() * 4, (Math.random() - 0.5) * 6),
+        life: 999,
+        flying: false,
+      });
+    }
+  }
+
+  /** faros lejanos que te siguen por detrás */
+  private spawnTrailLights(): void {
+    const car = this.car;
+    if (!car || this.trail) return;
+    const group = new THREE.Group();
+    const spriteMaterial = new THREE.SpriteMaterial({
+      color: '#e8f0ff',
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      fog: false,
+      depthWrite: false,
+    });
+    for (const x of [-0.7, 0.7]) {
+      const glow = new THREE.Sprite(spriteMaterial);
+      glow.scale.set(2.6, 2.6, 1);
+      glow.position.set(x, 0.8, 0);
+      group.add(glow);
+    }
+    this.scene.add(group);
+    this.trail = { group, timer: 10 };
+    this.hud.caption('The headlights behind you match your speed.', 4.5);
+  }
+
+  /** muro de niebla que avanza hacia ti */
+  private spawnFogWall(): void {
+    const car = this.car;
+    if (!car || this.fogWall) return;
+    const forward = car.forwardInto(this.scratchC);
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(46, 14),
+      new THREE.MeshBasicMaterial({
+        color: '#242c36',
+        transparent: true,
+        opacity: 0.55,
+        fog: false,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      }),
+    );
+    mesh.position.set(car.position.x + forward.x * 70, 4, car.position.z + forward.z * 70);
+    mesh.rotation.y = Math.atan2(forward.x, forward.z);
+    this.scene.add(mesh);
+    this.fogWall = { mesh, timer: 16 };
+    // la nana susurra dentro de la niebla
+    this.musicBox.play('ambient');
+  }
+
+  /** la misma silueta, tres apariciones cada vez más cerca del asfalto */
+  private fireStagedFigure(): void {
+    const car = this.car;
+    if (!this.stagedMesh || !car) return;
+    if (this.stagedIndex >= 3) {
+      this.audio.whisper(Math.random() < 0.5 ? -1 : 1);
+      return;
+    }
+    const forward = car.forwardInto(this.scratchC);
+    const lateral = [8, 4, 1.5][this.stagedIndex];
+    const side = this.stagedIndex % 2 === 0 ? 1 : -1;
+    this.stagedMesh.position.set(
+      car.position.x + forward.x * 45 - forward.z * lateral * side,
+      0.95,
+      car.position.z + forward.z * 45 + forward.x * lateral * side,
+    );
+    this.stagedMesh.visible = true;
+    this.stagedActive = true;
+    this.stagedIndex++;
+    if (this.stagedIndex === 3) {
+      this.hud.caption('It is closer than before. It is always closer than before.', 4.5);
     }
   }
 
@@ -962,6 +1103,7 @@ export class Game {
     this.hud.setVisible(false);
     this.hud.setClickHint(false);
     this.carAudio?.stop();
+    this.musicBox.stop();
     this.input.releaseLock();
   }
 
@@ -1034,6 +1176,7 @@ export class Game {
   private update(dt: number): void {
     this.clockT += dt;
     if (this.input.actionPressed('debug')) this.debug.toggle();
+    this.musicBox.update(dt); // la caja de música es independiente del estado
 
     const info = this.renderer.webgl.info;
     this.debug.setLine(
@@ -1063,6 +1206,7 @@ export class Game {
   /** ON_FOOT / DRIVING / ENDING: sistemas de juego activos */
   private updatePlaying(dt: number): void {
     this.hud.update(dt);
+    this.car?.visual.updateEmergency(dt);
     const world = this.world;
     const player = this.player;
     if (!world || !player) return;
@@ -1102,6 +1246,7 @@ export class Game {
         inVillage: ringDelta(footProjection.s, WORLD.villageS, world.curve.length) < 170,
         inTunnel: false,
         inEscape: false,
+        emergencyFactor: 1,
         speed: 0,
         playerPos: player.position,
         forward: player.lookDirection,
@@ -1173,8 +1318,7 @@ export class Game {
       const names = { off: 'Radio off', numbers: 'Radio: numbers station', lullaby: 'Radio: lullaby' } as const;
       this.hud.caption(names[station], 2);
     }
-    this.radio.update(dt, this.radioStaticBoost(car.position));
-    // la lluvia también cae a pie
+    // la lluvia también cae conduciendo
     this.rain?.update(dt, this.camera);
 
     // ---- coche fantasma: adelantamiento + aparición aparcada ----
@@ -1274,12 +1418,162 @@ export class Game {
       }
     }
 
+    // ---- luces de emergencia (F) y sirena (G) ----
+    if (this.input.actionPressed('emergency')) {
+      this.emergencyLights = !this.emergencyLights;
+      car.visual.setEmergencyLights(this.emergencyLights);
+      this.hud.caption(
+        this.emergencyLights ? 'Emergency lights on. Something is watching the lights.' : 'Emergency lights off',
+        2.8,
+      );
+    }
+    if (this.input.actionPressed('siren')) {
+      this.sirenOn = !this.sirenOn;
+      this.carAudio?.setSiren(this.sirenOn);
+      this.hud.caption(this.sirenOn ? 'Siren on. The town hears you.' : 'Siren off', 2.6);
+    }
+
+    // ---- cables combados: scrape al pasar rápido ----
+    if (!this.sagWireScraped && ringDelta(car.s, this.sagWireS, world.curve.length) < 5 && Math.abs(car.speed) > 13) {
+      this.sagWireScraped = true;
+      this.audio.burst({ duration: 0.4, frequency: 3100, q: 5, gain: 0.3 });
+      this.hud.caption('The wires scrape the roof. Something answers with a hum.', 5);
+    }
+
+    // ---- faros que te siguen: mantienen tu posición relativa ----
+    if (this.trail) {
+      this.trail.timer -= dt;
+      const behindPose = world.curve.at(car.s - 80 * this.ghostDir, { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 });
+      this.trail.group.position.set(behindPose.x, 0, behindPose.z);
+      if (this.trail.timer <= 0) {
+        this.scene.remove(this.trail.group);
+        this.trail = null;
+        this.audio.burst({ duration: 0.6, frequency: 1600, q: 1.4, gain: 0.1 });
+      }
+    }
+
+    // ---- muro de niebla: avanza hacia el jugador ----
+    if (this.fogWall) {
+      this.fogWall.timer -= dt;
+      const toPlayer = this.scratchA.set(
+        car.position.x - this.fogWall.mesh.position.x,
+        0,
+        car.position.z - this.fogWall.mesh.position.z,
+      );
+      const wallDist = toPlayer.length();
+      if (wallDist > 1) {
+        toPlayer.multiplyScalar((8 * dt) / wallDist);
+        this.fogWall.mesh.position.add(toPlayer);
+      }
+      const fogScale = wallDist < 50 ? 1 + (1 - wallDist / 50) * 1.5 : 1;
+      world.setFogDensityScale(fogScale);
+      if (this.fogWall.timer <= 0 || wallDist < 2) {
+        this.scene.remove(this.fogWall.mesh);
+        this.fogWall = null;
+        world.setFogDensityScale(1);
+        this.musicBox.stop();
+      }
+    }
+
+    // ---- silueta progresiva: desaparece al acercarte ----
+    if (this.stagedActive && this.stagedMesh) {
+      const stagedDist = Math.hypot(
+        this.stagedMesh.position.x - car.position.x,
+        this.stagedMesh.position.z - car.position.z,
+      );
+      if (stagedDist < 10) {
+        this.stagedActive = false;
+        this.stagedMesh.visible = false;
+        this.audio.burst({ duration: 0.4, frequency: 1300, q: 1.6, gain: 0.14 });
+        if (this.stagedIndex >= 3) {
+          this.hud.caption('It was right beside you.', 4);
+        }
+      }
+    }
+
+    // ---- araña: aproximarse, mirar, disparar ----
+    if (this.spiderState !== 'idle') {
+      const spiderPos = this.spider.group.position;
+      const spiderDist = Math.hypot(spiderPos.x - car.position.x, spiderPos.z - car.position.z);
+      this.spider.animate(dt, this.spiderState === 'watch' ? 'idle' : this.spiderState === 'dash' ? 'dash' : 'walk');
+      switch (this.spiderState) {
+        case 'approach': {
+          this.spiderT -= dt;
+          const t = 1 - Math.max(0, this.spiderT) / 1.2;
+          this.spider.group.position.lerpVectors(this.spiderFrom, this.spiderTo, t);
+          this.spider.group.rotation.y = Math.atan2(
+            this.spiderTo.x - this.spiderFrom.x,
+            this.spiderTo.z - this.spiderFrom.z,
+          );
+          if (this.spiderT <= 0) {
+            this.spiderState = 'watch';
+            this.spiderT = 3.5;
+            this.audio.startSpiderDrone();
+            this.hud.caption('It is standing on the road. It is looking at you.', 4.5);
+          }
+          break;
+        }
+        case 'watch': {
+          this.spiderT -= dt;
+          this.spider.group.rotation.y = Math.atan2(car.position.x - spiderPos.x, car.position.z - spiderPos.z);
+          this.chitterTimer -= dt;
+          if (this.chitterTimer <= 0) {
+            this.chitterTimer = 0.3 + Math.random() * 0.4;
+            this.spatial.playAt(spiderPos, {
+              frequency: 2400 + Math.random() * 900,
+              duration: 0.05,
+              gain: 0.15,
+              q: 8,
+            });
+          }
+          if (spiderDist < 18 || this.spiderT <= 0) {
+            this.spiderState = 'dash';
+            this.spiderT = 1.1;
+            this.spiderFrom.copy(spiderPos);
+            this.spiderTo.set(
+              spiderPos.x + (spiderPos.x - car.position.x) * 1.6,
+              0,
+              spiderPos.z + (spiderPos.z - car.position.z) * 1.6,
+            );
+            this.audio.burst({ duration: 0.3, frequency: 240, q: 1.5, gain: 0.35 });
+            this.hud.caption('It bolts for the trees.', 2.5);
+          }
+          break;
+        }
+        case 'dash': {
+          this.spiderT -= dt;
+          const t = 1 - Math.max(0, this.spiderT) / 1.1;
+          this.spider.group.position.lerpVectors(this.spiderFrom, this.spiderTo, t);
+          this.spider.group.scale.y = this.spiderT > 0.6 ? 1.4 : 1.7; // se agacha al disparar
+          if (this.spiderT <= 0) {
+            this.spiderState = 'idle';
+            this.spider.group.visible = false;
+            this.spider.group.scale.y = 1.7;
+            this.audio.stopSpiderDrone();
+          }
+          break;
+        }
+      }
+      // sacudida de cámara si está cerca
+      if (spiderDist < 15) {
+        const shake = 0.05 * (1 - spiderDist / 15);
+        this.camera.position.x += (Math.random() - 0.5) * shake;
+        this.camera.position.y += (Math.random() - 0.5) * shake;
+      }
+    }
+
+    // ---- radio: la estática reacciona a la figura y a los faros traseros ----
+    this.radio.update(dt, this.radioStaticBoost(car.position));
+
     // ---- director de sustos ----
+    const emergencyFactor =
+      this.emergencyLights && this.sirenOn ? 0.6 : this.emergencyLights || this.sirenOn ? 0.75 : 1;
     this.scares.update(dt, {
       driving: true,
       inVillage: false,
       inTunnel: inside,
       inEscape: this.state.phase === 'ESCAPE',
+      emergencyFactor,
       speed: Math.abs(car.speed),
       playerPos: car.position,
       forward: car.forwardInto(this.scratchC),
@@ -1332,6 +1626,12 @@ export class Game {
 
     // ---- narrativa: descubrimiento del pueblo, fugas y vueltas ----
     const gapVillage = ringDelta(car.s, WORLD.villageS, world.curve.length);
+    // 1ª vez que pasamos conduciendo junto al pueblo: un grito desde las casas
+    if (!this.villageScreamDone && this.state.phase !== 'VILLAGE' && gapVillage < WORLD.villageHalf + 90) {
+      this.villageScreamDone = true;
+      this.audio.scream((Math.random() - 0.5) * 1.6, true);
+      this.hud.caption('A scream from somewhere inside the town. It does not stop. It just gets further.', 6);
+    }
     if (this.state.phase === 'TURN_BACK' && gapVillage < WORLD.villageHalf + 320 && !this.approachNarrationDone) {
       this.approachNarrationDone = true;
       this.setPhase('APPROACH_VILLAGE');
@@ -1343,6 +1643,7 @@ export class Game {
     ) {
       this.setPhase('VILLAGE');
       this.village?.setLights(true);
+      this.musicBox.play('ambient');
       this.hud.narration('MARROW FALLS', 4.5);
       this.audio.beep(52, 1.6, { type: 'sine', gain: 0.08 });
     }
@@ -1350,6 +1651,11 @@ export class Game {
       this.attempts++;
       this.events.beginAttempt();
       this.scares.beginAttempt();
+      this.musicBox.stop();
+      // reset de la silueta progresiva por intento
+      this.stagedIndex = 0;
+      this.stagedActive = false;
+      if (this.stagedMesh) this.stagedMesh.visible = false;
       if (this.lighthouse) this.lighthouse.group.visible = true;
       if (this.lighthouseDoor) this.lighthouseDoor.active = true;
       this.setPhase('ESCAPE');

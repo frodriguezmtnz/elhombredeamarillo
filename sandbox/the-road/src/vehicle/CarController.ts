@@ -119,7 +119,7 @@ export class CarController {
       let moved = false;
       const cfx = Math.sin(this.heading);
       const cfz = Math.cos(this.heading);
-      for (const off of [1.5, 0, -1.5]) {
+      for (const off of [2.1, 0.5, -1.1, -2.2]) {
         const push = this.collisions.resolveVector(this.position.x + cfx * off, this.position.z + cfz * off, 0.95);
         if (push) {
           this.position.x += push.x;

@@ -393,6 +393,30 @@ export function buildSchoolBus(
 }
 
 /* ------------------------------------------------------------------ */
+/* cables eléctricos combados sobre la calzada                         */
+/* ------------------------------------------------------------------ */
+
+export function buildSaggingWire(curve: RoadCurve, s: number): THREE.Group {
+  const group = new THREE.Group();
+  const pose = curve.at(s, { x: 0, z: 0, tx: 0, tz: 0, nx: 0, nz: 0 });
+  const wireMaterial = new THREE.MeshStandardMaterial({ color: '#0c0d0e', roughness: 0.8 });
+  for (let i = 0; i < 3; i++) {
+    const sag = 2.35 + i * 0.22;
+    const points: THREE.Vector3[] = [];
+    for (let k = 0; k <= 8; k++) {
+      const t = k / 8;
+      const lateral = -6 + t * 12;
+      const dip = Math.sin(t * Math.PI) * (6.2 - sag);
+      points.push(new THREE.Vector3(pose.x + pose.nx * lateral, sag + dip, pose.z + pose.nz * lateral));
+    }
+    const curve3 = new THREE.CatmullRomCurve3(points);
+    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve3, 12, 0.022, 4), wireMaterial);
+    group.add(tube);
+  }
+  return group;
+}
+
+/* ------------------------------------------------------------------ */
 /* camino de tierra hasta el faro                                      */
 /* ------------------------------------------------------------------ */
 
