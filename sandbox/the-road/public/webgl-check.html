@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>THE ROAD — WebGL2 diagnostics</title>
+    <style>
+      body { background: #04060a; color: #cfd4d8; font-family: Consolas, monospace; padding: 2rem; line-height: 1.6; }
+      h1 { font-family: Georgia, serif; letter-spacing: 0.3em; }
+      pre { background: #0a0f14; border: 1px solid #1d2630; padding: 1rem; white-space: pre-wrap; }
+      .ok { color: #8fe8ad; }
+      .bad { color: #e88; }
+      .warn { color: #e8c46a; }
+    </style>
+  </head>
+  <body>
+    <h1>WEBGL2 DIAGNOSTICS</h1>
+    <pre id="out">running checks...</pre>
+    <script>
+      const out = document.getElementById('out');
+      const lines = [];
+      const log = (text, cls) => {
+        lines.push(cls ? '<span class="' + cls + '">' + text + '</span>' : text);
+        out.innerHTML = lines.join('\n');
+      };
+
+      const userAgent = navigator.userAgent;
+      log('userAgent: ' + userAgent);
+      log('platform: ' + navigator.platform + ' · cores: ' + (navigator.hardwareConcurrency || '?'));
+
+      const canvases = [
+        ['webgl2', 'webgl2'],
+        ['experimental webgl2', 'experimental-webgl2'],
+        ['webgl1', 'webgl'],
+        ['experimental webgl1', 'experimental-webgl'],
+      ];
+      let anyContext = null;
+      for (const [label, type] of canvases) {
+        try {
+          const canvas = document.createElement('canvas');
+          const gl = canvas.getContext(type);
+          if (gl) {
+            log('✔ ' + label + ' OK', 'ok');
+            if (!anyContext && type.indexOf('webgl2') !== -1) anyContext = gl;
+          } else {
+            log('✘ ' + label + ' → null', 'bad');
+          }
+        } catch (error) {
+          log('✘ ' + label + ' → threw: ' + error.message, 'bad');
+        }
+      }
+
+      if (anyContext) {
+        const gl = anyContext;
+        const debug = gl.getExtension('WEBGL_debug_renderer_info');
+        const renderer = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+        const vendor = debug ? gl.getParameter(debug.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+        log('renderer: ' + renderer, 'warn');
+        log('vendor: ' + vendor, 'warn');
+        log('maxTextureSize: ' + gl.getParameter(gl.MAX_TEXTURE_SIZE));
+        log('RESULT: WebGL2 works in this browser.', 'ok');
+      } else {
+        log('');
+        log('RESULT: no WebGL context available.', 'bad');
+        log('Likely causes:', 'warn');
+        log(' 1. Hardware acceleration disabled in browser settings.', 'warn');
+        log(' 2. GPU driver blocklisted by Chromium (Intel Arc needs driver ≥ 2024).', 'warn');
+        log(' 3. GPU process crashing (check chrome://gpu).', 'warn');
+        log('');
+        log('Try:', 'warn');
+        log(' · chrome://gpu  → look at "Graphics Feature Status"', 'warn');
+        log(' · Settings → System → "Use graphics acceleration when available" → ON', 'warn');
+        log(' · Relaunch browser with: --enable-unsafe-swiftshader --ignore-gpu-blocklist', 'warn');
+      }
+    </script>
+  </body>
+</html>

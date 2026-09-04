@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="THE ROAD — a psychological horror drive. Original browser game." />
+    <title>THE ROAD</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="scene-root"></div>
+    <div id="ui-root"></div>
+    <noscript>THE ROAD requires JavaScript.</noscript>
+    <div id="no-webgl" hidden>
+      <h1>THE ROAD</h1>
+      <p id="no-webgl-msg">This browser does not support WebGL 2.<br />Try Chrome, Edge or Firefox with hardware acceleration enabled.</p>
+      <p>
+        <button id="no-webgl-retry" type="button">RETRY</button>
+        <a id="no-webgl-diag" href="./webgl-check.html" target="_blank" rel="noopener" style="color:#b8a26b;margin-left:1rem">Run diagnostics</a>
+      </p>
+    </div>
+    <div id="exit">
+      <span>THE ROAD</span>
+      <span style="font-size:0.7rem">you can close this tab now</span>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
