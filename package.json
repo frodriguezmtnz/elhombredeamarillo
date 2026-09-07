@@ -10,7 +10,11 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs",
+    "dev:road": "pnpm --filter the-road dev",
+    "build:road": "pnpm --filter the-road build",
+    "preview:road": "pnpm --filter the-road preview",
+    "typecheck:road": "pnpm --filter the-road typecheck"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.0",

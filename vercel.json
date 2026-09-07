@@ -1,4 +1,5 @@
 {
+  "buildCommand": "pnpm build:road && pnpm build && node scripts/copy-road.mjs",
   "headers": [
     {
       "source": "/(.*)",
