@@ -6,14 +6,16 @@ independiente** del workspace `sandbox/*`; reutiliza *patrones* de THE ROAD, no 
 > `FROMVILLE` es un **codename interno**. No se publica con ese nombre (ver `plan/IP_ORIGINALITY.md`).
 > Todo el contenido es **original**; el terror parte de conceptos genéricos de género.
 
-## Estado: Fase 2 — Renderer & camera
+## Estado: Fase 3 — Day/Night
 
 Escena **gris** navegable en primera persona: carretera-bucle (anillo cerrado), bloque del pueblo,
 bosque con colisión. **Post-procesado** (`EffectComposer`): ACES + bloom (MED/HIGH) + viñeta + grano
-+ desaturación (look `VISUAL_DIRECTION.md`), con presets **LOW/MED/HIGH** conmutables en caliente
-(**F4**). **Cámara FPS** propia: FOV que se abre al correr + head-bob y roll finos, respetando
-`prefers-reduced-motion`. Debug **F3**. Sin linterna, día/noche, criaturas ni interactuables todavía
-(Fases 3, 6, 8, 9). Arte en Blender a partir de la Fase 5 (`plan/BLENDER_PIPELINE.md`).
++ desaturación (look `VISUAL_DIRECTION.md`), con presets **LOW/MED/HIGH** conmutables (**F4**).
+**Cámara FPS** propia: FOV al correr + head-bob/roll, respetando `prefers-reduced-motion`.
+**Ciclo día/noche** (`environment/DayNight.ts`): reloj por fases DAY→SUNSET→DUSK→NIGHT→DANGER→DAWN
+que interpola sol, hemisphere, cielo, **densidad de niebla por fase y calidad** y el **LUT** del
+composer; expone `onPhaseChange` (lo consumirán el Horror Director y el audio). Debug **F3**. Sin
+linterna, criaturas ni interactuables todavía (Fases 6, 8, 9). Arte en Blender a partir de la Fase 5.
 
 ## Scripts
 
@@ -31,8 +33,9 @@ También desde la raíz: `pnpm dev:fromville`, `pnpm build:fromville`, `pnpm typ
 
 - **Clic** en la escena → capturar ratón (pointer lock) y caminar.
 - **WASD / flechas** moverse · **Shift** correr (hace ruido de noche, Fase 8) · **Ratón** mirar.
-- **Esc** pausa (libera el ratón). **F3** overlay de debug (FPS/draw/tris/posición). **F4** cambia
-  calidad LOW/MED/HIGH en caliente.
+- **Esc** pausa (libera el ratón). **F3** overlay de debug (FPS/draw/tris/fase/posición). **F4** cambia
+  calidad LOW/MED/HIGH. **F5** salta a la siguiente fase del día. **F6** acelera el tiempo ×8 (para
+  ver el ciclo sin esperas).
 
 ## Estructura
 

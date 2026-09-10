@@ -97,6 +97,12 @@ export class PostFX {
     return this.bloom.enabled;
   }
 
+  /** El DayNight empuja cada fase su tinte/saturación de LUT (VISUAL_DIRECTION.md §5). */
+  setMood(tint: THREE.Color, saturation: number): void {
+    (this.atmosphere.uniforms.uTint.value as THREE.Color).copy(tint);
+    this.atmosphere.uniforms.uSaturation.value = saturation;
+  }
+
   setQuality(quality: Quality): void {
     this.quality = quality;
     this.bloom.enabled = quality !== 'LOW';

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { FirstPersonCamera } from '../camera/FirstPersonCamera';
+import { DayNight, type Phase } from '../environment/DayNight';
 import { FirstPersonController } from '../player/FirstPersonController';
 import { PostFX } from '../rendering/PostFX';
 import { DebugOverlay } from '../ui/DebugOverlay';
@@ -39,6 +40,8 @@ export class Game {
   private world: World | null = null;
   private player: FirstPersonController | null = null;
   private postfx: PostFX | null = null;
+  private dayNight: DayNight | null = null;
+  private fastTime = false;
 
   private startEl!: HTMLElement;
   private startButton!: HTMLButtonElement;
@@ -89,14 +92,15 @@ export class Game {
     this.startEl = el('div');
     this.startEl.id = 'start';
     const tag = el('div', 'tag');
-    tag.textContent = 'prototipo · fase 2';
+    tag.textContent = 'prototipo · fase 3';
     const title = el('h1');
     title.textContent = 'FROMVILLE';
     this.startButton = el('button') as HTMLButtonElement;
     this.startButton.textContent = 'Entrar al pueblo';
     this.startButton.addEventListener('click', () => this.start());
     const hint = el('div', 'hint');
-    hint.textContent = 'WASD moverse · Shift correr · Ratón mirar · Esc pausa · F3 debug · F4 calidad';
+    hint.textContent =
+      'WASD moverse · Shift correr · Ratón mirar · Esc pausa · F3 debug · F4 calidad · F5 saltar fase · F6 tiempo ×8';
     this.startEl.append(tag, title, this.startButton, hint);
     this.startEl.classList.add('open'); // MENU: visible hasta pulsar "Entrar al pueblo"
 
@@ -111,6 +115,12 @@ export class Game {
     this.postfx = new PostFX(this.renderer.webgl, this.scene, this.view.camera, this.settings.get().quality);
     this.postfx.reducedMotion = this.reducedMotion;
     this.postfx.setQuality(this.settings.get().quality);
+
+    this.dayNight = new DayNight(
+      { scene: this.scene, sun: this.world.sun, hemi: this.world.hemi, fog: this.world.fog },
+      this.settings.get().quality,
+    );
+    this.dayNight.onPhaseChange = (phase) => this.onPhaseChange(phase);
 
     const spawn = this.world.layout.spawn;
     this.player.teleport(spawn.x, spawn.z, spawn.yaw);
@@ -146,6 +156,19 @@ export class Game {
     this.captionTimer = seconds;
   }
 
+  /** hook del DayNight: por ahora un rótulo de señal; el Horror Director lo consumirá (Fase 9). */
+  private onPhaseChange(phase: Phase): void {
+    const msg: Record<Phase, string> = {
+      DAY: 'Amanece. El pueblo respira.',
+      SUNSET: 'El sol cae. Deberías buscar un refugio.',
+      DUSK: 'Cae la penumbra. Algo te observa.',
+      NIGHT: 'Es de noche. No corras: haces ruido.',
+      DANGER: 'Madrugada. Es lo más letal.',
+      DAWN: 'Amanece. Algo se retira al bosque.',
+    };
+    this.caption(msg[phase], 4);
+  }
+
   /** F4: alterna LOW→MED→HIGH en caliente (pixelRatio + passes del composer). */
   private cycleQuality(): void {
     const order: Quality[] = ['LOW', 'MED', 'HIGH'];
@@ -156,6 +179,7 @@ export class Game {
     this.renderer.resize();
     this.postfx?.setQuality(next);
     this.postfx?.setSize(window.innerWidth, window.innerHeight);
+    this.dayNight?.setQuality(next);
     this.caption(`Calidad: ${next}`, 2);
   }
 
@@ -179,8 +203,20 @@ export class Game {
 
     if (this.input.pressed('F3')) this.debug.toggle();
     if (this.input.pressed('F4')) this.cycleQuality();
+    if (this.input.pressed('F5')) {
+      this.dayNight?.skipToNext();
+      this.caption(`Fase: ${this.dayNight?.currentPhase ?? '—'}`, 1.5);
+    }
+    if (this.input.pressed('F6')) {
+      this.fastTime = !this.fastTime;
+      this.dayNight?.setTimeScale(this.fastTime ? 8 : 1);
+      this.caption(this.fastTime ? 'Tiempo ×8' : 'Tiempo ×1', 1.5);
+    }
 
     if (this.mode === 'PLAYING' && this.player) this.player.update(dt);
+
+    this.dayNight?.update(dt);
+    if (this.dayNight && this.postfx) this.postfx.setMood(this.dayNight.moodTint, this.dayNight.moodSaturation);
 
     if (this.captionTimer > 0) {
       this.captionTimer -= dt;
@@ -206,8 +242,11 @@ export class Game {
     const p = this.player?.position;
     const moving = this.player?.sprinting ? 'run' : p ? 'walk/idle' : '—';
     const fx = this.postfx ? `postfx ${this.postfx.quality}${this.postfx.bloomOn ? '+bloom' : ''}` : 'postfx off';
+    const phase = this.dayNight
+      ? `${this.dayNight.currentPhase} day ${(this.dayNight.dayFactor * 100).toFixed(0)}%`
+      : '—';
     this.debug.setLine(0, `FPS ${this.fps} · ${this.mode} · q ${this.settings.get().quality} · ${moving}`);
-    this.debug.setLine(1, `${fx} · grain ${this.reducedMotion ? 'off(RM)' : 'on'}`);
+    this.debug.setLine(1, `${phase} · ${fx} · grain ${this.reducedMotion ? 'off(RM)' : 'on'}`);
     this.debug.setLine(
       2,
       `draw ${info.render.calls} · tris ${info.render.triangles} · geo ${info.memory.geometries} · tex ${info.memory.textures}`,

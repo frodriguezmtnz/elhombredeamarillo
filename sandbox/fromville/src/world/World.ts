@@ -14,11 +14,23 @@ export class World {
   readonly group = new THREE.Group();
   readonly curve: LoopRoad;
   readonly layout: WorldLayout;
+  /** luces + niebla las maneja DayNight (Fase 3); World solo las crea y expone */
+  readonly hemi: THREE.HemisphereLight;
+  readonly sun: THREE.DirectionalLight;
+  readonly fog: THREE.FogExp2;
 
   constructor(scene: THREE.Scene, seed: number, collisions: CollisionSystem) {
     this.layout = buildLayout(seed);
     this.curve = this.layout.curve;
-    this.addAtmosphere(scene);
+
+    this.hemi = new THREE.HemisphereLight(0xa9b3bd, 0x4a4239, 0.9);
+    this.sun = new THREE.DirectionalLight(0xfff0d6, 1.15);
+    this.sun.position.set(-60, 90, 40);
+    this.fog = new THREE.FogExp2(0x7c828a, 0.01);
+    scene.background = new THREE.Color(0x7c828a);
+    scene.fog = this.fog;
+    scene.add(this.hemi, this.sun);
+
     this.buildGround();
     this.buildRoad();
     this.buildTown(collisions);
@@ -33,18 +45,6 @@ export class World {
 
   project(x: number, z: number, hint: number): { s: number; lateral: number; index: number } {
     return this.curve.project(x, z, hint);
-  }
-
-  private addAtmosphere(scene: THREE.Scene): void {
-    scene.background = new THREE.Color(0x141a21);
-    scene.fog = new THREE.FogExp2(0x141a21, 0.011);
-
-    const hemi = new THREE.HemisphereLight(0x93a6ba, 0x3a352f, 1.05);
-    scene.add(hemi);
-
-    const sun = new THREE.DirectionalLight(0xfff2e0, 1.2);
-    sun.position.set(-60, 90, 40);
-    scene.add(sun);
   }
 
   private buildGround(): void {
