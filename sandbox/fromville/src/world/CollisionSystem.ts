@@ -64,4 +64,26 @@ export class CollisionSystem {
     }
     return false;
   }
+
+  /**
+   * ¿el segmento (x0,z0)→(x1,z1) choca con algún collider? Se usa para la línea de visión de la
+   * criatura (AI.md §2): árboles/edificios bloquean la vista. `skip` ignora un id (p. ej. la propia
+   * criatura o el jugador). Coste O(n) — vale para unas pocas consultas/frame.
+   */
+  blocked(x0: number, z0: number, x1: number, z1: number, skip?: string): boolean {
+    const dx = x1 - x0;
+    const dz = z1 - z0;
+    const lenSq = dx * dx + dz * dz;
+    if (lenSq < 1e-8) return false;
+    for (const circle of this.circles) {
+      if (skip && circle.id === skip) continue;
+      const t = Math.max(0, Math.min(1, ((circle.x - x0) * dx + (circle.z - z0) * dz) / lenSq));
+      const px = x0 + dx * t;
+      const pz = z0 + dz * t;
+      const ex = circle.x - px;
+      const ez = circle.z - pz;
+      if (ex * ex + ez * ez < circle.r * circle.r) return true;
+    }
+    return false;
+  }
 }

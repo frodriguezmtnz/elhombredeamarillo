@@ -22,7 +22,7 @@ tenga sobre qué operar).
 | **6** | Interaction & refugios | ✅ `IInteractable` + `Door`(E/Shift+E sellar) + `Note` + `RefugeSystem` (regla de sellos) | `GAME_DESIGN §5-6` |
 | **7** | Audio | ✅ Web Audio procedural + `PannerNode`/HRTF + capas ambient/player/horror + cues de interacción | `TECH_ARCHITECTURE §8` |
 | **7.5** | Pulido (feedback) | ✅ Movimiento real arreglado + slider velocidad · linterna (F, batería) · noche navegable (viñeta dinámica) · farolas con luz · 1500 árboles · casas GLB (MCP) escaladas a huella | `GAME_DESIGN §7` |
-| **8** | Creature + AI | "The Hollow" + Perception + FSM + waypoints/steering | `AI` |
+| **8** | Creature + AI | 🟡 "The Hollow" + `PerceptionSystem` (awareness: LoS/ruido/linterna) + `CreatureFSM` (Dormant→Patrol→Investigate→Observe→Stalk→Chase→Search→Retreat→Consume) + `WaypointGraph` (anillo) + steering + pose "a saltos" + elipsis Consume. Falta: Manipulate, secundarios, más criaturas | `AI` |
 | **9** | Horror Director | TensionModel + EventBook + control de luces/fog/sonido/criatura | `HORROR_SYSTEM` |
 | **10** | Narrative & mystery | Story/Clue/Lore/Dialogue + beats + cuaderno + la "fotografía" | `NARRATIVE_MYSTERY` |
 | **11** | Vertical slice | Ensamblado pulido del MVP (10-20 min) | `§2` |

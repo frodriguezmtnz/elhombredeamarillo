@@ -28,7 +28,7 @@ huella canónica 6×6 que `TownKits` escala a la huella aleatoria de cada seed).
 (`Door`: abrir/cerrar con **E**, **sellar** con **Shift+E**) y **notas** legibles. `RefugeSystem` aplica
 la **regla de sellos**: un refugio solo es seguro si TODAS sus puertas están cerradas **y** selladas
 (seguridad activa, recalculada cada frame; base de checkpoints). Debug **F3** muestra refugio/estado.
-Aún sin interiores transitables (las puertas sellan desde el umbral) ni criaturas (Fase 9).
+Aún sin interiores transitables (las puertas sellan desde el umbral). La criatura llega en la Fase 8.
 **Fase 7:** audio **100 % procedural** (`core/AudioManager` con buses ambient/player/horror):
 `AmbientAudio` (viento con ráfagas LFO + drone sub-bass que crece de noche; `setIntensity()` deja al
 Horror Director cortar el ambiente con `silence()`), `SpatialAudio` (`PannerNode`/HRTF con el listener
@@ -48,6 +48,22 @@ ambiente lunar y menos niebla en NIGHT/DANGER, **viñeta dinámica** (`PostFX.se
 5 `PointLight` (`world/LampLights.ts`) que se reposicionan sobre las farolas más cercanas, escaladas
 por `nightFactor`. **Bosque denso**: `treeCount` 340 → **1500**. **Casas en Blender**: 3 variantes GLB
 (`house-a/b/c`) vía MCP escaladas a la huella. Sombras reales aún off (a proteger FPS).
+
+**Fase 8 (criatura + IA, primer slice):** **"The Hollow"** (`creatures/Creature.ts`), silueta humanoide
+alargada de proporciones incorrectas y **movimiento "a saltos"** (poses fijadas en ticks irregulares).
+**Dos capas** (AI.md §2): `ai/PerceptionSystem.ts` calcula estímulos (línea de visión cono+oclusión vía
+`CollisionSystem.blocked`, ruido por andar/correr, y **autodelatarse con la linterna**) que el
+`Creature` integra en un escalar **`awareness ∈ [0,1]`** (sube rápido, decae lento → pierde el rastro);
+`ai/CreatureFSM.ts` modula ese awareness en estados **Dormant→Patrol→Investigate→Observe→Stalk→Chase→
+Search→Retreat→Consume**. Navegación sin navmesh: `ai/WaypointGraph.ts` usa el **anillo de la carretera**
+como grafo (A\* = arco más corto) + steering seek con esquiva por colisión. **Regla de oro (AI.md §2.7):
+la criatura NUNCA corre** — camina con deliberación y corta el paso; la persecución es breve y se pierde
+con **silencio + refugio sellado** (`RefugeSystem.safe` la vuelve intocable). De **día está en letargo**
+(regla clara). El **Consume** es una **elipsis** (fundido a negro → despiertas en otro sitio), no un
+game over con gore. Audio: `HorrorAudio.creaturePresence()` anuncia su estado por sonido antes que por
+vista. Debug **F3** muestra `hollow: <estado> · aware % · <dist>m`. **Pendiente:** `Manipulate` (robar
+voces / provocar que rompas tus sellos), criaturas secundarias y más ejemplares (los invitará el Horror
+Director, Fase 9).
 
 ## Scripts
 

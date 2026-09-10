@@ -11,6 +11,7 @@ import type { SpatialAudio } from './SpatialAudio';
  */
 export class HorrorAudio {
   private nextAt = 0;
+  private nextPresenceAt = 0;
   private readonly scratch = new THREE.Vector3();
 
   constructor(
@@ -86,5 +87,38 @@ export class HorrorAudio {
     if (roll < 0.45) this.whisper(pos, intensity);
     else if (roll < 0.75) this.creak(pos, intensity);
     else this.knock(pos, intensity);
+  }
+
+  /**
+   * Presencia de la criatura (AI.md §4): anuncia su estado por SONIDO antes que por vista.
+   * Lejos/Observe → crujidos espaciados; Stalk → respiración grave frecuente; Chase → casi
+   * continua. Se auto-limita por reloj. `position` es la de la criatura (espacializada por HRTF).
+   */
+  creaturePresence(dist: number, position: THREE.Vector3, state: string, awareness: number): void {
+    if (!this.audio.ready) return;
+    if (state !== 'Observe' && state !== 'Stalk' && state !== 'Chase' && state !== 'Search') return;
+    const now = this.audio.now;
+    if (now < this.nextPresenceAt) return;
+    const closeness = Math.max(0, 1 - dist / 30);
+    const interval = state === 'Chase' ? 0.5 : state === 'Stalk' ? 1.1 : 2.4;
+    this.nextPresenceAt = now + interval * (1.4 - closeness);
+    const intensity = 0.4 + closeness * 0.9 + awareness * 0.2;
+    if (state === 'Chase') this.breath(position, intensity);
+    else if (state === 'Stalk') {
+      if (Math.random() < 0.5) this.creak(position, intensity * 0.8);
+      else this.breath(position, intensity * 0.8);
+    } else this.creak(position, intensity * 0.6);
+  }
+
+  /** respiración/gruñido grave de la criatura (ruido filtrado, no tonal). */
+  breath(position: THREE.Vector3, intensity = 1): void {
+    this.spatial.playAt(position, {
+      frequency: 90 + Math.random() * 40,
+      duration: 0.5,
+      gain: 0.5 * intensity,
+      q: 0.6,
+      type: 'lowpass',
+      bus: 'horror',
+    });
   }
 }

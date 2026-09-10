@@ -4,6 +4,7 @@ import { HorrorAudio } from '../audio/HorrorAudio';
 import { PlayerAudio } from '../audio/PlayerAudio';
 import { SpatialAudio } from '../audio/SpatialAudio';
 import { FirstPersonCamera } from '../camera/FirstPersonCamera';
+import { Creature } from '../creatures/Creature';
 import { DayNight, type Phase } from '../environment/DayNight';
 import { Door } from '../interaction/Door';
 import { InteractionManager } from '../interaction/InteractionManager';
@@ -20,6 +21,7 @@ import { LampLights } from '../world/LampLights';
 import { upgradeTownKits } from '../world/TownKits';
 import { World } from '../world/World';
 import { MAT } from '../world/kits';
+import { WORLD } from '../world/layout';
 import { AssetManager } from './AssetManager';
 import { AudioManager } from './AudioManager';
 import { InputManager } from './InputManager';
@@ -84,6 +86,9 @@ export class Game {
   private horrorAudio: HorrorAudio | null = null;
   private lampLights: LampLights | null = null;
   private flashlight: Flashlight | null = null;
+  private creature: Creature | null = null;
+  private readonly camDir = new THREE.Vector3();
+  private consuming = false;
   private audioStarted = false;
   private muted = false;
   private fastTime = false;
@@ -95,6 +100,7 @@ export class Game {
   private crosshairEl!: HTMLElement;
   private batteryEl!: HTMLElement;
   private batteryFill!: HTMLElement;
+  private fadeEl!: HTMLElement;
   private captionTimer = 0;
 
   private mode: Mode = 'MENU';
@@ -144,10 +150,12 @@ export class Game {
     this.batteryEl.innerHTML = '<span class="bulb"></span><span class="bar"><i></i></span>';
     this.batteryFill = this.batteryEl.querySelector('i') as HTMLElement;
 
+    this.fadeEl = el('div', 'fade');
+
     this.startEl = el('div');
     this.startEl.id = 'start';
     const tag = el('div', 'tag');
-    tag.textContent = 'prototipo · fase 7';
+    tag.textContent = 'prototipo · fase 8';
     const title = el('h1');
     title.textContent = 'FROMVILLE';
     this.startButton = el('button') as HTMLButtonElement;
@@ -155,7 +163,7 @@ export class Game {
     this.startButton.addEventListener('click', () => this.start());
     const hint = el('div', 'hint');
     hint.textContent =
-      'WASD moverse · Shift correr · E interactuar · Shift+E sellar · F linterna · Esc pausa · M silencio · F3 debug · F4 calidad · F5 fase · F6 tiempo ×8';
+      'WASD moverse · Shift correr · E interactuar · Shift+E sellar · F linterna · Esc pausa · M silencio · F3 debug · F4 calidad · F5 fase · F6 tiempo ×8 — de noche, correr y la linterna atraen a The Hollow';
     const settings = el('div', 'settings');
     settings.append(
       this.sliderRow('Velocidad', 0.6, 1.6, 0.05, this.settings.get().moveSpeed, (v) =>
@@ -168,7 +176,7 @@ export class Game {
     this.startEl.append(tag, title, this.startButton, settings, hint);
     this.startEl.classList.add('open'); // MENU: visible hasta pulsar "Entrar al pueblo"
 
-    this.uiRoot.append(this.crosshairEl, this.captionEl, this.promptEl, this.batteryEl, this.startEl);
+    this.uiRoot.append(this.crosshairEl, this.captionEl, this.promptEl, this.batteryEl, this.fadeEl, this.startEl);
   }
 
   /** fila de ajuste con etiqueta + <input type=range> persistido en Settings. */
@@ -215,6 +223,11 @@ export class Game {
     this.scene.add(this.view.camera);
     this.flashlight = new Flashlight(this.view.camera);
     this.lampLights = new LampLights(this.scene, this.world.layout.lamps, 5);
+
+    // Fase 8: "The Hollow" (AI.md). Se despierta de noche; el Horror Director (Fase 9) la invocará.
+    this.creature = new Creature(this.world.curve, this.collisions, WORLD.villageS + 90, this.seed ^ 0x51ed);
+    this.creature.onConsume = () => this.onConsumed();
+    this.scene.add(this.creature.group);
 
     // Fase 5: hero assets de Blender (GLB) cargados de public/assets (no bloquean el menú).
     this.assets = new AssetManager(this.renderer.webgl);
@@ -332,6 +345,27 @@ export class Game {
     this.caption(msg[phase], 4);
   }
 
+  /**
+   * Consume (AI.md §2): no es un game over con gore, es una ELIPSIS (fundido a negro → despiertas en
+   * otro sitio). La criatura se retira a letargo tras el "agarre".
+   */
+  private onConsumed(): void {
+    if (this.consuming) return;
+    this.consuming = true;
+    this.fadeEl.classList.add('on');
+    const ms = this.reducedMotion ? 200 : 1500;
+    window.setTimeout(() => {
+      if (this.world && this.player) {
+        const spawn = this.world.layout.spawn;
+        this.player.teleport(spawn.x, spawn.z, spawn.yaw);
+      }
+      this.caption('Despiertas en medio de la carretera. No recuerdas cómo llegaste.', 5);
+      this.creature?.reset();
+      this.fadeEl.classList.remove('on');
+      this.consuming = false;
+    }, ms);
+  }
+
   /** F4: alterna LOW→MED→HIGH en caliente (pixelRatio + passes del composer). */
   private cycleQuality(): void {
     const order: Quality[] = ['LOW', 'MED', 'HIGH'];
@@ -401,6 +435,31 @@ export class Game {
       if (this.mode === 'PLAYING') this.flashlight?.update(dt);
     }
     this.updateBatteryHud();
+
+    if (this.mode === 'PLAYING' && this.creature && this.player && this.dayNight) {
+      const phase = this.dayNight.currentPhase;
+      this.view.camera.getWorldDirection(this.camDir);
+      const dl = Math.hypot(this.camDir.x, this.camDir.z) || 1;
+      const p = this.player.position;
+      this.creature.update({
+        dt,
+        playerX: p.x,
+        playerZ: p.z,
+        playerDirX: this.camDir.x / dl,
+        playerDirZ: this.camDir.z / dl,
+        flashlightOn: this.flashlight?.active ?? false,
+        sprinting: this.player.sprinting,
+        walking: this.player.moving,
+        active: phase === 'NIGHT' || phase === 'DANGER',
+        safe: this.refuges?.safe ?? false,
+        nightFactor: this.dayNight.nightFactor,
+      });
+      if (this.audio?.ready && this.horrorAudio) {
+        const c = this.creature;
+        const dist = Math.hypot(c.pos.x - p.x, c.pos.z - p.z);
+        this.horrorAudio.creaturePresence(dist, c.group.position, c.state, c.awareness);
+      }
+    }
 
     if (this.mode === 'PLAYING' && this.player && this.interactions && this.dayNight) {
       this.interactions.update({ dayFactor: this.dayNight.dayFactor, phase: this.dayNight.currentPhase });
@@ -472,5 +531,11 @@ export class Game {
     );
     const audioState = !this.audio?.ready ? 'bloqueado (clic)' : this.muted ? 'muted' : 'on';
     this.debug.setLine(6, `audio: ${audioState} · hovered ${this.interactions?.hovered?.id ?? '—'}`);
+    const c = this.creature;
+    const hd =
+      c && p
+        ? `hollow: ${c.state} · aware ${(c.awareness * 100).toFixed(0)}% · ${c.pos.distanceTo(p).toFixed(0)}m`
+        : 'hollow: —';
+    this.debug.setLine(7, hd);
   }
 }

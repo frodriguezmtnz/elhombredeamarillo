@@ -61,6 +61,11 @@ export class FirstPersonController {
     );
   }
 
+  /** ¿se está desplazando (para el ruido que percibe la criatura)? */
+  get moving(): boolean {
+    return Math.hypot(this.velX, this.velZ) > 0.5;
+  }
+
   teleport(x: number, z: number, yaw: number): void {
     this.position.set(x, this.ground.heightAt(x, z) + this.eyeHeight, z);
     this.yaw = yaw;

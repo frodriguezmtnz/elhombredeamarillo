@@ -4,9 +4,11 @@
  * Se ejecuta vía `pnpm --filter fromville smoke` (esbuild bundle → node).
  */
 import * as THREE from 'three';
+import { Creature } from '../src/creatures/Creature.ts';
 import { Door } from '../src/interaction/Door.ts';
 import { RefugeSystem } from '../src/interaction/RefugeSystem.ts';
 import { ringDelta } from '../src/utils/MathUtils.ts';
+import { CollisionSystem } from '../src/world/CollisionSystem.ts';
 import { WORLD, buildLayout } from '../src/world/layout.ts';
 
 let failures = 0;
@@ -112,6 +114,68 @@ for (const seed of [1234, 987654, 424242]) {
     fail('F6: una puerta con llave no admite interacción');
   }
   if (failures === 0) ok('Fase 6: puertas + regla de sellos correctas');
+}
+
+// 9. Fase 8: percepción (awareness) + FSM de la criatura → Consume (AI.md §2)
+{
+  const seed = 1234;
+  const { curve } = buildLayout(seed);
+  const collisions = new CollisionSystem(); // vacío: sin oclusión → test determinista de la FSM
+  const creature = new Creature(curve, collisions, WORLD.villageS + 90, seed ^ 0x51ed);
+  const player = { x: creature.pos.x + 18, z: creature.pos.z };
+  let consumed = 0;
+  creature.onConsume = () => {
+    consumed++;
+  };
+  const dt = 1 / 60;
+  let sawChase = false;
+  for (let i = 0; i < 3600; i++) {
+    const dx = creature.pos.x - player.x;
+    const dz = creature.pos.z - player.z;
+    const d = Math.hypot(dx, dz) || 1;
+    creature.update({
+      dt,
+      playerX: player.x,
+      playerZ: player.z,
+      playerDirX: dx / d, // apuntándole con la linterna → se autodelata
+      playerDirZ: dz / d,
+      flashlightOn: true,
+      sprinting: false,
+      walking: true,
+      active: true,
+      safe: false,
+      nightFactor: 1,
+    });
+    if (creature.state === 'Chase') sawChase = true;
+    if (!Number.isFinite(creature.pos.x) || !Number.isFinite(creature.pos.z)) {
+      fail('F8: posición de la criatura se vuelve NaN');
+      break;
+    }
+    if (consumed > 0) break;
+  }
+  if (consumed === 0) fail(`F8: la criatura no llegó a consumir (estado final ${creature.state})`);
+  if (!sawChase) fail('F8: nunca entró en Chase antes de consumir');
+
+  // de día debe volver a letargo (Dormant) y no perseguir
+  creature.reset();
+  for (let i = 0; i < 600; i++) {
+    creature.update({
+      dt,
+      playerX: player.x,
+      playerZ: player.z,
+      playerDirX: 0,
+      playerDirZ: 1,
+      flashlightOn: false,
+      sprinting: false,
+      walking: false,
+      active: false,
+      safe: false,
+      nightFactor: 0,
+    });
+  }
+  if (creature.state !== 'Dormant') fail(`F8: de día no quedó en letargo (${creature.state})`);
+
+  if (failures === 0) ok('Fase 8: percepción + FSM + Consume correctos (y letargo de día)');
 }
 
 if (failures > 0) {
