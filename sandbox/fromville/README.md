@@ -6,7 +6,7 @@ independiente** del workspace `sandbox/*`; reutiliza *patrones* de THE ROAD, no 
 > `FROMVILLE` es un **codename interno**. No se publica con ese nombre (ver `plan/IP_ORIGINALITY.md`).
 > Todo el contenido es **original**; el terror parte de conceptos genéricos de género.
 
-## Estado: Fase 6 — Interacción & refugios
+## Estado: Fase 7 — Audio procedural (Web Audio)
 
 Escena **gris** navegable en primera persona: carretera-bucle (anillo cerrado), bloque del pueblo,
 bosque con colisión. **Post-procesado** (`EffectComposer`): ACES + bloom (MED/HIGH) + viñeta + grano
@@ -24,8 +24,14 @@ muestra `assets GLB N`. **Fase 6:** sistema de interacción genérico `interacti
 (`Door`: abrir/cerrar con **E**, **sellar** con **Shift+E**) y **notas** legibles. `RefugeSystem` aplica
 la **regla de sellos**: un refugio solo es seguro si TODAS sus puertas están cerradas **y** selladas
 (seguridad activa, recalculada cada frame; base de checkpoints). Debug **F3** muestra refugio/estado.
-Aún sin interiores transitables (las puertas sellan desde el umbral), linterna, criaturas ni audio
-(Fases 7, 8, 9).
+Aún sin interiores transitables (las puertas sellan desde el umbral) ni linterna/criaturas (Fases 8, 9).
+**Fase 7:** audio **100 % procedural** (`core/AudioManager` con buses ambient/player/horror):
+`AmbientAudio` (viento con ráfagas LFO + drone sub-bass que crece de noche; `setIntensity()` deja al
+Horror Director cortar el ambiente con `silence()`), `SpatialAudio` (`PannerNode`/HRTF con el listener
+anclado a la cámara), `PlayerAudio` (pasos + respiración al correr) y `HorrorAudio` (susurros/golpes/
+crujidos espacializados — "sound before sight"). Cues de puerta/cerrojo/papel en la interacción. El
+`AudioContext` arranca con el primer clic (política de autoplay); **M** silencia. Mezcla
+(master/ambient/effects) persistida en `Settings`.
 
 ## Scripts
 
@@ -45,6 +51,8 @@ También desde la raíz: `pnpm dev:fromville`, `pnpm build:fromville`, `pnpm typ
 - **WASD / flechas** moverse · **Shift** correr (hace ruido de noche, Fase 8) · **Ratón** mirar.
 - **E** interactuar (abrir/cerrar puerta, leer nota) · **Shift+E** sellar/quitar el sello de una puerta
   **cerrada** (base de los refugios seguros). El prompt aparece bajo la retícula al apuntar a algo.
+- **M** silencia/reactiva el audio. El sonido arranca al pulsar **Entrar al pueblo** (requiere gesto del
+  usuario por la política de autoplay del navegador).
 - **Esc** pausa (libera el ratón). **F3** overlay de debug (FPS/draw/tris/fase/posición/assets/refugio). **F4** cambia
   calidad LOW/MED/HIGH. **F5** salta a la siguiente fase del día. **F6** acelera el tiempo ×8 (para
   ver el ciclo sin esperas).

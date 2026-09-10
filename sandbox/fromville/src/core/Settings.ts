@@ -3,15 +3,25 @@ export type Quality = 'LOW' | 'MED' | 'HIGH';
 export interface SettingsSnapshot {
   quality: Quality;
   sensitivity: number;
+  masterVolume: number; // 0..1
+  ambientVolume: number; // 0..1
+  effectsVolume: number; // 0..1
 }
 
 const STORAGE_KEY = 'fromville:settings';
 
-const DEFAULTS: SettingsSnapshot = { quality: 'MED', sensitivity: 1 };
+const DEFAULTS: SettingsSnapshot = {
+  quality: 'MED',
+  sensitivity: 1,
+  masterVolume: 0.8,
+  ambientVolume: 0.9,
+  effectsVolume: 1,
+};
 
-/** Ajustes persistidos en localStorage (calidad + sensibilidad). Sin backend. */
+/** Ajustes persistidos en localStorage (calidad + sensibilidad + mezcla de audio). Sin backend. */
 export class Settings {
   private snapshot: SettingsSnapshot;
+  private readonly listeners = new Set<() => void>();
 
   constructor() {
     this.snapshot = { ...DEFAULTS };
@@ -34,5 +44,11 @@ export class Settings {
     } catch {
       /* ignore */
     }
+    for (const listener of this.listeners) listener();
+  }
+
+  onChange(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
   }
 }

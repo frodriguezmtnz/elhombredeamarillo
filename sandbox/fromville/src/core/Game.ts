@@ -1,6 +1,11 @@
 import * as THREE from 'three';
+import { AmbientAudio } from '../audio/AmbientAudio';
+import { HorrorAudio } from '../audio/HorrorAudio';
+import { PlayerAudio } from '../audio/PlayerAudio';
+import { SpatialAudio } from '../audio/SpatialAudio';
 import { FirstPersonCamera } from '../camera/FirstPersonCamera';
 import { DayNight, type Phase } from '../environment/DayNight';
+import { Door } from '../interaction/Door';
 import { InteractionManager } from '../interaction/InteractionManager';
 import { Note } from '../interaction/Note';
 import { RefugeSystem } from '../interaction/RefugeSystem';
@@ -12,6 +17,7 @@ import { placeHeroProps } from '../world/HeroProps';
 import { type InteractionBundle, buildInteractions } from '../world/Interactions';
 import { World } from '../world/World';
 import { AssetManager } from './AssetManager';
+import { AudioManager } from './AudioManager';
 import { InputManager } from './InputManager';
 import { Renderer } from './Renderer';
 import type { Quality } from './Settings';
@@ -39,8 +45,8 @@ function refugioLabel(id: string): string {
 }
 
 /**
- * Game — orquestador Fase 5: renderer + composer (PostFX) + cámara FPS + día/noche + mundo gris +
- * hero assets GLB (Blender → AssetManager).
+ * Game — orquestador Fase 7: renderer + composer (PostFX) + cámara FPS + día/noche + mundo gris +
+ * hero assets GLB (Blender → AssetManager) + interacción/refugios + audio procedural Web Audio.
  * Menú → clic → pointer lock → caminar. Esc libera el ratón → pausa. F3 → debug.
  * Aún sin día/noche, criaturas ni interactuables (Fases 3, 6, 8, 9).
  */
@@ -66,6 +72,13 @@ export class Game {
   private interactions: InteractionManager | null = null;
   private bundle: InteractionBundle | null = null;
   private refuges: RefugeSystem | null = null;
+  private audio: AudioManager | null = null;
+  private ambientAudio: AmbientAudio | null = null;
+  private spatialAudio: SpatialAudio | null = null;
+  private playerAudio: PlayerAudio | null = null;
+  private horrorAudio: HorrorAudio | null = null;
+  private audioStarted = false;
+  private muted = false;
   private fastTime = false;
 
   private startEl!: HTMLElement;
@@ -121,7 +134,7 @@ export class Game {
     this.startEl = el('div');
     this.startEl.id = 'start';
     const tag = el('div', 'tag');
-    tag.textContent = 'prototipo · fase 6';
+    tag.textContent = 'prototipo · fase 7';
     const title = el('h1');
     title.textContent = 'FROMVILLE';
     this.startButton = el('button') as HTMLButtonElement;
@@ -129,7 +142,7 @@ export class Game {
     this.startButton.addEventListener('click', () => this.start());
     const hint = el('div', 'hint');
     hint.textContent =
-      'WASD moverse · Shift correr · E interactuar · Shift+E sellar puerta · Esc pausa · F3 debug · F4 calidad · F5 fase · F6 tiempo ×8';
+      'WASD moverse · Shift correr · E interactuar · Shift+E sellar puerta · Esc pausa · M silencio · F3 debug · F4 calidad · F5 fase · F6 tiempo ×8';
     this.startEl.append(tag, title, this.startButton, hint);
     this.startEl.classList.add('open'); // MENU: visible hasta pulsar "Entrar al pueblo"
 
@@ -141,6 +154,7 @@ export class Game {
     this.player = new FirstPersonController(this.view, this.input, this.settings, this.collisions, {
       heightAt: (x, z) => (this.world ? this.world.heightAt(x, z) : 0),
     });
+    this.player.onFootstep = (running) => this.playerAudio?.footstep(running);
     this.postfx = new PostFX(this.renderer.webgl, this.scene, this.view.camera, this.settings.get().quality);
     this.postfx.reducedMotion = this.reducedMotion;
     this.postfx.setQuality(this.settings.get().quality);
@@ -164,15 +178,20 @@ export class Game {
     for (const door of this.bundle.doors) this.interactions.add(door);
     for (const note of this.bundle.notes) this.interactions.add(note);
     this.interactions.onPrompt = (text) => this.setPrompt(text);
-    this.interactions.onInteract = (item) => {
-      if (item instanceof Note) this.caption(item.body, 8);
-    };
+    this.interactions.onInteract = (item, mode) => this.onInteractSound(item, mode);
     this.refuges = new RefugeSystem();
     for (const refuge of this.bundle.refuges) this.refuges.add(refuge);
     this.refuges.onSafeChange = (safe, refuge) => {
       if (safe && refuge) this.caption(`${refugioLabel(refuge.id)} sellado: estás a salvo.`, 3);
       else if (!safe && refuge) this.caption('Has roto el sello. Ya no estás a salvo.', 3);
     };
+
+    // Fase 7: audio procedural. El AudioContext se crea en el primer gesto (start → unlockAudio).
+    this.audio = new AudioManager(this.settings);
+    this.spatialAudio = new SpatialAudio(this.audio);
+    this.ambientAudio = new AmbientAudio(this.audio);
+    this.playerAudio = new PlayerAudio(this.audio);
+    this.horrorAudio = new HorrorAudio(this.audio, this.spatialAudio, () => this.player!.position);
 
     const spawn = this.world.layout.spawn;
     this.player.teleport(spawn.x, spawn.z, spawn.yaw);
@@ -187,10 +206,35 @@ export class Game {
 
   private start(): void {
     if (this.mode === 'PLAYING') return;
+    this.unlockAudio();
     this.startEl.classList.remove('open');
     this.crosshairEl.classList.add('on');
     this.mode = 'PLAYING';
     this.input.requestLock();
+  }
+
+  /** primer gesto: crea/reanuda el AudioContext y arranca las capas (una sola vez). */
+  private unlockAudio(): void {
+    this.audio?.unlock();
+    if (this.audioStarted) return;
+    this.audioStarted = true;
+    this.ambientAudio?.start();
+    this.playerAudio?.start();
+  }
+
+  private onInteractSound(item: { id: string }, mode: 'primary' | 'secondary'): void {
+    if (!this.audio) return;
+    if (item instanceof Note) {
+      this.caption(item.body, 8);
+      this.audio.burst({ duration: 0.12, frequency: 1700, q: 2, gain: 0.1 }); // papel
+    } else if (item instanceof Door) {
+      if (mode === 'secondary') {
+        this.audio.burst({ duration: 0.16, frequency: 240, q: 1.4, gain: 0.24 }); // cerrojo
+      } else {
+        this.audio.burst({ duration: 0.32, frequency: 150, q: 0.9, gain: 0.28, type: 'lowpass' }); // madero
+        this.spatialAudio?.playAt(item.position, { frequency: 320, duration: 0.4, gain: 0.28, q: 6, bus: 'player' });
+      }
+    }
   }
 
   private pause(): void {
@@ -200,6 +244,7 @@ export class Game {
     this.startEl.classList.add('open');
     this.crosshairEl.classList.remove('on');
     this.setPrompt(null);
+    this.audio?.suspend();
     this.input.releaseLock();
   }
 
@@ -275,6 +320,11 @@ export class Game {
       this.dayNight?.setTimeScale(this.fastTime ? 8 : 1);
       this.caption(this.fastTime ? 'Tiempo ×8' : 'Tiempo ×1', 1.5);
     }
+    if (this.input.pressed('KeyM')) {
+      this.muted = !this.muted;
+      this.audio?.setMuted(this.muted);
+      this.caption(this.muted ? 'Audio silenciado' : 'Audio activo', 1.5);
+    }
 
     if (this.mode === 'PLAYING' && this.player) this.player.update(dt);
 
@@ -286,6 +336,15 @@ export class Game {
       this.refuges?.update(this.player);
     }
     this.bundle?.update(dt);
+
+    if (this.audio?.ready && this.dayNight) {
+      this.spatialAudio?.updateListener(this.view.camera);
+      this.ambientAudio?.update(this.dayNight.dayFactor);
+      if (this.mode === 'PLAYING') {
+        this.horrorAudio?.update(this.dayNight.dayFactor, this.dayNight.currentPhase);
+        this.playerAudio?.setExertion(this.player?.sprinting ? 1 : 0);
+      }
+    }
 
     if (this.captionTimer > 0) {
       this.captionTimer -= dt;
@@ -330,5 +389,7 @@ export class Game {
       5,
       `refugio: ${safeState} · selladas ${this.bundle?.doors.filter((d) => d.sealed).length ?? 0}/${this.bundle?.doors.length ?? 0}`,
     );
+    const audioState = !this.audio?.ready ? 'bloqueado (clic)' : this.muted ? 'muted' : 'on';
+    this.debug.setLine(6, `audio: ${audioState} · hovered ${this.interactions?.hovered?.id ?? '—'}`);
   }
 }
