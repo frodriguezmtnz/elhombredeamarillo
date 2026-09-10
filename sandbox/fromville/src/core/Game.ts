@@ -1,11 +1,15 @@
 import * as THREE from 'three';
 import { FirstPersonCamera } from '../camera/FirstPersonCamera';
 import { DayNight, type Phase } from '../environment/DayNight';
+import { InteractionManager } from '../interaction/InteractionManager';
+import { Note } from '../interaction/Note';
+import { RefugeSystem } from '../interaction/RefugeSystem';
 import { FirstPersonController } from '../player/FirstPersonController';
 import { PostFX } from '../rendering/PostFX';
 import { DebugOverlay } from '../ui/DebugOverlay';
 import { CollisionSystem } from '../world/CollisionSystem';
 import { placeHeroProps } from '../world/HeroProps';
+import { type InteractionBundle, buildInteractions } from '../world/Interactions';
 import { World } from '../world/World';
 import { AssetManager } from './AssetManager';
 import { InputManager } from './InputManager';
@@ -19,6 +23,19 @@ function el(tag: string, className?: string): HTMLElement {
   const node = document.createElement(tag);
   if (className) node.className = className;
   return node;
+}
+
+const REFUGIO_NAMES: Record<string, string> = {
+  diner: 'El diner',
+  sheriff: 'La comisaría',
+  church: 'La iglesia',
+  gas: 'La gasolinera',
+};
+
+function refugioLabel(id: string): string {
+  if (REFUGIO_NAMES[id]) return REFUGIO_NAMES[id];
+  if (id.startsWith('house')) return 'Una casa';
+  return 'El refugio';
 }
 
 /**
@@ -46,11 +63,15 @@ export class Game {
   private dayNight: DayNight | null = null;
   private assets: AssetManager | null = null;
   private heroCount = 0;
+  private interactions: InteractionManager | null = null;
+  private bundle: InteractionBundle | null = null;
+  private refuges: RefugeSystem | null = null;
   private fastTime = false;
 
   private startEl!: HTMLElement;
   private startButton!: HTMLButtonElement;
   private captionEl!: HTMLElement;
+  private promptEl!: HTMLElement;
   private crosshairEl!: HTMLElement;
   private captionTimer = 0;
 
@@ -94,10 +115,13 @@ export class Game {
     this.captionEl = el('div');
     this.captionEl.id = 'caption';
 
+    this.promptEl = el('div');
+    this.promptEl.id = 'prompt';
+
     this.startEl = el('div');
     this.startEl.id = 'start';
     const tag = el('div', 'tag');
-    tag.textContent = 'prototipo · fase 5';
+    tag.textContent = 'prototipo · fase 6';
     const title = el('h1');
     title.textContent = 'FROMVILLE';
     this.startButton = el('button') as HTMLButtonElement;
@@ -105,11 +129,11 @@ export class Game {
     this.startButton.addEventListener('click', () => this.start());
     const hint = el('div', 'hint');
     hint.textContent =
-      'WASD moverse · Shift correr · Ratón mirar · Esc pausa · F3 debug · F4 calidad · F5 saltar fase · F6 tiempo ×8';
+      'WASD moverse · Shift correr · E interactuar · Shift+E sellar puerta · Esc pausa · F3 debug · F4 calidad · F5 fase · F6 tiempo ×8';
     this.startEl.append(tag, title, this.startButton, hint);
     this.startEl.classList.add('open'); // MENU: visible hasta pulsar "Entrar al pueblo"
 
-    this.uiRoot.append(this.crosshairEl, this.captionEl, this.startEl);
+    this.uiRoot.append(this.crosshairEl, this.captionEl, this.promptEl, this.startEl);
   }
 
   async init(): Promise<void> {
@@ -132,6 +156,23 @@ export class Game {
     void placeHeroProps(this.assets, this.world).then((n) => {
       this.heroCount = n;
     });
+
+    // Fase 6: interacción genérica (puertas/sellos/notas) + regla de sellos de los refugios.
+    this.bundle = buildInteractions(this.world);
+    this.world.group.add(this.bundle.group);
+    this.interactions = new InteractionManager(this.player, this.input);
+    for (const door of this.bundle.doors) this.interactions.add(door);
+    for (const note of this.bundle.notes) this.interactions.add(note);
+    this.interactions.onPrompt = (text) => this.setPrompt(text);
+    this.interactions.onInteract = (item) => {
+      if (item instanceof Note) this.caption(item.body, 8);
+    };
+    this.refuges = new RefugeSystem();
+    for (const refuge of this.bundle.refuges) this.refuges.add(refuge);
+    this.refuges.onSafeChange = (safe, refuge) => {
+      if (safe && refuge) this.caption(`${refugioLabel(refuge.id)} sellado: estás a salvo.`, 3);
+      else if (!safe && refuge) this.caption('Has roto el sello. Ya no estás a salvo.', 3);
+    };
 
     const spawn = this.world.layout.spawn;
     this.player.teleport(spawn.x, spawn.z, spawn.yaw);
@@ -158,6 +199,7 @@ export class Game {
     this.startButton.textContent = 'Seguir';
     this.startEl.classList.add('open');
     this.crosshairEl.classList.remove('on');
+    this.setPrompt(null);
     this.input.releaseLock();
   }
 
@@ -165,6 +207,16 @@ export class Game {
     this.captionEl.textContent = text;
     this.captionEl.classList.add('on');
     this.captionTimer = seconds;
+  }
+
+  /** prompt de interacción bajo la retícula (null → oculto). */
+  private setPrompt(text: string | null): void {
+    if (!text) {
+      this.promptEl.classList.remove('on');
+      return;
+    }
+    this.promptEl.textContent = `E · ${text}`;
+    this.promptEl.classList.add('on');
   }
 
   /** hook del DayNight: por ahora un rótulo de señal; el Horror Director lo consumirá (Fase 9). */
@@ -229,6 +281,12 @@ export class Game {
     this.dayNight?.update(dt);
     if (this.dayNight && this.postfx) this.postfx.setMood(this.dayNight.moodTint, this.dayNight.moodSaturation);
 
+    if (this.mode === 'PLAYING' && this.player && this.interactions && this.dayNight) {
+      this.interactions.update({ dayFactor: this.dayNight.dayFactor, phase: this.dayNight.currentPhase });
+      this.refuges?.update(this.player);
+    }
+    this.bundle?.update(dt);
+
     if (this.captionTimer > 0) {
       this.captionTimer -= dt;
       if (this.captionTimer <= 0) this.captionEl.classList.remove('on');
@@ -264,5 +322,13 @@ export class Game {
     );
     if (p) this.debug.setLine(3, `pos ${p.x.toFixed(1)}, ${p.y.toFixed(1)}, ${p.z.toFixed(1)}`);
     this.debug.setLine(4, `assets GLB ${this.heroCount} · seed ${this.seed}`);
+    const cur = this.refuges?.current;
+    const safeState = cur
+      ? `${refugioLabel(cur.id)} ${this.refuges?.safe ? 'SEGURO' : 'sin sellar'}`
+      : 'a la intemperie';
+    this.debug.setLine(
+      5,
+      `refugio: ${safeState} · selladas ${this.bundle?.doors.filter((d) => d.sealed).length ?? 0}/${this.bundle?.doors.length ?? 0}`,
+    );
   }
 }

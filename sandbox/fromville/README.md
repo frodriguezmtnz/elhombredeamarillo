@@ -6,7 +6,7 @@ independiente** del workspace `sandbox/*`; reutiliza *patrones* de THE ROAD, no 
 > `FROMVILLE` es un **codename interno**. No se publica con ese nombre (ver `plan/IP_ORIGINALITY.md`).
 > Todo el contenido es **original**; el terror parte de conceptos genéricos de género.
 
-## Estado: Fase 5 — Pipeline Blender (hero assets GLB)
+## Estado: Fase 6 — Interacción & refugios
 
 Escena **gris** navegable en primera persona: carretera-bucle (anillo cerrado), bloque del pueblo,
 bosque con colisión. **Post-procesado** (`EffectComposer`): ACES + bloom (MED/HIGH) + viñeta + grano
@@ -19,7 +19,13 @@ con **LOD impostor** (`world/Forest.ts`) y farolas/rocas instanciadas (`world/Pr
 `layout.ts` determinista. **Fase 5:** hero assets modelados en **Blender** (batch `bpy`, ver
 `blender/scripts/gen_assets.py`) → `public/assets/props/*.glb`, cargados por `core/AssetManager.ts`
 (GLTFLoader + DRACO/KTX2 cableados) y colocados junto a la plaza por `world/HeroProps.ts`. Debug **F3**
-muestra `assets GLB N`. Sin linterna, criaturas ni interactuables todavía (Fases 6, 8, 9).
+muestra `assets GLB N`. **Fase 6:** sistema de interacción genérico `interaction/` — `IInteractable`
++ `InteractionManager` (raycast por proximidad + cono de mira, prompt bajo la retícula) con **puertas**
+(`Door`: abrir/cerrar con **E**, **sellar** con **Shift+E**) y **notas** legibles. `RefugeSystem` aplica
+la **regla de sellos**: un refugio solo es seguro si TODAS sus puertas están cerradas **y** selladas
+(seguridad activa, recalculada cada frame; base de checkpoints). Debug **F3** muestra refugio/estado.
+Aún sin interiores transitables (las puertas sellan desde el umbral), linterna, criaturas ni audio
+(Fases 7, 8, 9).
 
 ## Scripts
 
@@ -37,7 +43,9 @@ También desde la raíz: `pnpm dev:fromville`, `pnpm build:fromville`, `pnpm typ
 
 - **Clic** en la escena → capturar ratón (pointer lock) y caminar.
 - **WASD / flechas** moverse · **Shift** correr (hace ruido de noche, Fase 8) · **Ratón** mirar.
-- **Esc** pausa (libera el ratón). **F3** overlay de debug (FPS/draw/tris/fase/posición). **F4** cambia
+- **E** interactuar (abrir/cerrar puerta, leer nota) · **Shift+E** sellar/quitar el sello de una puerta
+  **cerrada** (base de los refugios seguros). El prompt aparece bajo la retícula al apuntar a algo.
+- **Esc** pausa (libera el ratón). **F3** overlay de debug (FPS/draw/tris/fase/posición/assets/refugio). **F4** cambia
   calidad LOW/MED/HIGH. **F5** salta a la siguiente fase del día. **F6** acelera el tiempo ×8 (para
   ver el ciclo sin esperas).
 

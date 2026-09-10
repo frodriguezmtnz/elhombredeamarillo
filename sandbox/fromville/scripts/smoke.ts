@@ -3,6 +3,9 @@
  * proyección es estable, que POIs/bosque/farolas no invaden la calzada y que el spawn es válido.
  * Se ejecuta vía `pnpm --filter fromville smoke` (esbuild bundle → node).
  */
+import * as THREE from 'three';
+import { Door } from '../src/interaction/Door.ts';
+import { RefugeSystem } from '../src/interaction/RefugeSystem.ts';
 import { ringDelta } from '../src/utils/MathUtils.ts';
 import { WORLD, buildLayout } from '../src/world/layout.ts';
 
@@ -85,6 +88,30 @@ for (const seed of [1234, 987654, 424242]) {
       } far · ${lamps.length} farolas`,
     );
   }
+}
+
+// 8. Fase 6: máquina de estados de puertas + regla de sellos (GAME_DESIGN §5)
+{
+  const ctx = { dayFactor: 0.2, phase: 'NIGHT', player: new THREE.Vector3() };
+  const door = new Door('t', new THREE.Vector3());
+  if (door.safe) fail('F6: la puerta arranca insegura, no sellada');
+  door.interact(ctx, 'secondary'); // sellar (cerrada)
+  if (!door.safe) fail('F6: sellar una puerta cerrada debería ponerla safe');
+  if (door.canInteract(ctx, 'primary')) fail('F6: sellada no se puede abrir sin quitar el sello');
+  door.interact(ctx, 'secondary'); // quitar sello
+  door.interact(ctx, 'primary'); // abrir
+  if (!door.open) fail('F6: la primaria debería abrir una puerta cerrada');
+  if (door.canInteract(ctx, 'secondary')) fail('F6: no se puede sellar una puerta abierta');
+  door.interact(ctx, 'primary'); // cerrar
+  const refuge = { id: 'r', x: 0, z: 0, radius: 3, doors: [door] };
+  if (RefugeSystem.isSealed(refuge)) fail('F6: refugio sin sellar no es seguro');
+  door.interact(ctx, 'secondary'); // sellar
+  if (!RefugeSystem.isSealed(refuge)) fail('F6: refugio con puerta sellada es seguro');
+  const locked = new Door('l', new THREE.Vector3(), { locked: true });
+  if (locked.canInteract(ctx, 'primary') || locked.canInteract(ctx, 'secondary')) {
+    fail('F6: una puerta con llave no admite interacción');
+  }
+  if (failures === 0) ok('Fase 6: puertas + regla de sellos correctas');
 }
 
 if (failures > 0) {

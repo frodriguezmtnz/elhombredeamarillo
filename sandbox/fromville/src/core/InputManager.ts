@@ -1,4 +1,4 @@
-export type ActionKey = 'forward' | 'back' | 'left' | 'right' | 'run';
+export type ActionKey = 'forward' | 'back' | 'left' | 'right' | 'run' | 'interact';
 
 /** Mapa de acciones → códigos físicos (rebinding completo llega en una fase posterior). */
 const ACTION_CODES: Record<ActionKey, string[]> = {
@@ -7,6 +7,7 @@ const ACTION_CODES: Record<ActionKey, string[]> = {
   left: ['KeyA', 'ArrowLeft'],
   right: ['KeyD', 'ArrowRight'],
   run: ['ShiftLeft', 'ShiftRight'],
+  interact: ['KeyE'],
 };
 
 export const DEBUG_CODE = 'F3';

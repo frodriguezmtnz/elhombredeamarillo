@@ -19,7 +19,7 @@ tenga sobre qué operar).
 | **3** | Day/Night | ✅ Reloj + fases + interpolación de luces/fog + hooks | `HORROR_SYSTEM §3` |
 | **4** | Modular environment | ✅ LoopRoad (anillo seed) + Town (POIs) + Forest (instancing/impostores) | `WORLD_DESIGN` |
 | **5** | Blender pipeline | ✅ Batch `bpy` → kits/hero → GLB → carga en Three (DRACO/KTX2 cableados) | `BLENDER_PIPELINE §6.1` |
-| **6** | Interaction & refugios | `IInteractable` + puertas/cerrojos + zonas seguras | `GAME_DESIGN §5-6` |
+| **6** | Interaction & refugios | ✅ `IInteractable` + `Door`(E/Shift+E sellar) + `Note` + `RefugeSystem` (regla de sellos) | `GAME_DESIGN §5-6` |
 | **7** | Audio | Web Audio procedural + spatial + capas ambient/player/horror | `TECH_ARCHITECTURE §8` |
 | **8** | Creature + AI | "The Hollow" + Perception + FSM + waypoints/steering | `AI` |
 | **9** | Horror Director | TensionModel + EventBook + control de luces/fog/sonido/criatura | `HORROR_SYSTEM` |
