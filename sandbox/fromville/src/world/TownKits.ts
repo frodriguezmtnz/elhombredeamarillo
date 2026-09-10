@@ -12,6 +12,8 @@ export const GLB_KIT_KINDS: Partial<Record<LandmarkKind, string>> = {
   church: `${K}church.glb`,
   gas: `${K}gas.glb`,
   watertower: `${K}watertower.glb`,
+  motel: `${K}motel.glb`,
+  colina: `${K}colina.glb`,
 };
 
 /** Casas GLB (Fase 5+/MCP): footprint canónico 6×6, base z=0, puerta en +X, muro alto 3.5.
@@ -24,6 +26,31 @@ interface KitPlacement {
   sx: number;
   sy: number;
   sz: number;
+}
+
+/**
+ * Materiales emisivos exportados desde los kits GLB (neón de rótulos y ventanas cálidas). El Game
+ * modula su `emissiveIntensity` con el `nightFactor` (de día apagados, de noche encendidos).
+ * Los GLB comparten instancias de material vía AssetManager, así que se recogen una vez por nombre.
+ */
+export const kitEmissives = {
+  neon: [] as THREE.MeshStandardMaterial[],
+  windows: [] as THREE.MeshStandardMaterial[],
+};
+
+function harvestEmissives(root: THREE.Object3D): void {
+  root.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    for (const m of mats) {
+      const mat = m as THREE.MeshStandardMaterial;
+      if (!mat?.emissive) continue;
+      const nm = mat.name ?? '';
+      if (nm.includes('fvm_neon') && !kitEmissives.neon.includes(mat)) kitEmissives.neon.push(mat);
+      else if (nm.includes('fvm_windowGlow') && !kitEmissives.windows.includes(mat)) kitEmissives.windows.push(mat);
+    }
+  });
 }
 
 /** Resuelve el GLB y la escala para un landmark (POI con kit a escala 1; casa según su huella). */
@@ -71,6 +98,7 @@ export async function upgradeTownKits(assets: AssetManager, world: World): Promi
               mesh.receiveShadow = true;
             }
           });
+          harvestEmissives(gltf);
           if (old?.parent) {
             old.parent.add(gltf);
             old.parent.remove(old);

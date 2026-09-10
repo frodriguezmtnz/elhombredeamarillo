@@ -100,6 +100,22 @@ export function buildInteractions(world: World): InteractionBundle {
       'Un grupo de gente sonríe frente a esta misma carretera. Nadie mira a cámara. En el reverso: «Día 1».',
     ),
   );
+  // setpiece del motel: nota junto al borde de la piscina (huella local +X = fachada a la carretera)
+  const motel = world.layout.landmarks.find((lm) => lm.kind === 'motel');
+  if (motel) {
+    const lx = 8.6;
+    const lz = 5.4;
+    const c = Math.cos(motel.rot);
+    const s = Math.sin(motel.rot);
+    notes.push(
+      new Note(
+        'note-piscina',
+        new THREE.Vector3(motel.x + lx * c + lz * s, 0, motel.z - lx * s + lz * c),
+        'Nota mojada dentro del vaso',
+        '«SACAD EL COCHE DE LA PISCINA. — L. M. La dirección no se hace cargo de sucesos del aparcamiento.»',
+      ),
+    );
+  }
   const noteMat = new THREE.MeshStandardMaterial({ color: 0xd9d2bf, roughness: 1 });
   const noteGeo = new THREE.BoxGeometry(0.3, 0.4, 0.02);
   for (const n of notes) {

@@ -18,7 +18,7 @@ import { CollisionSystem } from '../world/CollisionSystem';
 import { placeHeroProps } from '../world/HeroProps';
 import { type InteractionBundle, buildInteractions } from '../world/Interactions';
 import { LampLights } from '../world/LampLights';
-import { upgradeTownKits } from '../world/TownKits';
+import { kitEmissives, upgradeTownKits } from '../world/TownKits';
 import { World } from '../world/World';
 import { MAT } from '../world/kits';
 import { WORLD } from '../world/layout';
@@ -42,6 +42,8 @@ const REFUGIO_NAMES: Record<string, string> = {
   sheriff: 'La comisaría',
   church: 'La iglesia',
   gas: 'La gasolinera',
+  motel: 'El motel',
+  colina: 'La Colina',
 };
 
 function refugioLabel(id: string): string {
@@ -432,6 +434,11 @@ export class Game {
       const night = this.dayNight.nightFactor;
       this.lampLights?.update(p.x, p.z, night);
       MAT.lampGlow.emissiveIntensity = 0.15 + night * 2.6;
+      // neón de rótulos y ventanas cálidas de los kits GLB: vivos de noche, apagados de día
+      const neon = 0.6 + night * 9;
+      for (const m of kitEmissives.neon) m.emissiveIntensity = neon;
+      const win = night * 4.5;
+      for (const m of kitEmissives.windows) m.emissiveIntensity = win;
       if (this.mode === 'PLAYING') this.flashlight?.update(dt);
     }
     this.updateBatteryHud();

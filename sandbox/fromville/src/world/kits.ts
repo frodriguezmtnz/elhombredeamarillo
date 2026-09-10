@@ -148,6 +148,35 @@ function makeWaterTower(w: number, h: number, d: number): THREE.Group {
   return g;
 }
 
+function makeMotel(w: number, h: number, d: number): THREE.Group {
+  const g = new THREE.Group();
+  const body = box(w * 0.72, h, d, MAT.wall);
+  body.position.set(-w * 0.14, h / 2, 0);
+  const roof = box(w * 0.72 + 0.4, 0.3, d + 0.4, MAT.roof);
+  roof.position.set(-w * 0.14, h + 0.15, 0);
+  const pole = box(0.2, h + 3.2, 0.2, MAT.metal);
+  pole.position.set(w * 0.34, (h + 3.2) / 2, -d * 0.6);
+  const sign = box(0.15, 1.2, 3.2, MAT.accent);
+  sign.position.set(w * 0.34, h + 2.6, -d * 0.6);
+  g.add(body, roof, pole, sign);
+  return g;
+}
+
+function makeColina(w: number, h: number, d: number): THREE.Group {
+  const g = new THREE.Group();
+  const body = box(w, h * 0.62, d, MAT.house);
+  body.position.y = (h * 0.62) / 2;
+  const upper = box(w * 0.85, h * 0.38, d * 0.8, MAT.wall);
+  upper.position.y = h * 0.62 + (h * 0.38) / 2;
+  const rh = h * 0.45;
+  const roof = pyramid(w * 0.95, d * 0.9, rh, MAT.roof);
+  roof.position.y = h + rh / 2;
+  const door = box(1.1, 2.3, 0.12, MAT.dark);
+  door.position.set(w / 2 + 0.06, 1.15, d * 0.1);
+  g.add(body, upper, roof, door);
+  return g;
+}
+
 /** Construye el grupo de un POI por tipo (huella w×d, altura h, base en y=0). */
 export function buildLandmark(kind: LandmarkKind, w: number, h: number, d: number): THREE.Group {
   switch (kind) {
@@ -163,6 +192,10 @@ export function buildLandmark(kind: LandmarkKind, w: number, h: number, d: numbe
       return makeGas(w, h, d);
     case 'watertower':
       return makeWaterTower(w, h, d);
+    case 'motel':
+      return makeMotel(w, h, d);
+    case 'colina':
+      return makeColina(w, h, d);
   }
 }
 

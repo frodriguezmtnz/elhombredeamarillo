@@ -16,7 +16,7 @@ export const WORLD = {
   townKeep: 55,
 } as const;
 
-export type LandmarkKind = 'house' | 'diner' | 'sheriff' | 'church' | 'gas' | 'watertower';
+export type LandmarkKind = 'house' | 'diner' | 'sheriff' | 'church' | 'gas' | 'watertower' | 'motel' | 'colina';
 
 export interface LandmarkSpec {
   id: string;
@@ -99,6 +99,10 @@ export function buildLayout(seed: number): WorldLayout {
     { kind: 'church', s: WORLD.villageS + 20, side: 1, lat: hw + 6, w: 8, d: 13, h: 5.5 },
     { kind: 'gas', s: WORLD.villageS + 260, side: -1, lat: hw + 5, w: 10, d: 8, h: 4.5 },
     { kind: 'watertower', s: WORLD.villageS - 180, side: 1, lat: hw + 12, w: 6, d: 6, h: 16 },
+    // Motel (setpiece Broken Houses + Stained Pool, WORLD_DESIGN §4): piscina + coche volcado.
+    { kind: 'motel', s: WORLD.villageS - 110, side: 1, lat: hw + 6, w: 14, d: 9, h: 3.6 },
+    // La Colina (NE, 2ª facción): colony house victoriana, hito tardío y peligroso.
+    { kind: 'colina', s: WORLD.villageS + 120, side: -1, lat: hw + 9, w: 16, d: 13, h: 8 },
   ];
   for (const lm of named) {
     const p = place(curve, lm.s, lm.lat, lm.side, pose);

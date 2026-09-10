@@ -65,6 +65,16 @@ vista. Debug **F3** muestra `hollow: <estado> · aware % · <dist>m`. **Pendient
 voces / provocar que rompas tus sellos), criaturas secundarias y más ejemplares (los invitará el Horror
 Director, Fase 9).
 
+**Tanda visual 8.5 (POIs con setpiece):** tres kits nuevos/renovados modelados en Blender vía MCP
+(colección `FROMVILLE_KITS2`): **Diner v2** con rótulo de neón **DINER** y ventanales cálidos,
+**El motel** (edificio de 5 puertas + cartel MOTEL / No Vacancy + **piscina con el coche volcado** y
+RV oxidado, setpiece de Broken Houses / Stained Pool) y **La Colina** (colony house victoriana con
+porche envolvente, buhardillas, bay window y tres chimeneas). Nuevos materiales emisivos `fvm_neon` y
+`fvm_windowGlow`: `TownKits` los cosecha en `kitEmissives` y `Game` modula su `emissiveIntensity` con
+el `nightFactor` (de día apagados, de noche vivos). El motel y La Colina son refugios nombrables y
+suman **13 POIs** por seed; nota setpiece «sacad el coche de la piscina» junto al vaso. Pendiente:
+pasada de **texturas** sobre estos kits.
+
 ## Scripts
 
 ```bash
