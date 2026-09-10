@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { DEBUG_CODE, type InputManager } from '../core/InputManager';
+import type { FirstPersonCamera } from '../camera/FirstPersonCamera';
+import type { InputManager } from '../core/InputManager';
 import type { Settings } from '../core/Settings';
 import { clamp, damp } from '../utils/MathUtils';
 import type { CollisionSystem } from '../world/CollisionSystem';
@@ -9,16 +10,16 @@ export interface GroundProvider {
 }
 
 /**
- * FirstPersonController — mouse look (Pointer Lock) + WASD + sprint + gravedad simple +
- * colisión circular contra el mundo. Mueve la cámara directamente (rig implícito) con head-bob.
- * El sprint existe ya, pero su CASTIGO (ruido que atrae criaturas) llega con la IA (Fase 8).
+ * FirstPersonController — lógica de cuerpo: mouse look (Pointer Lock) + WASD + sprint + gravedad +
+ * colisión circular. La representación visual (FOV, head-bob, roll) vive en FirstPersonCamera.
+ * El sprint ya existe; su castigo (ruido que atrae criaturas) llega con la IA (Fase 8).
  */
 export class FirstPersonController {
   readonly position = new THREE.Vector3();
   private velocityY = 0;
   private yaw = 0;
   private pitch = 0;
-  private bobPhase = 0;
+  private stepPhase = 0;
   private grounded = true;
 
   readonly eyeHeight = 1.68;
@@ -29,7 +30,7 @@ export class FirstPersonController {
 
   onFootstep: ((running: boolean) => void) | null = null;
 
-  private readonly camera: THREE.PerspectiveCamera;
+  private readonly view: FirstPersonCamera;
   private readonly input: InputManager;
   private readonly settings: Settings;
   private readonly collisions: CollisionSystem;
@@ -37,22 +38,17 @@ export class FirstPersonController {
   private readonly forward = new THREE.Vector3();
 
   constructor(
-    camera: THREE.PerspectiveCamera,
+    view: FirstPersonCamera,
     input: InputManager,
     settings: Settings,
     collisions: CollisionSystem,
     ground: GroundProvider,
   ) {
-    this.camera = camera;
+    this.view = view;
     this.input = input;
     this.settings = settings;
     this.collisions = collisions;
     this.ground = ground;
-    this.camera.rotation.order = 'YXZ';
-  }
-
-  get debugCode(): string {
-    return DEBUG_CODE;
   }
 
   get lookDirection(): THREE.Vector3 {
@@ -68,7 +64,8 @@ export class FirstPersonController {
     this.yaw = yaw;
     this.pitch = 0;
     this.velocityY = 0;
-    this.syncCamera(0);
+    this.view.resetBob();
+    this.view.applyTo(this.position, this.yaw, this.pitch);
   }
 
   update(dt: number): void {
@@ -123,25 +120,18 @@ export class FirstPersonController {
       this.grounded = false;
     }
 
-    // ---- head bob + pasos ----
+    // ---- pasos + modificadores de cámara ----
     const planarSpeed = Math.hypot(targetVX, targetVZ);
-    let bobOffset = 0;
+    const speed01 = clamp(planarSpeed / this.runSpeed, 0, 1);
     if (this.grounded && planarSpeed > 0.1) {
-      const previous = this.bobPhase;
-      this.bobPhase += dt * (this.sprinting ? 11.5 : 7.6);
-      bobOffset = Math.sin(this.bobPhase) * (this.sprinting ? 0.045 : 0.028);
-      if (Math.floor(previous / Math.PI) !== Math.floor(this.bobPhase / Math.PI)) {
+      const previous = this.stepPhase;
+      this.stepPhase += dt * (this.sprinting ? 11.5 : 7.6);
+      if (Math.floor(previous / Math.PI) !== Math.floor(this.stepPhase / Math.PI)) {
         this.onFootstep?.(this.sprinting);
       }
-    } else {
-      this.bobPhase = damp(this.bobPhase, Math.round(this.bobPhase / Math.PI) * Math.PI, 0.08, dt);
     }
 
-    this.syncCamera(bobOffset);
-  }
-
-  private syncCamera(bob: number): void {
-    this.camera.position.set(this.position.x, this.position.y + bob, this.position.z);
-    this.camera.rotation.set(this.pitch, this.yaw, 0);
+    this.view.update(dt, { speed01, sprinting: this.sprinting });
+    this.view.applyTo(this.position, this.yaw, this.pitch);
   }
 }

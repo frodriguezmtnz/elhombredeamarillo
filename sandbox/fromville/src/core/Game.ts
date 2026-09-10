@@ -1,40 +1,44 @@
 import * as THREE from 'three';
+import { FirstPersonCamera } from '../camera/FirstPersonCamera';
 import { FirstPersonController } from '../player/FirstPersonController';
+import { PostFX } from '../rendering/PostFX';
 import { DebugOverlay } from '../ui/DebugOverlay';
 import { CollisionSystem } from '../world/CollisionSystem';
 import { World } from '../world/World';
 import { InputManager } from './InputManager';
 import { Renderer } from './Renderer';
+import type { Quality } from './Settings';
 import { Settings } from './Settings';
 
 type Mode = 'MENU' | 'PLAYING' | 'PAUSED';
 
-function el(tag: string, id?: string, className?: string): HTMLElement {
+function el(tag: string, className?: string): HTMLElement {
   const node = document.createElement(tag);
-  if (id) node.id = id;
   if (className) node.className = className;
   return node;
 }
 
 /**
- * Game — orquestador Fase 1: monta renderer + mundo gris + controlador FPS + bucle único.
+ * Game — orquestador Fase 2: renderer + composer (PostFX) + cámara FPS + mundo gris + bucle único.
  * Menú → clic → pointer lock → caminar. Esc libera el ratón → pausa. F3 → debug.
- * Sin día/noche, sin criaturas y sin interactuables todavía (Fases 3, 6, 8, 9).
+ * Aún sin día/noche, criaturas ni interactuables (Fases 3, 6, 8, 9).
  */
 export class Game {
   readonly settings = new Settings();
   readonly seed: number;
   readonly scene = new THREE.Scene();
-  readonly camera: THREE.PerspectiveCamera;
   readonly collisions = new CollisionSystem();
+  readonly view: FirstPersonCamera;
 
   private readonly renderer: Renderer;
   private readonly input: InputManager;
   private readonly debug: DebugOverlay;
   private readonly uiRoot: HTMLElement;
+  private readonly reducedMotion: boolean;
 
   private world: World | null = null;
   private player: FirstPersonController | null = null;
+  private postfx: PostFX | null = null;
 
   private startEl!: HTMLElement;
   private startButton!: HTMLButtonElement;
@@ -60,8 +64,12 @@ export class Game {
 
     this.renderer = new Renderer(sceneRoot, this.settings.get());
     this.input = new InputManager(this.renderer.domElement);
-    this.camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.view = new FirstPersonCamera(window.innerWidth / window.innerHeight);
     this.debug = new DebugOverlay(uiRoot);
+
+    this.reducedMotion =
+      typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.view.reducedMotion = this.reducedMotion;
 
     this.buildUi();
 
@@ -72,7 +80,7 @@ export class Game {
   }
 
   private buildUi(): void {
-    this.crosshairEl = el('div', 'crosshair');
+    this.crosshairEl = el('div');
     this.crosshairEl.id = 'crosshair';
 
     this.captionEl = el('div');
@@ -80,15 +88,15 @@ export class Game {
 
     this.startEl = el('div');
     this.startEl.id = 'start';
-    const tag = el('div', undefined, 'tag');
-    tag.textContent = 'prototipo · fase 1';
+    const tag = el('div', 'tag');
+    tag.textContent = 'prototipo · fase 2';
     const title = el('h1');
     title.textContent = 'FROMVILLE';
     this.startButton = el('button') as HTMLButtonElement;
     this.startButton.textContent = 'Entrar al pueblo';
     this.startButton.addEventListener('click', () => this.start());
-    const hint = el('div', undefined, 'hint');
-    hint.textContent = 'WASD moverse · Shift correr · Ratón mirar · Esc pausa · F3 debug';
+    const hint = el('div', 'hint');
+    hint.textContent = 'WASD moverse · Shift correr · Ratón mirar · Esc pausa · F3 debug · F4 calidad';
     this.startEl.append(tag, title, this.startButton, hint);
     this.startEl.classList.add('open'); // MENU: visible hasta pulsar "Entrar al pueblo"
 
@@ -97,13 +105,17 @@ export class Game {
 
   async init(): Promise<void> {
     this.world = new World(this.scene, this.seed, this.collisions);
-    this.player = new FirstPersonController(this.camera, this.input, this.settings, this.collisions, {
+    this.player = new FirstPersonController(this.view, this.input, this.settings, this.collisions, {
       heightAt: (x, z) => (this.world ? this.world.heightAt(x, z) : 0),
     });
+    this.postfx = new PostFX(this.renderer.webgl, this.scene, this.view.camera, this.settings.get().quality);
+    this.postfx.reducedMotion = this.reducedMotion;
+    this.postfx.setQuality(this.settings.get().quality);
+
     const spawn = this.world.layout.spawn;
     this.player.teleport(spawn.x, spawn.z, spawn.yaw);
 
-    this.renderer.render(this.scene, this.camera);
+    this.renderFrame(0);
     this.caption('Marrow Falls no aparece en ningún mapa.', 4.5);
     await new Promise((resolve) => window.setTimeout(resolve, 100));
 
@@ -134,10 +146,30 @@ export class Game {
     this.captionTimer = seconds;
   }
 
-  private onResize(): void {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
-    this.camera.updateProjectionMatrix();
+  /** F4: alterna LOW→MED→HIGH en caliente (pixelRatio + passes del composer). */
+  private cycleQuality(): void {
+    const order: Quality[] = ['LOW', 'MED', 'HIGH'];
+    const current = this.settings.get().quality;
+    const next = order[(order.indexOf(current) + 1) % order.length] as Quality;
+    this.settings.set('quality', next);
+    this.renderer.applySettings(this.settings.get());
     this.renderer.resize();
+    this.postfx?.setQuality(next);
+    this.postfx?.setSize(window.innerWidth, window.innerHeight);
+    this.caption(`Calidad: ${next}`, 2);
+  }
+
+  private onResize(): void {
+    const aspect = window.innerWidth / window.innerHeight;
+    this.view.resize(aspect);
+    this.renderer.resize();
+    this.postfx?.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  private renderFrame(dt: number): void {
+    this.renderer.webgl.info.reset();
+    if (this.postfx) this.postfx.render(dt);
+    else this.renderer.render(this.scene, this.view.camera);
   }
 
   private loop = (time: number): void => {
@@ -146,6 +178,7 @@ export class Game {
     this.lastTime = time;
 
     if (this.input.pressed('F3')) this.debug.toggle();
+    if (this.input.pressed('F4')) this.cycleQuality();
 
     if (this.mode === 'PLAYING' && this.player) this.player.update(dt);
 
@@ -154,7 +187,7 @@ export class Game {
       if (this.captionTimer <= 0) this.captionEl.classList.remove('on');
     }
 
-    this.renderer.render(this.scene, this.camera);
+    this.renderFrame(dt);
     this.input.endFrame();
 
     this.frames++;
@@ -172,11 +205,13 @@ export class Game {
     const info = this.renderer.webgl.info;
     const p = this.player?.position;
     const moving = this.player?.sprinting ? 'run' : p ? 'walk/idle' : '—';
+    const fx = this.postfx ? `postfx ${this.postfx.quality}${this.postfx.bloomOn ? '+bloom' : ''}` : 'postfx off';
     this.debug.setLine(0, `FPS ${this.fps} · ${this.mode} · q ${this.settings.get().quality} · ${moving}`);
+    this.debug.setLine(1, `${fx} · grain ${this.reducedMotion ? 'off(RM)' : 'on'}`);
     this.debug.setLine(
-      1,
+      2,
       `draw ${info.render.calls} · tris ${info.render.triangles} · geo ${info.memory.geometries} · tex ${info.memory.textures}`,
     );
-    if (p) this.debug.setLine(2, `pos ${p.x.toFixed(1)}, ${p.y.toFixed(1)}, ${p.z.toFixed(1)}`);
+    if (p) this.debug.setLine(3, `pos ${p.x.toFixed(1)}, ${p.y.toFixed(1)}, ${p.z.toFixed(1)}`);
   }
 }

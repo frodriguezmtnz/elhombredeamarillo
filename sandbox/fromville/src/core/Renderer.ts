@@ -22,6 +22,8 @@ export class Renderer {
       antialias: settings.quality !== 'LOW',
       powerPreference: 'high-performance',
     });
+    // Con EffectComposer se hacen varios renderer.render por frame; acumulamos stats y reseteamos a mano.
+    this.webgl.info.autoReset = false;
     this.webgl.setClearColor(0x05070a, 1);
     this.applySettings(settings);
     this.resize();
@@ -33,11 +35,13 @@ export class Renderer {
   }
 
   applySettings(settings: SettingsSnapshot): void {
-    const maxDpr = settings.quality === 'HIGH' ? 2 : settings.quality === 'MED' ? 1.5 : 1;
+    // pixelRatio cap por calidad (PERFORMANCE.md §1): LOW 1.0 · MED 1.25 · HIGH 2.0
+    const maxDpr = settings.quality === 'HIGH' ? 2 : settings.quality === 'MED' ? 1.25 : 1;
     this.webgl.setPixelRatio(Math.min(window.devicePixelRatio, maxDpr));
     this.webgl.outputColorSpace = THREE.SRGBColorSpace;
+    // El tone mapping ACES lo aplica el OutputPass del composer; el exposure vive aquí.
     this.webgl.toneMapping = THREE.ACESFilmicToneMapping;
-    this.webgl.toneMappingExposure = 1.25;
+    this.webgl.toneMappingExposure = 1.12;
   }
 
   resize(): void {
