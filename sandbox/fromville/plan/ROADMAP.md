@@ -102,8 +102,8 @@ resolver. Grabación de playtest de 3 personas sin tutorial = validación.
 
 ## 5. Future roadmap (post-slice)
 
-- Más POIs del mapa (talleres, lagos, torre, cueva del talismán) y el **Late Game** (Colunist Houses,
-  el pacto, la salida real con sacrificio).
+- Más POIs del mapa (talleres, lagos, torre, Cueva de los Sellos) y el **Late Game** (La Colina /
+  Los Colunist, el pacto, la salida real: *terminar tu propia historia*).
 - Más criaturas (imitadores, observadores) y variantes por seed.
 - **Weather** (lluvia, viento fuerte) y estaciones; el bosque "respira".
 - **New Game+**: el bucle cambia; lo que sabías ya no vale.
