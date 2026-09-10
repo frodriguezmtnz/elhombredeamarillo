@@ -103,6 +103,12 @@ export class PostFX {
     this.atmosphere.uniforms.uSaturation.value = saturation;
   }
 
+  /** nightFactor 0..1: de día apenas hay viñeta (ver el entorno); de noche se cierra un poco
+   * para dar encuadre, pero muy lejos del 0.95 que dejaba la noche ilegible. */
+  setAtmosphere(nightFactor: number): void {
+    this.atmosphere.uniforms.uVignette.value = 0.42 + nightFactor * 0.22;
+  }
+
   setQuality(quality: Quality): void {
     this.quality = quality;
     this.bloom.enabled = quality !== 'LOW';
@@ -111,7 +117,7 @@ export class PostFX {
     this.bloom.threshold = 0.72;
 
     const u = this.atmosphere.uniforms;
-    u.uVignette.value = 0.95;
+    u.uVignette.value = 0.42;
     u.uSaturation.value = quality === 'LOW' ? 0.86 : 0.8;
     u.uGrain.value = this.reducedMotion ? 0 : quality === 'HIGH' ? 0.07 : quality === 'MED' ? 0.05 : 0;
   }

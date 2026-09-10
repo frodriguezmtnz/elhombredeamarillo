@@ -21,6 +21,7 @@ tenga sobre qué operar).
 | **5** | Blender pipeline | ✅ Batch `bpy` → kits/hero → GLB → carga en Three (DRACO/KTX2 cableados) | `BLENDER_PIPELINE §6.1` |
 | **6** | Interaction & refugios | ✅ `IInteractable` + `Door`(E/Shift+E sellar) + `Note` + `RefugeSystem` (regla de sellos) | `GAME_DESIGN §5-6` |
 | **7** | Audio | ✅ Web Audio procedural + `PannerNode`/HRTF + capas ambient/player/horror + cues de interacción | `TECH_ARCHITECTURE §8` |
+| **7.5** | Pulido (feedback) | ✅ Movimiento real arreglado + slider velocidad · linterna (F, batería) · noche navegable (viñeta dinámica) · farolas con luz · 1500 árboles · casas GLB (MCP) escaladas a huella | `GAME_DESIGN §7` |
 | **8** | Creature + AI | "The Hollow" + Perception + FSM + waypoints/steering | `AI` |
 | **9** | Horror Director | TensionModel + EventBook + control de luces/fog/sonido/criatura | `HORROR_SYSTEM` |
 | **10** | Narrative & mystery | Story/Clue/Lore/Dialogue + beats + cuaderno + la "fotografía" | `NARRATIVE_MYSTERY` |

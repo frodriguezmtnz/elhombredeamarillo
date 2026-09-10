@@ -8,6 +8,13 @@ export const MAT = {
   roof: new THREE.MeshStandardMaterial({ color: 0x33373c, roughness: 0.95 }),
   dark: new THREE.MeshStandardMaterial({ color: 0x14171a, roughness: 1 }),
   accent: new THREE.MeshStandardMaterial({ color: 0x8a4a24, roughness: 0.8 }),
+  /** cabeza de farola: emisivo (bloom lo capta). La intensidad la fija el Game según nightFactor. */
+  lampGlow: new THREE.MeshStandardMaterial({
+    color: 0x1a1408,
+    emissive: 0xffb45c,
+    emissiveIntensity: 0,
+    roughness: 1,
+  }),
   metal: new THREE.MeshStandardMaterial({ color: 0x3d4247, roughness: 0.55, metalness: 0.4 }),
   trunk: new THREE.MeshStandardMaterial({ color: 0x5a4632, roughness: 1 }),
   foliage: new THREE.MeshStandardMaterial({ color: 0x33463a, roughness: 1 }),

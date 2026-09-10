@@ -41,7 +41,7 @@ export class Renderer {
     this.webgl.outputColorSpace = THREE.SRGBColorSpace;
     // El tone mapping ACES lo aplica el OutputPass del composer; el exposure vive aquí.
     this.webgl.toneMapping = THREE.ACESFilmicToneMapping;
-    this.webgl.toneMappingExposure = 1.12;
+    this.webgl.toneMappingExposure = 1.2;
   }
 
   resize(): void {

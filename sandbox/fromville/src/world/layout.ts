@@ -9,11 +9,11 @@ export const WORLD = {
   /** coordenada de arco del núcleo urbano (control 0, tramo suavizado = calle principal) */
   villageS: 0,
   /** árboles con lateral menor que esto usan geometría detallada; el resto, impostor */
-  nearLateral: 22,
-  treeCount: 340,
-  rockCount: 46,
+  nearLateral: 26,
+  treeCount: 1500,
+  rockCount: 60,
   /** radio de "plaza" alrededor del núcleo donde no se ponen árboles (deja sitio al pueblo) */
-  townKeep: 74,
+  townKeep: 55,
 } as const;
 
 export type LandmarkKind = 'house' | 'diner' | 'sheriff' | 'church' | 'gas' | 'watertower';
@@ -135,12 +135,12 @@ export function buildLayout(seed: number): WorldLayout {
   // --- bosque: árboles fuera de calzada y plaza, con tier near/far por distancia a la carretera ---
   const trees: TreeSpec[] = [];
   let guard = 0;
-  while (trees.length < WORLD.treeCount && guard < WORLD.treeCount * 8) {
+  while (trees.length < WORLD.treeCount && guard < WORLD.treeCount * 10) {
     guard++;
     const s = rand.range(0, curve.length);
     const side = rand.sign();
-    const lateral = hw + 8 + rand.range(0, 42);
-    if (ringDelta(s, WORLD.villageS, curve.length) < WORLD.townKeep && lateral < 30) continue;
+    const lateral = hw + 7 + rand.range(0, 55);
+    if (ringDelta(s, WORLD.villageS, curve.length) < WORLD.townKeep && lateral < 24) continue;
     const p = place(curve, s, lateral, side, pose);
     const scale = rand.range(0.7, 1.7);
     trees.push({ x: p.x, z: p.z, scale, r: 0.6 * scale, near: lateral < WORLD.nearLateral });

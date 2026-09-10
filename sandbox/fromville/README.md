@@ -21,13 +21,14 @@ con **LOD impostor** (`world/Forest.ts`) y farolas/rocas instanciadas (`world/Pr
 (GLTFLoader + DRACO/KTX2 cableados) y colocados junto a la plaza por `world/HeroProps.ts`. **Los POIs
 del pueblo (diner, comisaría, iglesia, gasolinera, torre de agua) son kits GLB modelados en Blender en
 vía MCP** (`world/TownKits.ts` reemplaza el gris-box por su `.glb` en `public/assets/kits/`, con
-fallback procedural; las casas aleatorias siguen procedurales). Debug **F3** muestra `assets GLB N ·
-townKits N`. **Fase 6:** sistema de interacción genérico `interaction/` — `IInteractable`
+fallback procedural; las **casas** `house-*` también son GLB — 3 variantes `house-a/b/c.glb` sobre
+huella canónica 6×6 que `TownKits` escala a la huella aleatoria de cada seed). Debug **F3** muestra
+`assets GLB N · townKits N`. **Fase 6:** sistema de interacción genérico `interaction/` — `IInteractable`
 + `InteractionManager` (raycast por proximidad + cono de mira, prompt bajo la retícula) con **puertas**
 (`Door`: abrir/cerrar con **E**, **sellar** con **Shift+E**) y **notas** legibles. `RefugeSystem` aplica
 la **regla de sellos**: un refugio solo es seguro si TODAS sus puertas están cerradas **y** selladas
 (seguridad activa, recalculada cada frame; base de checkpoints). Debug **F3** muestra refugio/estado.
-Aún sin interiores transitables (las puertas sellan desde el umbral) ni linterna/criaturas (Fases 8, 9).
+Aún sin interiores transitables (las puertas sellan desde el umbral) ni criaturas (Fase 9).
 **Fase 7:** audio **100 % procedural** (`core/AudioManager` con buses ambient/player/horror):
 `AmbientAudio` (viento con ráfagas LFO + drone sub-bass que crece de noche; `setIntensity()` deja al
 Horror Director cortar el ambiente con `silence()`), `SpatialAudio` (`PannerNode`/HRTF con el listener
@@ -35,6 +36,18 @@ anclado a la cámara), `PlayerAudio` (pasos + respiración al correr) y `HorrorA
 crujidos espacializados — "sound before sight"). Cues de puerta/cerrojo/papel en la interacción. El
 `AudioContext` arranca con el primer clic (política de autoplay); **M** silencia. Mezcla
 (master/ambient/effects) persistida en `Settings`.
+
+**Pulido jugable/visual (post-Fase 7):** se arregló la **integración de movimiento** (antes se
+amortiguaba la posición hacia `pos+v·dt` recortando la velocidad real al ~8 %; ahora se suaviza el
+**vector velocidad** y se integra, con andar 5 / correr 11 m/s) y se añadió un **slider de velocidad**
+y de volumen en el overlay (persistidos en `Settings.moveSpeed`). **Linterna** (`player/Flashlight.ts`,
+tecla **F**): SpotLight anclado a la cámara con batería que se agota/repone, parpadeo según carga y
+hook `setStress()` para el Horror Director; HUD de batería abajo-izquierda. **Noche navegable**: más
+ambiente lunar y menos niebla en NIGHT/DANGER, **viñeta dinámica** (`PostFX.setAtmosphere`) lejos del
+0.95 ilegible y exposición 1.2. **Farolas que alumbran**: cabezas emisivas (`MAT.lampGlow`) + pool de
+5 `PointLight` (`world/LampLights.ts`) que se reposicionan sobre las farolas más cercanas, escaladas
+por `nightFactor`. **Bosque denso**: `treeCount` 340 → **1500**. **Casas en Blender**: 3 variantes GLB
+(`house-a/b/c`) vía MCP escaladas a la huella. Sombras reales aún off (a proteger FPS).
 
 ## Scripts
 
@@ -51,9 +64,12 @@ También desde la raíz: `pnpm dev:fromville`, `pnpm build:fromville`, `pnpm typ
 ## Controles
 
 - **Clic** en la escena → capturar ratón (pointer lock) y caminar.
-- **WASD / flechas** moverse · **Shift** correr (hace ruido de noche, Fase 8) · **Ratón** mirar.
+- **WASD / flechas** moverse · **Shift** correr (hace ruido de noche, Fase 8) · **Ratón** mirar. La
+  **velocidad** (y el volumen) se ajustan con los **sliders** del panel de entrada (persistidos).
 - **E** interactuar (abrir/cerrar puerta, leer nota) · **Shift+E** sellar/quitar el sello de una puerta
   **cerrada** (base de los refugios seguros). El prompt aparece bajo la retícula al apuntar a algo.
+- **F** enciende/apaga la **linterna** (consume batería; se recupera apagada; parpadea cuando queda
+  poca). La batería aparece abajo a la izquierda al usarla.
 - **M** silencia/reactiva el audio. El sonido arranca al pulsar **Entrar al pueblo** (requiere gesto del
   usuario por la política de autoplay del navegador).
 - **Esc** pausa (libera el ratón). **F3** overlay de debug (FPS/draw/tris/fase/posición/assets/refugio). **F4** cambia

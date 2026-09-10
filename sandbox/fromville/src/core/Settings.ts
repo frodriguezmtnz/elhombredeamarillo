@@ -3,6 +3,7 @@ export type Quality = 'LOW' | 'MED' | 'HIGH';
 export interface SettingsSnapshot {
   quality: Quality;
   sensitivity: number;
+  moveSpeed: number; // multiplicador de velocidad de movimiento (0.6..1.6)
   masterVolume: number; // 0..1
   ambientVolume: number; // 0..1
   effectsVolume: number; // 0..1
@@ -13,6 +14,7 @@ const STORAGE_KEY = 'fromville:settings';
 const DEFAULTS: SettingsSnapshot = {
   quality: 'MED',
   sensitivity: 1,
+  moveSpeed: 1,
   masterVolume: 0.8,
   ambientVolume: 0.9,
   effectsVolume: 1,

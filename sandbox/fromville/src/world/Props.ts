@@ -12,7 +12,7 @@ export function buildProps(lamps: LampSpec[], rocks: RockSpec[]): THREE.Group {
 
   if (lamps.length > 0) {
     const pole = new THREE.InstancedMesh(lampPoleGeo(), MAT.metal, lamps.length);
-    const head = new THREE.InstancedMesh(lampHeadGeo(), MAT.accent, lamps.length);
+    const head = new THREE.InstancedMesh(lampHeadGeo(), MAT.lampGlow, lamps.length);
     lamps.forEach((l, i) => {
       dummy.position.set(l.x, 0, l.z);
       dummy.rotation.set(0, 0, 0);

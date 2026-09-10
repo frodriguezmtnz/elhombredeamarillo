@@ -16,6 +16,8 @@ export interface GroundProvider {
  */
 export class FirstPersonController {
   readonly position = new THREE.Vector3();
+  private velX = 0;
+  private velZ = 0;
   private velocityY = 0;
   private yaw = 0;
   private pitch = 0;
@@ -24,8 +26,8 @@ export class FirstPersonController {
 
   readonly eyeHeight = 1.68;
   readonly radius = 0.38;
-  walkSpeed = 5.6;
-  runSpeed = 9.2;
+  walkSpeed = 5;
+  runSpeed = 11;
   sprinting = false;
 
   onFootstep: ((running: boolean) => void) | null = null;
@@ -64,6 +66,8 @@ export class FirstPersonController {
     this.yaw = yaw;
     this.pitch = 0;
     this.velocityY = 0;
+    this.velX = 0;
+    this.velZ = 0;
     this.view.resetBob();
     this.view.applyTo(this.position, this.yaw, this.pitch);
   }
@@ -85,7 +89,7 @@ export class FirstPersonController {
     if (this.input.actionDown('left')) moveX -= 1;
     if (this.input.actionDown('right')) moveX += 1;
     this.sprinting = this.input.actionDown('run') && (moveX !== 0 || moveZ !== 0);
-    const speed = this.sprinting ? this.runSpeed : this.walkSpeed;
+    const speed = (this.sprinting ? this.runSpeed : this.walkSpeed) * this.settings.get().moveSpeed;
 
     let targetVX = 0;
     let targetVZ = 0;
@@ -99,11 +103,13 @@ export class FirstPersonController {
       targetVZ = (moveZ * cos - moveX * sin) * speed;
     }
 
-    const pos2D = { x: this.position.x, z: this.position.z };
-    const smoothing = this.sprinting ? 0.09 : 0.13;
-    pos2D.x = damp(pos2D.x, pos2D.x + targetVX * dt, smoothing, dt);
-    pos2D.z = damp(pos2D.z, pos2D.z + targetVZ * dt, smoothing, dt);
+    // Suavizamos la VELOCIDAD (media de vida corta → respuesta viva) y luego integramos posición.
+    // (Antes se amortiguaba la posición hacia pos+v·dt, lo que recortaba la velocidad real al ~8 %.)
+    const accel = this.grounded ? 0.05 : 0.18; // menos control en el aire
+    this.velX = damp(this.velX, targetVX, accel, dt);
+    this.velZ = damp(this.velZ, targetVZ, accel, dt);
 
+    const pos2D = { x: this.position.x + this.velX * dt, z: this.position.z + this.velZ * dt };
     this.collisions.resolve(pos2D, this.radius);
     this.position.x = pos2D.x;
     this.position.z = pos2D.z;
@@ -121,7 +127,7 @@ export class FirstPersonController {
     }
 
     // ---- pasos + modificadores de cámara ----
-    const planarSpeed = Math.hypot(targetVX, targetVZ);
+    const planarSpeed = Math.hypot(this.velX, this.velZ);
     const speed01 = clamp(planarSpeed / this.runSpeed, 0, 1);
     if (this.grounded && planarSpeed > 0.1) {
       const previous = this.stepPhase;

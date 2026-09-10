@@ -10,13 +10,16 @@ import { InteractionManager } from '../interaction/InteractionManager';
 import { Note } from '../interaction/Note';
 import { RefugeSystem } from '../interaction/RefugeSystem';
 import { FirstPersonController } from '../player/FirstPersonController';
+import { Flashlight } from '../player/Flashlight';
 import { PostFX } from '../rendering/PostFX';
 import { DebugOverlay } from '../ui/DebugOverlay';
 import { CollisionSystem } from '../world/CollisionSystem';
 import { placeHeroProps } from '../world/HeroProps';
 import { type InteractionBundle, buildInteractions } from '../world/Interactions';
+import { LampLights } from '../world/LampLights';
 import { upgradeTownKits } from '../world/TownKits';
 import { World } from '../world/World';
+import { MAT } from '../world/kits';
 import { AssetManager } from './AssetManager';
 import { AudioManager } from './AudioManager';
 import { InputManager } from './InputManager';
@@ -79,6 +82,8 @@ export class Game {
   private spatialAudio: SpatialAudio | null = null;
   private playerAudio: PlayerAudio | null = null;
   private horrorAudio: HorrorAudio | null = null;
+  private lampLights: LampLights | null = null;
+  private flashlight: Flashlight | null = null;
   private audioStarted = false;
   private muted = false;
   private fastTime = false;
@@ -88,6 +93,8 @@ export class Game {
   private captionEl!: HTMLElement;
   private promptEl!: HTMLElement;
   private crosshairEl!: HTMLElement;
+  private batteryEl!: HTMLElement;
+  private batteryFill!: HTMLElement;
   private captionTimer = 0;
 
   private mode: Mode = 'MENU';
@@ -133,6 +140,10 @@ export class Game {
     this.promptEl = el('div');
     this.promptEl.id = 'prompt';
 
+    this.batteryEl = el('div', 'battery');
+    this.batteryEl.innerHTML = '<span class="bulb"></span><span class="bar"><i></i></span>';
+    this.batteryFill = this.batteryEl.querySelector('i') as HTMLElement;
+
     this.startEl = el('div');
     this.startEl.id = 'start';
     const tag = el('div', 'tag');
@@ -144,11 +155,43 @@ export class Game {
     this.startButton.addEventListener('click', () => this.start());
     const hint = el('div', 'hint');
     hint.textContent =
-      'WASD moverse · Shift correr · E interactuar · Shift+E sellar puerta · Esc pausa · M silencio · F3 debug · F4 calidad · F5 fase · F6 tiempo ×8';
-    this.startEl.append(tag, title, this.startButton, hint);
+      'WASD moverse · Shift correr · E interactuar · Shift+E sellar · F linterna · Esc pausa · M silencio · F3 debug · F4 calidad · F5 fase · F6 tiempo ×8';
+    const settings = el('div', 'settings');
+    settings.append(
+      this.sliderRow('Velocidad', 0.6, 1.6, 0.05, this.settings.get().moveSpeed, (v) =>
+        this.settings.set('moveSpeed', v),
+      ),
+      this.sliderRow('Volumen', 0, 1, 0.05, this.settings.get().masterVolume, (v) =>
+        this.settings.set('masterVolume', v),
+      ),
+    );
+    this.startEl.append(tag, title, this.startButton, settings, hint);
     this.startEl.classList.add('open'); // MENU: visible hasta pulsar "Entrar al pueblo"
 
-    this.uiRoot.append(this.crosshairEl, this.captionEl, this.promptEl, this.startEl);
+    this.uiRoot.append(this.crosshairEl, this.captionEl, this.promptEl, this.batteryEl, this.startEl);
+  }
+
+  /** fila de ajuste con etiqueta + <input type=range> persistido en Settings. */
+  private sliderRow(
+    label: string,
+    min: number,
+    max: number,
+    step: number,
+    value: number,
+    onInput: (v: number) => void,
+  ): HTMLElement {
+    const row = el('label', 'row');
+    const name = el('span', 'name');
+    name.textContent = label;
+    const input = el('input') as HTMLInputElement;
+    input.type = 'range';
+    input.min = String(min);
+    input.max = String(max);
+    input.step = String(step);
+    input.value = String(value);
+    input.addEventListener('input', () => onInput(Number(input.value)));
+    row.append(name, input);
+    return row;
   }
 
   async init(): Promise<void> {
@@ -166,6 +209,12 @@ export class Game {
       this.settings.get().quality,
     );
     this.dayNight.onPhaseChange = (phase) => this.onPhaseChange(phase);
+
+    // Pulido: linterna ligada a la cámara + pool de luces de farola sobre las cercanas al jugador.
+    // La cámara debe estar en el grafo para que la SpotLight (hija suya) se recorra y emita luz.
+    this.scene.add(this.view.camera);
+    this.flashlight = new Flashlight(this.view.camera);
+    this.lampLights = new LampLights(this.scene, this.world.layout.lamps, 5);
 
     // Fase 5: hero assets de Blender (GLB) cargados de public/assets (no bloquean el menú).
     this.assets = new AssetManager(this.renderer.webgl);
@@ -331,11 +380,27 @@ export class Game {
       this.audio?.setMuted(this.muted);
       this.caption(this.muted ? 'Audio silenciado' : 'Audio activo', 1.5);
     }
+    if (this.mode === 'PLAYING' && this.input.pressed('KeyF') && this.flashlight) {
+      const before = this.flashlight.active;
+      const ok = this.flashlight.toggle();
+      if (!before && !ok) this.caption('Linterna sin batería', 1.5);
+    }
 
     if (this.mode === 'PLAYING' && this.player) this.player.update(dt);
 
     this.dayNight?.update(dt);
-    if (this.dayNight && this.postfx) this.postfx.setMood(this.dayNight.moodTint, this.dayNight.moodSaturation);
+    if (this.dayNight && this.postfx) {
+      this.postfx.setMood(this.dayNight.moodTint, this.dayNight.moodSaturation);
+      this.postfx.setAtmosphere(this.dayNight.nightFactor);
+    }
+    if (this.dayNight && this.player) {
+      const p = this.player.position;
+      const night = this.dayNight.nightFactor;
+      this.lampLights?.update(p.x, p.z, night);
+      MAT.lampGlow.emissiveIntensity = 0.15 + night * 2.6;
+      if (this.mode === 'PLAYING') this.flashlight?.update(dt);
+    }
+    this.updateBatteryHud();
 
     if (this.mode === 'PLAYING' && this.player && this.interactions && this.dayNight) {
       this.interactions.update({ dayFactor: this.dayNight.dayFactor, phase: this.dayNight.currentPhase });
@@ -370,6 +435,16 @@ export class Game {
     }
     this.debug.update(dt);
   };
+
+  private updateBatteryHud(): void {
+    const fl = this.flashlight;
+    if (!fl) return;
+    const visible = this.mode === 'PLAYING' && (fl.active || fl.level < 0.995);
+    this.batteryEl.classList.toggle('on', visible);
+    this.batteryEl.classList.toggle('low', fl.level < 0.28);
+    this.batteryEl.classList.toggle('dead', fl.level <= 0.02);
+    this.batteryFill.style.width = `${Math.round(fl.level * 100)}%`;
+  }
 
   private updateDebug(): void {
     const info = this.renderer.webgl.info;

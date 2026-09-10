@@ -143,6 +143,77 @@ body {
   color: var(--accent);
   font-size: 0.72rem;
   letter-spacing: 0.05em;
+  max-width: 80vw;
+  text-align: center;
+}
+#start .settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+#start .settings .row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+#start .settings .row .name {
+  width: 6.5rem;
+  text-align: right;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+#start .settings input[type="range"] {
+  pointer-events: auto;
+  width: min(46vw, 260px);
+  accent-color: var(--ink);
+}
+
+/* HUD de batería de la linterna (esquina inferior izquierda, solo al usarla) */
+.battery {
+  position: absolute;
+  left: 1.2rem;
+  bottom: 1.2rem;
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.battery.on {
+  display: flex;
+}
+.battery .bulb {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+.battery.dead .bulb {
+  background: #5a2a2a;
+  box-shadow: none;
+}
+.battery .bar {
+  width: 120px;
+  height: 8px;
+  border: 1px solid var(--accent);
+  background: rgb(0 0 0 / 40%);
+}
+.battery .bar i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--ink);
+  transition: width 0.15s linear;
+}
+.battery.low .bar i {
+  background: var(--accent);
+}
+.battery.dead .bar i {
+  background: #5a2a2a;
 }
 
 /* debug F3 */
