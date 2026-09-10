@@ -73,6 +73,22 @@ importers:
         specifier: ^5.8.0
         version: 5.9.3
 
+  sandbox/fromville:
+    dependencies:
+      three:
+        specifier: ^0.185.1
+        version: 0.185.1
+    devDependencies:
+      '@types/three':
+        specifier: ^0.185.4
+        version: 0.185.4
+      typescript:
+        specifier: ^5.8.0
+        version: 5.9.3
+      vite:
+        specifier: ^7.1.0
+        version: 7.3.6(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.49.2)
+
   sandbox/the-road:
     dependencies:
       three:

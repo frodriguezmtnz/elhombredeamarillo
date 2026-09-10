@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FROMVILLE — walking sim de terror (prototipo)</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="scene-root"></div>
+    <div id="ui-root"></div>
+    <div id="no-webgl" hidden>
+      <div class="no-webgl-card">
+        <h1>Sin WebGL2</h1>
+        <p>Este navegador no puede ejecutar FROMVILLE. Prueba con Chrome, Edge o Firefox actualizado.</p>
+        <button id="no-webgl-retry">Reintentar</button>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

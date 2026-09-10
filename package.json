@@ -14,7 +14,12 @@
     "dev:road": "pnpm --filter the-road dev",
     "build:road": "pnpm --filter the-road build",
     "preview:road": "pnpm --filter the-road preview",
-    "typecheck:road": "pnpm --filter the-road typecheck"
+    "typecheck:road": "pnpm --filter the-road typecheck",
+    "dev:fromville": "pnpm --filter fromville dev",
+    "build:fromville": "pnpm --filter fromville build",
+    "preview:fromville": "pnpm --filter fromville preview",
+    "typecheck:fromville": "pnpm --filter fromville typecheck",
+    "smoke:fromville": "pnpm --filter fromville smoke"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.0",
