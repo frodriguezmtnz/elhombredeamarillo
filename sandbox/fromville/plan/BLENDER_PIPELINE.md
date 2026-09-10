@@ -149,6 +149,22 @@ blender --background --python blender/scripts/gen_assets.py -- <out_dir_glb>
 - Cuándo usar cada vía: **batch** para kits/LOD deterministas y regeneración; **MCP interactivo**
   para esculpir/retoquetear hero assets a mano (ver §3 y `AI_AGENT_WORKFLOW.md`).
 
+### 6.2 Pipeline interactivo por MCP (POIs del pueblo — implementado tras reiniciar OpenCode)
+
+Al disponerse de las tools `blender_*` en sesión, los **5 POIs grandes** se modelaron **en el Blender
+vivo del usuario** (colección `FROMVILLE_KITS`, sin tocar su escena) con `execute_blender_code`:
+primitivas + paleta de materiales PBR (pared/techo/cristal/metálico/acento), a las dimensiones exactas
+del `layout`, base en y=0 y **entrada en +X** (que con `rotation.y = lm.rot` en Three mira a la
+carretera). Cada kit se exportó aislado con `export_scene.gltf(use_selection, export_yup)` a
+`public/assets/kits/*.glb`.
+
+- **Runtime:** `src/world/TownKits.ts` → `upgradeTownKits(assets, world)` clona cada GLB por `AssetManager`
+  y **sustituye** el nodo procedural homónimo (`node.name = lm.id`), con fallback si falta el archivo.
+  Las casas (huella aleatoria) siguen procedurales.
+- **Verificación visual:** `get_screenshot_of_area_as_image(VIEW_3D)` → los kits se ven en el viewport.
+- El batch (`gen_assets.py`) sigue vigente para CI/reproducibilidad; esta vía MCP es para autoría
+  iterativa donde un humano ve/ajusta el resultado en Blender.
+
 ---
 
 ## 7. Criaturas

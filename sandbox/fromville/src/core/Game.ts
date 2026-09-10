@@ -15,6 +15,7 @@ import { DebugOverlay } from '../ui/DebugOverlay';
 import { CollisionSystem } from '../world/CollisionSystem';
 import { placeHeroProps } from '../world/HeroProps';
 import { type InteractionBundle, buildInteractions } from '../world/Interactions';
+import { upgradeTownKits } from '../world/TownKits';
 import { World } from '../world/World';
 import { AssetManager } from './AssetManager';
 import { AudioManager } from './AudioManager';
@@ -69,6 +70,7 @@ export class Game {
   private dayNight: DayNight | null = null;
   private assets: AssetManager | null = null;
   private heroCount = 0;
+  private townKits = 0;
   private interactions: InteractionManager | null = null;
   private bundle: InteractionBundle | null = null;
   private refuges: RefugeSystem | null = null;
@@ -169,6 +171,10 @@ export class Game {
     this.assets = new AssetManager(this.renderer.webgl);
     void placeHeroProps(this.assets, this.world).then((n) => {
       this.heroCount = n;
+    });
+    // Fase 5+/MCP: POIs del pueblo sustituidos por sus kits GLB modelados en Blender.
+    void upgradeTownKits(this.assets, this.world).then((n) => {
+      this.townKits = n;
     });
 
     // Fase 6: interacción genérica (puertas/sellos/notas) + regla de sellos de los refugios.
@@ -380,7 +386,7 @@ export class Game {
       `draw ${info.render.calls} · tris ${info.render.triangles} · geo ${info.memory.geometries} · tex ${info.memory.textures}`,
     );
     if (p) this.debug.setLine(3, `pos ${p.x.toFixed(1)}, ${p.y.toFixed(1)}, ${p.z.toFixed(1)}`);
-    this.debug.setLine(4, `assets GLB ${this.heroCount} · seed ${this.seed}`);
+    this.debug.setLine(4, `assets GLB ${this.heroCount} · townKits ${this.townKits} · seed ${this.seed}`);
     const cur = this.refuges?.current;
     const safeState = cur
       ? `${refugioLabel(cur.id)} ${this.refuges?.safe ? 'SEGURO' : 'sin sellar'}`

@@ -18,8 +18,11 @@ composer; expone `onPhaseChange`. **Entorno modular** (Fase 4): POIs/hitos (`wor
 con **LOD impostor** (`world/Forest.ts`) y farolas/rocas instanciadas (`world/Props.ts`), todo desde
 `layout.ts` determinista. **Fase 5:** hero assets modelados en **Blender** (batch `bpy`, ver
 `blender/scripts/gen_assets.py`) → `public/assets/props/*.glb`, cargados por `core/AssetManager.ts`
-(GLTFLoader + DRACO/KTX2 cableados) y colocados junto a la plaza por `world/HeroProps.ts`. Debug **F3**
-muestra `assets GLB N`. **Fase 6:** sistema de interacción genérico `interaction/` — `IInteractable`
+(GLTFLoader + DRACO/KTX2 cableados) y colocados junto a la plaza por `world/HeroProps.ts`. **Los POIs
+del pueblo (diner, comisaría, iglesia, gasolinera, torre de agua) son kits GLB modelados en Blender en
+vía MCP** (`world/TownKits.ts` reemplaza el gris-box por su `.glb` en `public/assets/kits/`, con
+fallback procedural; las casas aleatorias siguen procedurales). Debug **F3** muestra `assets GLB N ·
+townKits N`. **Fase 6:** sistema de interacción genérico `interaction/` — `IInteractable`
 + `InteractionManager` (raycast por proximidad + cono de mira, prompt bajo la retícula) con **puertas**
 (`Door`: abrir/cerrar con **E**, **sellar** con **Shift+E**) y **notas** legibles. `RefugeSystem` aplica
 la **regla de sellos**: un refugio solo es seguro si TODAS sus puertas están cerradas **y** selladas

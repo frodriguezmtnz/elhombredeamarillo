@@ -11,6 +11,7 @@ export function buildTown(landmarks: LandmarkSpec[], collisions: CollisionSystem
   const group = new THREE.Group();
   for (const lm of landmarks) {
     const node = buildLandmark(lm.kind, lm.w, lm.h, lm.d);
+    node.name = lm.id;
     node.position.set(lm.x, 0, lm.z);
     node.rotation.y = lm.rot;
     group.add(node);
