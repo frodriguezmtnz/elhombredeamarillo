@@ -1,0 +1,126 @@
+---
+import TriviaBoard from '../components/trivial/TriviaBoard';
+import Footer from '../components/ui/Footer.astro';
+import Header from '../components/ui/Header.astro';
+import { TRIVIA_QUESTIONS } from '../data/trivial';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const SITE = Astro.site?.origin ?? 'https://elhombredeamarillo.vercel.app';
+const totalPreguntas = TRIVIA_QUESTIONS.length;
+const categorias = new Set(TRIVIA_QUESTIONS.map((q) => q.category)).size;
+const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.season > 0).length;
+---
+
+<BaseLayout
+  title="Trivial del Pueblo — El Hombre de Amarillo"
+  description="Juego de preguntas sobre FROM: reglas del pueblo, criaturas, personajes, tramas y producción. ¿Hasta qué nivel de iniciación has llegado?"
+  ogImage="/assets/profile-landscape-hd.jpg"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'BreadcrumbList',
+          '@id': `${SITE}/trivial/#breadcrumb`,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE}/` },
+            { '@type': 'ListItem', position: 2, name: 'Trivial', item: `${SITE}/trivial/` },
+          ],
+        },
+        {
+          '@type': 'CollectionPage',
+          '@id': `${SITE}/trivial/#page`,
+          url: `${SITE}/trivial/`,
+          name: 'Trivial del Pueblo — El Hombre de Amarillo',
+          description: 'Juego de preguntas y respuestas sobre FROM.',
+          inLanguage: 'es',
+          isPartOf: { '@id': `${SITE}/#website` },
+          breadcrumb: { '@id': `${SITE}/trivial/#breadcrumb` },
+        },
+      ],
+    })} />
+  </Fragment>
+  <Header />
+
+  <main class="pt-[var(--header-h)]">
+    <!-- Hero -->
+    <section class="relative overflow-hidden" aria-labelledby="trivial-title">
+      <div class="absolute inset-0 bg-gradient-to-br from-yellow/5 via-transparent to-rust/5 pointer-events-none"></div>
+      <div class="relative mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 lg:py-24">
+        <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-3">
+          PRUEBA DE INICIACIÓN // ARCHIVO LÚDICO
+        </p>
+        <h1 class="font-pixel text-[clamp(2.5rem,7vw,5rem)] uppercase leading-[0.85]" id="trivial-title">
+          TRIVIAL <span class="text-yellow">DEL PUEBLO</span>
+        </h1>
+        <p class="mt-4 max-w-[60ch] text-text-muted text-sm leading-relaxed">
+          ¿Crees que las reglas del pueblo no tienen secretos? Responde antes de que suene el cuerno:
+          {totalPreguntas} preguntas sobre FROM, sus criaturas, su producción y este mismo archivo.
+        </p>
+
+        <!-- Stats -->
+        <div class="flex flex-wrap gap-3 mt-8">
+          <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-surface/60">
+            <span class="font-pixel text-xl text-yellow">{totalPreguntas}</span>
+            <span class="text-[9px] font-bold tracking-[.1em] text-text-muted uppercase font-mono">PREGUNTAS</span>
+          </div>
+          <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-surface/60">
+            <span class="font-pixel text-xl text-yellow">{categorias}</span>
+            <span class="text-[9px] font-bold tracking-[.1em] text-text-muted uppercase font-mono">CATEGORÍAS</span>
+          </div>
+          <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-surface/60">
+            <span class="font-pixel text-xl text-rust-hot">{conSpoilers}</span>
+            <span class="text-[9px] font-bold tracking-[.1em] text-text-muted uppercase font-mono">CON SPOILERS</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Juego -->
+    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 pb-16" aria-label="Juego trivial">
+      <TriviaBoard client:visible />
+    </section>
+
+    <!-- Cómo funciona -->
+    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 pb-20 border-t border-border pt-12" aria-labelledby="como-title">
+      <header class="mb-8">
+        <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">PROTOCOLO DE LA PRUEBA</p>
+        <h2 class="font-pixel text-[clamp(1.6rem,3.5vw,2.5rem)] uppercase" id="como-title">Cómo se juega</h2>
+      </header>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="rounded-2xl border border-border bg-surface p-5">
+          <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">01 // TOQUE DE QUEDA</span>
+          <h3 class="mt-2 font-pixel text-xl uppercase">20 segundos por pregunta</h3>
+          <p class="mt-2 text-text-muted text-xs leading-relaxed">
+            El cuerno suena al empezar cada pregunta. Responder rápido da bonus: dudar demasiado
+            solo garantiza que te encuentren fuera.
+          </p>
+        </div>
+        <div class="rounded-2xl border border-border bg-surface p-5">
+          <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">02 // TALISMANES</span>
+          <h3 class="mt-2 font-pixel text-xl uppercase">Rachas y dificultad</h3>
+          <p class="mt-2 text-text-muted text-xs leading-relaxed">
+            Cada pregunta suma según su dificultad. Encadenar tres o más aciertos multiplica tu
+            protección: las rachas dan puntos extra hasta x5.
+          </p>
+        </div>
+        <div class="rounded-2xl border border-border bg-surface p-5">
+          <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">03 // TU RANGO</span>
+          <h3 class="mt-2 font-pixel text-xl uppercase">De Cautivo a Hombre de Amarillo</h3>
+          <p class="mt-2 text-text-muted text-xs leading-relaxed">
+            Al terminar sabrás qué rango te ha concedido el pueblo y tu mejor marca quedará
+            guardada en este dispositivo. Tu móvil es tu casa.
+          </p>
+        </div>
+      </div>
+      <p class="mt-8 text-[11px] text-text-muted/70 font-mono leading-relaxed">
+        Aviso: las categorías «Trama por temporadas» y muchas de «Criaturas» contienen spoilers hasta
+        la T3. Si estás al día del canal, usa el modo SIN SPOILERS. Las explicaciones de cada respuesta
+        distinguen entre hechos de pantalla y material confirmado por la producción.
+      </p>
+    </section>
+
+    <Footer />
+  </main>
+</BaseLayout>
