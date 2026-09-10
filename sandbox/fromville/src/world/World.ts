@@ -1,14 +1,18 @@
 import * as THREE from 'three';
 import type { CollisionSystem } from './CollisionSystem';
+import { buildForest } from './Forest';
 import type { LoopRoad } from './LoopRoad';
+import { buildProps } from './Props';
+import { buildTown } from './Town';
 import { buildLayout } from './layout';
 import type { WorldLayout } from './layout';
 import { WORLD } from './layout';
 
 /**
- * World — bloque GRIS de la Fase 1: suelo, carretera-bucle (anillo), pueblo de cajas y bosque
- * instanciado. Sin materiales PBR ni Blender todavía (Fase 5). La geometría la decide `layout.ts`
- * (determinista por seed); aquí solo se convierte en mallas y colliders.
+ * World — contenedor del entorno gris (Fase 4): suelo, carretera-bucle (anillo), POIs del pueblo
+ * (kits), bosque con LOD/impostores y props (farolas, rocas). La geometría la decide `layout.ts`
+ * (determinista por seed); los módulos la convierten en mallas. Las luces/niebla las gobierna
+ * DayNight (Fase 3). Sin materiales PBR ni Blender todavía (Fase 5).
  */
 export class World {
   readonly group = new THREE.Group();
@@ -33,18 +37,27 @@ export class World {
 
     this.buildGround();
     this.buildRoad();
-    this.buildTown(collisions);
-    this.buildForest(collisions);
+    this.group.add(buildTown(this.layout.landmarks, collisions));
+    this.group.add(buildForest(this.layout.trees));
+    this.group.add(buildProps(this.layout.lamps, this.layout.rocks));
+    this.registerScatterColliders(collisions);
     scene.add(this.group);
   }
 
-  /** terreno plano en Fase 1 (0 en todo el anillo); Terrain real llega más adelante */
+  /** terreno plano (0 en todo el anillo); Terrain real llega más adelante */
   heightAt(_x: number, _z: number): number {
     return 0;
   }
 
   project(x: number, z: number, hint: number): { s: number; lateral: number; index: number } {
     return this.curve.project(x, z, hint);
+  }
+
+  /** colisión de los elementos dispersos (árboles, rocas, postes de farola) */
+  private registerScatterColliders(collisions: CollisionSystem): void {
+    for (const t of this.layout.trees) collisions.add(t.x, t.z, t.r, 'tree');
+    for (const r of this.layout.rocks) collisions.add(r.x, r.z, r.scale * 0.6, 'rock');
+    for (const l of this.layout.lamps) collisions.add(l.x, l.z, 0.25, 'lamp');
   }
 
   private buildGround(): void {
@@ -79,54 +92,7 @@ export class World {
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geo.setIndex(indices);
     geo.computeVertexNormals();
-    const mat = new THREE.MeshStandardMaterial({
-      color: 0x1a1e22,
-      roughness: 1,
-      side: THREE.DoubleSide,
-    });
+    const mat = new THREE.MeshStandardMaterial({ color: 0x1a1e22, roughness: 1, side: THREE.DoubleSide });
     this.group.add(new THREE.Mesh(geo, mat));
-  }
-
-  private buildTown(collisions: CollisionSystem): void {
-    for (const box of this.layout.boxes) {
-      const mesh = new THREE.Mesh(
-        new THREE.BoxGeometry(box.w, box.h, box.d),
-        new THREE.MeshStandardMaterial({ color: 0x767c84, roughness: 0.9 }),
-      );
-      mesh.position.set(box.x, box.h / 2, box.z);
-      mesh.rotation.y = box.rot;
-      this.group.add(mesh);
-      collisions.addBox(box.x, box.z, box.w / 2, box.d / 2, 'building');
-    }
-  }
-
-  private buildForest(collisions: CollisionSystem): void {
-    const trees = this.layout.trees;
-    const count = trees.length;
-
-    const trunkGeo = new THREE.CylinderGeometry(0.16, 0.22, 1.4, 6);
-    trunkGeo.translate(0, 0.7, 0);
-    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5a4632, roughness: 1 });
-    const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, count);
-
-    const foliageGeo = new THREE.ConeGeometry(1.15, 3.2, 7);
-    foliageGeo.translate(0, 3.0, 0);
-    const foliageMat = new THREE.MeshStandardMaterial({ color: 0x33463a, roughness: 1 });
-    const foliage = new THREE.InstancedMesh(foliageGeo, foliageMat, count);
-
-    const dummy = new THREE.Object3D();
-    for (let i = 0; i < count; i++) {
-      const t = trees[i];
-      dummy.position.set(t.x, 0, t.z);
-      dummy.rotation.set(0, ((i * 2.399) % Math.PI) * 2, 0);
-      dummy.scale.setScalar(t.scale);
-      dummy.updateMatrix();
-      trunks.setMatrixAt(i, dummy.matrix);
-      foliage.setMatrixAt(i, dummy.matrix);
-      collisions.add(t.x, t.z, t.r, 'tree');
-    }
-    trunks.instanceMatrix.needsUpdate = true;
-    foliage.instanceMatrix.needsUpdate = true;
-    this.group.add(trunks, foliage);
   }
 }
