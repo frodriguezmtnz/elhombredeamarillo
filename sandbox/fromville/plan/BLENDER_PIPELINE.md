@@ -130,6 +130,25 @@ Blender (MCP/modelado) → export glTF 2.0 (.glb) → optimización → public/a
 **Lightmaps de interiores:** hornear en Blender (bake) → textura de luz → aplicar en Three como
 mapa. Mezcla con luz dinámica solo para jugador/criatura (`VISUAL_DIRECTION.md §4`).
 
+### 6.1 Pipeline por lotes (headless — implementado en Fase 5)
+
+Para que los kits/hero sean **reproducibles y versionables** (y CI-friendly) sin depender de la
+sesión interactiva del MCP, los generamos por scripting `bpy` en modo background. Mismo motor de
+Blender, cero UI:
+
+```
+blender --background --python blender/scripts/gen_assets.py -- <out_dir_glb>
+```
+
+- `blender/scripts/gen_assets.py`: define cada prefab (crate, barrel, tombstone, well, hollow) con
+  primitivas + bisel, `reset_scene()` por asset y `export_scene.gltf(export_format=GLB, export_yup)`.
+  Salida a `public/assets/props/*.glb` (Y-up, origen en la base). Ninguno copia diseño protegido.
+- **Runtime (Fase 5):** `src/core/AssetManager.ts` (GLTFLoader + DRACO/KTX2 cableados, caché por URL,
+  DoubleSide para tolerar el winding del batch) y `src/world/HeroProps.ts` (ancla los GLB a la
+  carretera por tangente/normal y tolera assets ausentes → vuelve al procedural de la Fase 4).
+- Cuándo usar cada vía: **batch** para kits/LOD deterministas y regeneración; **MCP interactivo**
+  para esculpir/retoquetear hero assets a mano (ver §3 y `AI_AGENT_WORKFLOW.md`).
+
 ---
 
 ## 7. Criaturas

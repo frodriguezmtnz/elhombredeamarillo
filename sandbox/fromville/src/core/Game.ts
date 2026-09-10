@@ -5,7 +5,9 @@ import { FirstPersonController } from '../player/FirstPersonController';
 import { PostFX } from '../rendering/PostFX';
 import { DebugOverlay } from '../ui/DebugOverlay';
 import { CollisionSystem } from '../world/CollisionSystem';
+import { placeHeroProps } from '../world/HeroProps';
 import { World } from '../world/World';
+import { AssetManager } from './AssetManager';
 import { InputManager } from './InputManager';
 import { Renderer } from './Renderer';
 import type { Quality } from './Settings';
@@ -20,7 +22,8 @@ function el(tag: string, className?: string): HTMLElement {
 }
 
 /**
- * Game — orquestador Fase 2: renderer + composer (PostFX) + cámara FPS + mundo gris + bucle único.
+ * Game — orquestador Fase 5: renderer + composer (PostFX) + cámara FPS + día/noche + mundo gris +
+ * hero assets GLB (Blender → AssetManager).
  * Menú → clic → pointer lock → caminar. Esc libera el ratón → pausa. F3 → debug.
  * Aún sin día/noche, criaturas ni interactuables (Fases 3, 6, 8, 9).
  */
@@ -41,6 +44,8 @@ export class Game {
   private player: FirstPersonController | null = null;
   private postfx: PostFX | null = null;
   private dayNight: DayNight | null = null;
+  private assets: AssetManager | null = null;
+  private heroCount = 0;
   private fastTime = false;
 
   private startEl!: HTMLElement;
@@ -92,7 +97,7 @@ export class Game {
     this.startEl = el('div');
     this.startEl.id = 'start';
     const tag = el('div', 'tag');
-    tag.textContent = 'prototipo · fase 3';
+    tag.textContent = 'prototipo · fase 5';
     const title = el('h1');
     title.textContent = 'FROMVILLE';
     this.startButton = el('button') as HTMLButtonElement;
@@ -121,6 +126,12 @@ export class Game {
       this.settings.get().quality,
     );
     this.dayNight.onPhaseChange = (phase) => this.onPhaseChange(phase);
+
+    // Fase 5: hero assets de Blender (GLB) cargados de public/assets (no bloquean el menú).
+    this.assets = new AssetManager(this.renderer.webgl);
+    void placeHeroProps(this.assets, this.world).then((n) => {
+      this.heroCount = n;
+    });
 
     const spawn = this.world.layout.spawn;
     this.player.teleport(spawn.x, spawn.z, spawn.yaw);
@@ -252,5 +263,6 @@ export class Game {
       `draw ${info.render.calls} · tris ${info.render.triangles} · geo ${info.memory.geometries} · tex ${info.memory.textures}`,
     );
     if (p) this.debug.setLine(3, `pos ${p.x.toFixed(1)}, ${p.y.toFixed(1)}, ${p.z.toFixed(1)}`);
+    this.debug.setLine(4, `assets GLB ${this.heroCount} · seed ${this.seed}`);
   }
 }
