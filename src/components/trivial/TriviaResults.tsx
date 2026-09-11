@@ -2,7 +2,9 @@ import { TRIVIA_QUESTIONS, getRank } from '@data/trivial';
 import type { TriviaBestScore, TriviaQuestion } from '@lib/types';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import TriviaConfetti from './TriviaConfetti';
 import type { TriviaSummary } from './TriviaGame';
+import TriviaShare from './TriviaShare';
 
 const BEST_KEY = 'trivial-best';
 
@@ -26,6 +28,8 @@ export default function TriviaResults({ summary, deck, onPlayAgain, onNewMode }:
   const { correct, total, score, bestStreak, modeLabel, records } = summary;
   const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
   const rank = getRank(accuracy);
+  const perfect = total > 0 && correct === total;
+  const [celebrating, setCelebrating] = useState(perfect);
   const [best, setBest] = useState<TriviaBestScore | null>(null);
   const isNewBest = best !== null && score > best.score;
 
@@ -52,9 +56,11 @@ export default function TriviaResults({ summary, deck, onPlayAgain, onNewMode }:
   }, []);
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-6 lg:p-10">
+    <div className="relative rounded-2xl border border-border bg-surface p-6 lg:p-10">
+      {celebrating && <TriviaConfetti onDone={() => setCelebrating(false)} />}
       <p className="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">
         EXPEDIENTE CERRADO · MODO {modeLabel.toUpperCase()}
+        {perfect && <b className="ml-2 text-yellow-bright">· PERFECTO</b>}
       </p>
 
       <div className="flex flex-col lg:flex-row lg:items-end gap-8">
@@ -135,6 +141,7 @@ export default function TriviaResults({ summary, deck, onPlayAgain, onNewMode }:
         >
           IR A LOS EXPEDIENTES <b>↗</b>
         </a>
+        <TriviaShare summary={summary} rank={rank.name} />
       </div>
     </div>
   );

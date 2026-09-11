@@ -1,5 +1,5 @@
 import type { TriviaQuestion } from '@lib/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthProvider from '../community/AuthProvider';
 import TriviaGame, { type TriviaSummary } from './TriviaGame';
 import TriviaLeaderboard from './TriviaLeaderboard';
@@ -29,7 +29,21 @@ function TriviaBoardInner() {
     resetRecord();
     setRound((r) => r + 1);
     setPhase('playing');
+    document.getElementById('juego')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+
+  // Modo inmersivo: difumina hero, reglas y footer mientras se juega
+  useEffect(() => {
+    const immersive = phase !== 'setup';
+    document.body.classList.toggle('trivial-immersive', immersive);
+    return () => {
+      if (!immersive) return;
+      // Si la SPA navega a otra página, limpiamos el flag
+      queueMicrotask(() => {
+        if (!document.getElementById('juego')) document.body.classList.remove('trivial-immersive');
+      });
+    };
+  }, [phase]);
 
   function handleFinish(result: TriviaSummary) {
     setSummary(result);

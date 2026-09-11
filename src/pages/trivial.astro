@@ -45,7 +45,7 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.season > 0).length;
 
   <main class="pt-[var(--header-h)]">
     <!-- Hero -->
-    <section class="relative overflow-hidden" aria-labelledby="trivial-title">
+    <section class="relative overflow-hidden trivial-side" aria-labelledby="trivial-title">
       <div class="absolute inset-0 bg-gradient-to-br from-yellow/5 via-transparent to-rust/5 pointer-events-none"></div>
       <div class="relative mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 lg:py-24">
         <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-3">
@@ -55,9 +55,24 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.season > 0).length;
           TRIVIAL <span class="text-yellow">DEL PUEBLO</span>
         </h1>
         <p class="mt-4 max-w-[60ch] text-text-muted text-sm leading-relaxed">
-          ¿Crees que las reglas del pueblo no tienen secretos? Responde antes de que suene el cuerno:
-          {totalPreguntas} preguntas sobre FROM, sus criaturas, su producción y este mismo archivo.
+          ¿Crees que las reglas del pueblo no tienen secretos? Responde antes de que suene el cuerno: {totalPreguntas} preguntas sobre FROM, sus criaturas, su producción y este mismo archivo.
         </p>
+
+        <!-- CTA -->
+        <div class="flex flex-wrap gap-3 mt-8">
+          <a
+            href="#juego"
+            class="inline-flex items-center justify-center gap-4 min-h-[48px] px-8 bg-yellow text-bg text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:brightness-110 transition-all"
+          >
+            JUGAR <b>→</b>
+          </a>
+          <a
+            href="#reglas"
+            class="inline-flex items-center justify-center gap-4 min-h-[48px] px-8 border border-yellow/50 text-yellow text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:bg-yellow/10 transition-all"
+          >
+            REGLAS
+          </a>
+        </div>
 
         <!-- Stats -->
         <div class="flex flex-wrap gap-3 mt-8">
@@ -78,12 +93,12 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.season > 0).length;
     </section>
 
     <!-- Juego -->
-    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 pb-16" aria-label="Juego trivial">
+    <section id="juego" class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 pb-16 scroll-mt-[calc(var(--header-h)+1rem)]" aria-label="Juego trivial">
       <TriviaBoard client:visible />
     </section>
 
     <!-- Cómo funciona -->
-    <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 pb-20 border-t border-border pt-12" aria-labelledby="como-title">
+    <section id="reglas" class="trivial-side mx-auto max-w-[var(--shell)] px-5 lg:px-8 pb-20 border-t border-border pt-12 scroll-mt-[calc(var(--header-h)+1rem)]" aria-labelledby="como-title">
       <header class="mb-8">
         <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">PROTOCOLO DE LA PRUEBA</p>
         <h2 class="font-pixel text-[clamp(1.6rem,3.5vw,2.5rem)] uppercase" id="como-title">Cómo se juega</h2>
@@ -122,6 +137,8 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.season > 0).length;
       </p>
     </section>
 
-    <Footer />
+    <div class="trivial-side">
+      <Footer />
+    </div>
   </main>
 </BaseLayout>

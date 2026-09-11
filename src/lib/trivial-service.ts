@@ -42,6 +42,13 @@ export function sanitizePlayerAlias(value: string): string {
   return value.replace(/\s+/g, ' ').trim().slice(0, 24);
 }
 
+function describeError(err: unknown): string {
+  if (err instanceof DOMException && (err.name === 'TimeoutError' || err.name === 'AbortError')) {
+    return 'El archivo tarda demasiado en responder';
+  }
+  return err instanceof Error ? err.message : 'No hay conexión con el archivo';
+}
+
 /**
  * Envía una partida terminada al tablón.
  * `player` se guarda con el payload ya saneado por la UI.
@@ -62,12 +69,13 @@ export async function submitTriviaScore(payload: TriviaScorePayload): Promise<{ 
         rank: payload.rank,
       })
       .select('id')
+      .abortSignal(AbortSignal.timeout(10_000))
       .single();
 
     if (error) return { error: error.message };
     return { id: (data as { id: string }).id };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : 'No hay conexión con el archivo' };
+    return { error: describeError(err) };
   }
 }
 
@@ -85,11 +93,12 @@ export async function fetchTriviaLeaderboard(
     const { data, error } = await query
       .order('score', { ascending: false })
       .order('created_at', { ascending: true })
-      .limit(limit);
+      .limit(limit)
+      .abortSignal(AbortSignal.timeout(10_000));
 
     if (error) return { error: error.message };
     return { data: ((data ?? []) as TriviaScoreRow[]).map(mapRow) };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : 'No hay conexión con el archivo' };
+    return { error: describeError(err) };
   }
 }
