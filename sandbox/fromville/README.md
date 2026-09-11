@@ -72,8 +72,14 @@ RV oxidado, setpiece de Broken Houses / Stained Pool) y **La Colina** (colony ho
 porche envolvente, buhardillas, bay window y tres chimeneas). Nuevos materiales emisivos `fvm_neon` y
 `fvm_windowGlow`: `TownKits` los cosecha en `kitEmissives` y `Game` modula su `emissiveIntensity` con
 el `nightFactor` (de día apagados, de noche vivos). El motel y La Colina son refugios nombrables y
-suman **13 POIs** por seed; nota setpiece «sacad el coche de la piscina» junto al vaso. Pendiente:
-pasada de **texturas** sobre estos kits.
+suman **13 POIs** por seed; nota setpiece «sacad el coche de la piscina» junto al vaso.
+
+**Texturas (8.5b):** pasada procedural por **batch headless** (`blender/scripts/texture_kits.py`,
+`blender --background --python … -- public/assets/kits`): smart-UV + texturas generadas con numpy
+(RNG sembrado → reproducible) enganchadas al Base Color de cada material según receta: **estuco** con
+manchas y chorrillos (muros), **tablas de madera** (casas), **tejas asfálticas** con juntas
+(tejados), **óxido** con picadura (RV), **vidriera de plomo** (iglesia/piscina). Emisivos y cristal
+sin textura (se modulan en runtime). PNG 512² empaquetados en cada GLB (KTX2 queda para Fase 12).
 
 ## Scripts
 

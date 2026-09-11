@@ -23,7 +23,8 @@ tenga sobre qué operar).
 | **7** | Audio | ✅ Web Audio procedural + `PannerNode`/HRTF + capas ambient/player/horror + cues de interacción | `TECH_ARCHITECTURE §8` |
 | **7.5** | Pulido (feedback) | ✅ Movimiento real arreglado + slider velocidad · linterna (F, batería) · noche navegable (viñeta dinámica) · farolas con luz · 1500 árboles · casas GLB (MCP) escaladas a huella | `GAME_DESIGN §7` |
 | **8** | Creature + AI | 🟡 "The Hollow" + `PerceptionSystem` (awareness: LoS/ruido/linterna) + `CreatureFSM` (Dormant→Patrol→Investigate→Observe→Stalk→Chase→Search→Retreat→Consume) + `WaypointGraph` (anillo) + steering + pose "a saltos" + elipsis Consume. Falta: Manipulate, secundarios, más criaturas | `AI` |
-| **8.5** | Tanda visual (POIs) | ✅ Diner v2 (neón) + Motel (cartel No Vacancy, piscina con coche volcado, RV) + La Colina victoriana — kits MCP `FROMVILLE_KITS2`, emisivos `kitEmissives` ligados a `nightFactor`, 13 POIs/seed, nota setpiece. Falta: pasada de texturas | `WORLD_DESIGN §4` |
+| **8.5** | Tanda visual (POIs) | ✅ Diner v2 (neón) + Motel (cartel No Vacancy, piscina con coche volcado, RV) + La Colina victoriana — kits MCP `FROMVILLE_KITS2`, emisivos `kitEmissives` ligados a `nightFactor`, 13 POIs/seed, nota setpiece | `WORLD_DESIGN §4` |
+| **8.5b** | Texturas de kits | ✅ Pipeline batch `blender/scripts/texture_kits.py` (headless, numpy determinista): estuco/tablas/tejas/óxido/vidriera por recibo de material, smart-UV, PNG 512² empaquetados en los 10 GLB. Falta KTX2 → Fase 12 | `BLENDER_PIPELINE §6`, `VISUAL_DIRECTION §6` |
 | **9** | Horror Director | TensionModel + EventBook + control de luces/fog/sonido/criatura | `HORROR_SYSTEM` |
 | **10** | Narrative & mystery | Story/Clue/Lore/Dialogue + beats + cuaderno + la "fotografía" | `NARRATIVE_MYSTERY` |
 | **11** | Vertical slice | Ensamblado pulido del MVP (10-20 min) | `§2` |

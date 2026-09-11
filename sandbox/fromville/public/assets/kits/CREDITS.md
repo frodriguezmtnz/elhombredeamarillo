@@ -30,3 +30,19 @@ carretera). Si algún `.glb` falta, `Town.ts` deja el gris-box procedural como f
 
 Regenerar (edición interactiva): abrir Blender con el add-on MCP activo y re-ejecutar el modelado
 por `execute_blender_code`; o mantener el script batch equivalente en `blender/scripts/`.
+
+## Pasada de texturas (Fase 8.5b)
+
+`blender/scripts/texture_kits.py` (headless, batch):
+
+```
+blender --background --python blender/scripts/texture_kits.py -- public/assets/kits
+```
+
+Por cada GLB: smart-UV por objeto y textura procedural **generada con numpy** (RNG sembrado por
+nombre → reproducible) enganchada al Base Color según el recibo del material: `fvm_wall/wall2` =
+estuco con manchas y chorrillos, `fvm_house` = tablas de madera (clapboard), `fvm_roof` = tejas
+asfálticas con juntas, `fvm_rust` = óxido con picadura, `fvm_stained` = vidriera de plomo. Los
+emisivos (`fvm_neon`, `fvm_windowGlow`) y el cristal van **sin** textura (su luz se modula en
+runtime). Los PNG (512², sRGB) quedan empaquetados en el GLB; la conversión a **KTX2/Basis** se
+hará en la Fase 12 (optimización, `PERFORMANCE.md`).
