@@ -109,3 +109,69 @@ export interface MysteryData {
   mentions: number;
   hypotheses: HypothesisData[];
 }
+
+// ── Trivial ──
+
+export type TriviaCategory = 'reglas' | 'criaturas' | 'personajes' | 'temporadas' | 'produccion' | 'canal';
+
+export interface TriviaQuestion {
+  id: string;
+  category: TriviaCategory;
+  /** 1 = fácil, 2 = media, 3 = difícil (afecta a la puntuación) */
+  difficulty: 1 | 2 | 3;
+  /** 0 = sin spoilers de trama (premisas, producción, canal); 1-3 = temporada requerida */
+  season: 0 | 1 | 2 | 3;
+  question: string;
+  options: string[];
+  /** Índice de la opción correcta sobre `options` (se baraja en cliente) */
+  answer: number;
+  explanation: string;
+}
+
+export interface TriviaAnswerRecord {
+  questionId: string;
+  correct: boolean;
+  timedOut: boolean;
+  /** Segundos restantes en el momento de responder */
+  timeLeft: number;
+  /** Puntos obtenidos por esta pregunta */
+  points: number;
+}
+
+export interface TriviaBestScore {
+  score: number;
+  correct: number;
+  total: number;
+  modeLabel: string;
+  rank: string;
+  date: string;
+}
+
+/** Datos de una partida terminada listos para enviar al tablón */
+export interface TriviaScorePayload {
+  userId: string | null;
+  player: string;
+  mode: string;
+  score: number;
+  correct: number;
+  total: number;
+  bestStreak: number;
+  rank: string;
+}
+
+/** Fila del tablón ya mapeada a camelCase */
+export interface TriviaLeaderboardEntry {
+  id: string;
+  userId: string | null;
+  player: string;
+  mode: string;
+  score: number;
+  correct: number;
+  total: number;
+  bestStreak: number;
+  rank: string;
+  verified: boolean;
+  createdAt: string;
+}
+
+export type TriviaLeaderboardScope = 'all' | 'week';

@@ -28,21 +28,30 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const [loginOpen, setLoginOpen] = useState(false);
 
   useEffect(() => {
-    getSupabase().then((sb) => {
-      sb.auth.getSession().then(({ data: { session } }) => {
-        setUser(session?.user ?? null);
+    let subscription: { unsubscribe: () => void } | null = null;
+    getSupabase()
+      .then((sb) => {
+        sb.auth.getSession().then(({ data: { session } }) => {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        });
+
+        const {
+          data: { subscription: sub },
+        } = sb.auth.onAuthStateChange((_event, session) => {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        });
+        subscription = sub;
+      })
+      .catch(() => {
+        // Sin credenciales de Supabase: la UI queda en modo anónimo
         setLoading(false);
       });
 
-      const {
-        data: { subscription },
-      } = sb.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
-      });
-
-      return () => subscription.unsubscribe();
-    });
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
