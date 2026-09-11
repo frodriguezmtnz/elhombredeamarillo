@@ -58,7 +58,7 @@ YOUTUBE_API_KEY=AIzaSy...
 
 ## Base de datos
 
-El esquema y los datos semilla de Supabase viven en `supabase/` (`001_schema.sql`, `002_seed.sql`).
+El esquema y los datos semilla de Supabase viven en `supabase/` (`001_schema.sql`, `002_seed.sql`, `003_trivial.sql` para el tablón del Trivial).
 
 ## Estructura
 

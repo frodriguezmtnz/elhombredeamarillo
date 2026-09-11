@@ -1,22 +1,32 @@
 import type { TriviaQuestion } from '@lib/types';
 import { useState } from 'react';
+import AuthProvider from '../community/AuthProvider';
 import TriviaGame, { type TriviaSummary } from './TriviaGame';
+import TriviaLeaderboard from './TriviaLeaderboard';
 import TriviaResults from './TriviaResults';
 import TriviaSetup from './TriviaSetup';
+import TriviaSubmit from './TriviaSubmit';
 
 type Phase = 'setup' | 'playing' | 'results';
 
-export default function TriviaBoard() {
+function TriviaBoardInner() {
   const [phase, setPhase] = useState<Phase>('setup');
   const [deck, setDeck] = useState<TriviaQuestion[]>([]);
   const [modeLabel, setModeLabel] = useState('');
   const [summary, setSummary] = useState<TriviaSummary | null>(null);
   const [round, setRound] = useState(0);
+  const [leaderboardKey, setLeaderboardKey] = useState(0);
+  const [recordedId, setRecordedId] = useState<string | null>(null);
+
+  function resetRecord() {
+    setRecordedId(null);
+  }
 
   function handleStart(nextDeck: TriviaQuestion[], label: string) {
     setDeck(nextDeck);
     setModeLabel(label);
     setSummary(null);
+    resetRecord();
     setRound((r) => r + 1);
     setPhase('playing');
   }
@@ -30,12 +40,18 @@ export default function TriviaBoard() {
     const shuffled = [...deck].sort(() => Math.random() - 0.5);
     setDeck(shuffled);
     setSummary(null);
+    resetRecord();
     setRound((r) => r + 1);
     setPhase('playing');
   }
 
+  function handleRecorded(id: string) {
+    setRecordedId(id);
+    setLeaderboardKey((k) => k + 1);
+  }
+
   return (
-    <div>
+    <div className="space-y-6">
       {phase === 'setup' && <TriviaSetup onStart={handleStart} />}
       {phase === 'playing' && (
         <TriviaGame
@@ -47,13 +63,26 @@ export default function TriviaBoard() {
         />
       )}
       {phase === 'results' && summary && (
-        <TriviaResults
-          summary={summary}
-          deck={deck}
-          onPlayAgain={handlePlayAgain}
-          onNewMode={() => setPhase('setup')}
-        />
+        <>
+          <TriviaResults
+            summary={summary}
+            deck={deck}
+            onPlayAgain={handlePlayAgain}
+            onNewMode={() => setPhase('setup')}
+          />
+          <TriviaSubmit summary={summary} onRecorded={handleRecorded} />
+        </>
       )}
+
+      <TriviaLeaderboard refreshKey={leaderboardKey} highlightId={recordedId} />
     </div>
+  );
+}
+
+export default function TriviaBoard() {
+  return (
+    <AuthProvider>
+      <TriviaBoardInner />
+    </AuthProvider>
   );
 }

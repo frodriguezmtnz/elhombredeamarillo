@@ -146,3 +146,31 @@ export interface TriviaBestScore {
   rank: string;
   date: string;
 }
+
+/** Datos de una partida terminada listos para enviar al tablón */
+export interface TriviaScorePayload {
+  userId: string | null;
+  player: string;
+  mode: string;
+  score: number;
+  correct: number;
+  total: number;
+  bestStreak: number;
+  rank: string;
+}
+
+/** Fila del tablón ya mapeada a camelCase */
+export interface TriviaLeaderboardEntry {
+  id: string;
+  player: string;
+  mode: string;
+  score: number;
+  correct: number;
+  total: number;
+  bestStreak: number;
+  rank: string;
+  verified: boolean;
+  createdAt: string;
+}
+
+export type TriviaLeaderboardScope = 'all' | 'week';

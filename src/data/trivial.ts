@@ -850,8 +850,9 @@ export function buildDeck(config: DeckConfig): TriviaQuestion[] {
   if (config.season !== undefined) {
     pool = pool.filter((q) => q.season === config.season || q.season === 0);
   }
-  if (config.minDifficulty !== undefined) {
-    pool = pool.filter((q) => q.difficulty >= config.minDifficulty);
+  const minDifficulty = config.minDifficulty;
+  if (minDifficulty !== undefined) {
+    pool = pool.filter((q) => q.difficulty >= minDifficulty);
   }
 
   return shuffle(pool)
