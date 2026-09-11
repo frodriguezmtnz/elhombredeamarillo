@@ -1,10 +1,11 @@
 import { getSupabase } from '@lib/supabase-browser';
-import { fetchTriviaLeaderboard } from '@lib/trivial-service';
+import { deleteTriviaScore, fetchTriviaLeaderboard } from '@lib/trivial-service';
 import type { TriviaLeaderboardEntry, TriviaLeaderboardScope } from '@lib/types';
 import { relativeTime } from '@lib/utils';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import { clsx } from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
+import { useAuth } from '../community/AuthProvider';
 
 interface Props {
   /** Cambiar esta clave fuerza una recarga (p. ej. tras publicar) */
@@ -21,10 +22,25 @@ const SCOPES: { key: TriviaLeaderboardScope; label: string }[] = [
 ];
 
 export default function TriviaLeaderboard({ refreshKey, highlightId, alias }: Props) {
+  const { user } = useAuth();
   const [scope, setScope] = useState<TriviaLeaderboardScope>('week');
   const [entries, setEntries] = useState<TriviaLeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  async function handleDelete(id: string) {
+    setDeletingId(id);
+    const result = await deleteTriviaScore(id);
+    setDeletingId(null);
+    setConfirmDeleteId(null);
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+    setEntries((prev) => prev.filter((e) => e.id !== id));
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -128,6 +144,7 @@ export default function TriviaLeaderboard({ refreshKey, highlightId, alias }: Pr
         <ol className="mt-4">
           {entries.map((entry, i) => {
             const isMe = entry.id === highlightId;
+            const mine = Boolean(user && entry.userId === user.id);
             return (
               <li
                 key={entry.id}
@@ -160,6 +177,29 @@ export default function TriviaLeaderboard({ refreshKey, highlightId, alias }: Pr
                 <span className="hidden md:block w-24 text-right text-[9px] font-mono text-text-muted/50">
                   {entry.correct}/{entry.total} · {relativeTime(entry.createdAt)}
                 </span>
+                {mine && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirmDeleteId === entry.id) handleDelete(entry.id);
+                      else setConfirmDeleteId(entry.id);
+                    }}
+                    disabled={deletingId === entry.id}
+                    aria-label={
+                      confirmDeleteId === entry.id
+                        ? `Confirmar borrado de mi marca ${entry.score}`
+                        : `Borrar mi marca ${entry.score}`
+                    }
+                    className={clsx(
+                      'shrink-0 min-h-[24px] px-2 rounded border text-[8px] font-bold tracking-[.1em] uppercase font-mono transition-colors cursor-pointer',
+                      confirmDeleteId === entry.id
+                        ? 'border-rust bg-rust/20 text-rust-hot'
+                        : 'border-border text-text-muted/40 hover:border-rust/60 hover:text-rust-hot',
+                    )}
+                  >
+                    {deletingId === entry.id ? '...' : confirmDeleteId === entry.id ? '✓ BORRAR' : '✕'}
+                  </button>
+                )}
               </li>
             );
           })}

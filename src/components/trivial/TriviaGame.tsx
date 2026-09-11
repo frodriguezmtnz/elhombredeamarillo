@@ -39,6 +39,7 @@ export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props)
   const [score, setScore] = useState(0);
   const timeRef = useRef(TIME_LIMIT_SECONDS);
   const lockRef = useRef(false);
+  const intervalRef = useRef<number | null>(null);
 
   const question = deck[index];
   const answered = selected !== null || timedOut;
@@ -47,6 +48,11 @@ export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props)
     (choice: number | null) => {
       if (lockRef.current) return;
       lockRef.current = true;
+      // Congela la cuenta: al fallar (o acertar) el tiempo deja de descontarse
+      if (intervalRef.current !== null) {
+        window.clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
 
       const correct = choice !== null && choice === question.answer;
       const left = timeRef.current;
@@ -85,11 +91,16 @@ export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props)
       setTimeLeft(timeRef.current);
       if (timeRef.current <= 0) {
         window.clearInterval(interval);
+        intervalRef.current = null;
         answer(null);
       }
     }, 100);
+    intervalRef.current = interval;
 
-    return () => window.clearInterval(interval);
+    return () => {
+      window.clearInterval(interval);
+      if (intervalRef.current === interval) intervalRef.current = null;
+    };
   }, [index, answer]);
 
   function next() {

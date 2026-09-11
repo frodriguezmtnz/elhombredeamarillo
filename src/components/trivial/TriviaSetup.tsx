@@ -7,10 +7,28 @@ interface Props {
   onAliasChange: (value: string) => void;
 }
 
-const MODES: { key: string; label: string; hint: string; note: string }[] = [
-  { key: 'rapido', label: 'Rápido', hint: '10 preguntas variadas', note: 'de todo el archivo' },
-  { key: 'experto', label: 'Experto', hint: '15 preguntas · solo media o difícil', note: 'para iniciados' },
-  { key: 'sanspoilers', label: 'Sin spoilers', hint: '10 preguntas sin revelar trama', note: 'ideal recién llegado' },
+const MODES: { key: string; label: string; hint: string; tagline: string; note: string }[] = [
+  {
+    key: 'rapido',
+    label: 'Rápido',
+    hint: '10 preguntas variadas',
+    tagline: 'para empezar ya',
+    note: 'de todo el archivo',
+  },
+  {
+    key: 'experto',
+    label: 'Experto',
+    hint: '15 preguntas · solo media o difícil',
+    tagline: 'si ya has visto las 3 temporadas',
+    note: 'para iniciados',
+  },
+  {
+    key: 'sanspoilers',
+    label: 'Sin spoilers',
+    hint: '10 preguntas sin revelar trama',
+    tagline: 'si estás al día de la serie',
+    note: 'ideal recién llegado',
+  },
 ];
 
 const SEASONS: { key: 1 | 2 | 3; label: string }[] = [
@@ -21,16 +39,42 @@ const SEASONS: { key: 1 | 2 | 3; label: string }[] = [
 
 const CATEGORIES = Object.keys(TRIVIA_CATEGORY_LABELS) as TriviaCategory[];
 
-function SectionHeader({ index, title, sub }: { index: string; title: string; sub: string }) {
+function SectionHeader({
+  index,
+  title,
+  sub,
+  primary = false,
+}: {
+  index: string;
+  title: string;
+  sub: string;
+  primary?: boolean;
+}) {
   return (
     <div className="flex items-baseline gap-4">
-      <span className="font-pixel text-3xl text-yellow/40 leading-none">{index}</span>
+      <span
+        className={
+          primary ? 'font-pixel text-5xl text-yellow leading-none' : 'font-pixel text-3xl text-yellow/40 leading-none'
+        }
+      >
+        {index}
+      </span>
       <div>
-        <h3 className="font-pixel text-xl uppercase leading-none">{title}</h3>
+        <h3
+          className={
+            primary ? 'font-pixel text-2xl uppercase leading-none' : 'font-pixel text-xl uppercase leading-none'
+          }
+        >
+          {title}
+        </h3>
         <p className="mt-1 text-[9px] font-bold tracking-[.12em] text-text-muted/60 uppercase font-mono">{sub}</p>
       </div>
     </div>
   );
+}
+
+function Divider() {
+  return <div aria-hidden="true" className="mt-16 mb-14 h-[3px] rounded-full bg-yellow/60" />;
 }
 
 export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
@@ -87,34 +131,40 @@ export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
         </label>
       </div>
 
-      {/* 01 · Modos principales: las tarjetas grandes son el camino rápido */}
-      <div className="mt-10">
-        <SectionHeader index="01" title="Modos del pueblo" sub="elige y la campana empezará a sonar" />
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5">
+      {/* 01 · Modos principales: el camino rápido, destacado */}
+      <div className="mt-12">
+        <SectionHeader index="01" title="Modos del pueblo" sub="elige uno y la campana empezará a sonar" primary />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-6">
           {MODES.map((mode, i) => (
             <button
               key={mode.key}
               type="button"
               onClick={() => start(mode.key)}
-              className="group text-left rounded-xl border border-yellow/25 bg-surface-raised p-5 hover:border-yellow hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(228,183,34,0.12)] transition-all cursor-pointer"
+              className="group flex flex-col text-left rounded-xl border-2 border-yellow/30 bg-surface-raised p-6 hover:border-yellow hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(228,183,34,0.15)] transition-all cursor-pointer"
             >
-              <span className="font-pixel text-2xl text-yellow/40 group-hover:text-yellow transition-colors">
+              <span className="font-pixel text-4xl text-yellow/50 group-hover:text-yellow transition-colors leading-none">
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <span className="block mt-1 font-pixel text-2xl uppercase text-text group-hover:text-yellow transition-colors">
+              <span className="mt-3 font-pixel text-3xl uppercase text-text group-hover:text-yellow transition-colors leading-none">
                 {mode.label}
               </span>
-              <span className="block mt-2 text-text-muted text-xs leading-relaxed">{mode.hint}</span>
-              <span className="mt-3 inline-block px-2 py-1 rounded bg-yellow/10 border border-yellow/20 text-[8px] font-bold tracking-[.12em] text-yellow/70 uppercase font-mono">
+              <span className="mt-3 text-text-muted text-sm leading-relaxed">{mode.hint}</span>
+              <span className="mt-2 text-[11px] italic text-yellow/70 font-body">{mode.tagline}</span>
+              <span className="mt-4 inline-block self-start px-2 py-1 rounded bg-yellow/10 border border-yellow/20 text-[8px] font-bold tracking-[.12em] text-yellow/70 uppercase font-mono">
                 {mode.note}
+              </span>
+              <span className="mt-auto pt-5 inline-flex items-center gap-2 text-[10px] font-bold tracking-[.14em] uppercase font-mono text-yellow opacity-0 group-hover:opacity-100 transition-opacity">
+                EMPEZAR <b>→</b>
               </span>
             </button>
           ))}
         </div>
       </div>
 
+      <Divider />
+
       {/* 02 · Temporadas: píldoras con aviso de spoilers */}
-      <div className="mt-12">
+      <div>
         <SectionHeader index="02" title="Por temporada" sub="spoilers de esa temporada + reglas generales" />
         <div className="flex flex-wrap gap-3 mt-5">
           {SEASONS.map((s) => (
@@ -133,8 +183,10 @@ export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
         </div>
       </div>
 
+      <Divider />
+
       {/* 03 · Categorías: fichas informativas con su tamaño de banco */}
-      <div className="mt-12">
+      <div>
         <SectionHeader
           index="03"
           title="Por categoría"

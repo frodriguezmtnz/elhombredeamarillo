@@ -23,12 +23,12 @@ export default function TriviaSubmit({ summary, alias, onAliasChange, onRecorded
   const effectiveScore = Math.min(summary.score, MAX_POINTS_HINT);
 
   async function publish() {
+    if (!user) return;
     setStatus('sending');
     setError('');
-    const clean = sanitizePlayerAlias(alias) || 'Anónimo';
     const result = await submitTriviaScore({
-      userId: user?.id ?? null,
-      player: clean,
+      userId: user.id,
+      player: sanitizePlayerAlias(alias) || 'Anónimo',
       mode: summary.modeLabel,
       score: effectiveScore,
       correct: summary.correct,
@@ -52,9 +52,32 @@ export default function TriviaSubmit({ summary, alias, onAliasChange, onRecorded
           MARCADOR PUBLICADO EN EL TABLÓN
         </p>
         <p className="mt-2 text-text-muted text-xs leading-relaxed">
-          Tus {effectiveScore} pts firmados como «{sanitizePlayerAlias(alias) || 'Anónimo'}»{' '}
-          {user ? 'quedan verificados con tu cuenta.' : ' quedan como anónimos.'} Mira tu posición más abajo.
+          Tus {effectiveScore} pts firmadas como «{sanitizePlayerAlias(alias) || 'Anónimo'}» quedan{' '}
+          <b className="text-yellow">verificadas con tu cuenta</b>. Puedes borrarlas desde el propio tablón. Mira tu
+          posición más abajo.
         </p>
+      </div>
+    );
+  }
+
+  // Anti-bots: jugar es libre, publicar exige cuenta
+  if (!user) {
+    return (
+      <div className="rounded-2xl border border-border bg-surface p-5 lg:p-6">
+        <p className="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-1">
+          TABLÓN DEL PUEBLO · SOLO MARCAS VERIFICADAS
+        </p>
+        <p className="text-text-muted text-xs leading-relaxed mb-4">
+          Jugar es gratis y anónimo, pero para publicar tu marca en el tablón hace falta una cuenta: así el pueblo
+          mantiene a los bots fuera del archivo.
+        </p>
+        <button
+          type="button"
+          onClick={openLogin}
+          className="inline-flex items-center gap-3 min-h-[44px] px-5 bg-yellow text-bg text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:brightness-110 transition-all cursor-pointer"
+        >
+          INICIAR SESIÓN O CREAR CUENTA <b>→</b>
+        </button>
       </div>
     );
   }
@@ -65,23 +88,8 @@ export default function TriviaSubmit({ summary, alias, onAliasChange, onRecorded
         TABLÓN DEL PUEBLO · PUBLICA TU MARCA
       </p>
       <p className="text-text-muted text-xs leading-relaxed mb-4">
-        {user ? (
-          <>
-            Aparecerás <b className="text-yellow">verificado</b> con tu cuenta. Puedes usar el alias que quieras.
-          </>
-        ) : (
-          <>
-            Puedes publicar sin cuenta (marca anónima), pero{' '}
-            <button
-              type="button"
-              onClick={openLogin}
-              className="text-yellow underline underline-offset-2 hover:text-yellow-bright transition-colors cursor-pointer"
-            >
-              inicia sesión
-            </button>{' '}
-            para que sea tuya de verdad y poder borrarla.
-          </>
-        )}
+        Aparecerás <b className="text-yellow">verificado</b> con tu cuenta. Puedes firmar con el alias que quieras y
+        borrar la marca desde el tablón.
       </p>
 
       <div className="flex flex-col sm:flex-row gap-3">
@@ -92,7 +100,7 @@ export default function TriviaSubmit({ summary, alias, onAliasChange, onRecorded
             value={alias}
             onChange={(e) => onAliasChange(e.target.value.slice(0, 24))}
             maxLength={24}
-            placeholder={user ? (user.email ?? '').split('@')[0] : 'Anónimo'}
+            placeholder={(user.email ?? '').split('@')[0]}
             disabled={status === 'sending'}
             className="w-full min-h-[44px] px-4 rounded-xl bg-bg border border-border text-sm text-text placeholder:text-text-muted/40 focus:outline-2 focus:outline-yellow"
           />

@@ -17,6 +17,7 @@ interface TriviaScoreRow {
 function mapRow(row: TriviaScoreRow): TriviaLeaderboardEntry {
   return {
     id: row.id,
+    userId: row.user_id,
     player: row.player,
     mode: row.mode,
     score: row.score,
@@ -98,6 +99,21 @@ export async function fetchTriviaLeaderboard(
 
     if (error) return { error: error.message };
     return { data: ((data ?? []) as TriviaScoreRow[]).map(mapRow) };
+  } catch (err) {
+    return { error: describeError(err) };
+  }
+}
+
+/**
+ * Borra una marca propia (la política RLS solo deja borrar las filas
+ * cuyo user_id coincide con la sesión; las anónimas se limpian a mano
+ * desde el dashboard de Supabase).
+ */
+export async function deleteTriviaScore(id: string): Promise<{ error?: string }> {
+  try {
+    const sb = await getSupabase();
+    const { error } = await sb.from('trivia_scores').delete().eq('id', id).abortSignal(AbortSignal.timeout(10_000));
+    return error ? { error: error.message } : {};
   } catch (err) {
     return { error: describeError(err) };
   }

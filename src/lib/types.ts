@@ -162,6 +162,7 @@ export interface TriviaScorePayload {
 /** Fila del tablón ya mapeada a camelCase */
 export interface TriviaLeaderboardEntry {
   id: string;
+  userId: string | null;
   player: string;
   mode: string;
   score: number;

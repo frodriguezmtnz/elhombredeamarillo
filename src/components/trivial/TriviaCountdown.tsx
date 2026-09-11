@@ -7,7 +7,7 @@ interface Props {
   onDone: () => void;
 }
 
-const INTRO_MS = 900;
+const INTRO_MS = 7000;
 const COUNT_MS = 600;
 const GO_MS = 700;
 
