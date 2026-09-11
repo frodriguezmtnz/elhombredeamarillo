@@ -112,6 +112,17 @@ body.trivial-immersive .trivial-side {
   user-select: none;
 }
 
+/* El hero ocupa espacio sobre el juego: durante la partida se retira
+   para que el tablero quede arriba, centrado bajo la cabecera */
+body.trivial-immersive .trivial-hero {
+  display: none;
+}
+
+body.trivial-immersive #juego {
+  padding-top: 2rem;
+  min-height: calc(100vh - var(--header-h));
+}
+
 /* ─── Reduced motion ─── */
 @media (prefers-reduced-motion: reduce) {
   *,

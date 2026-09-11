@@ -4,25 +4,17 @@ import { useState } from 'react';
 import { useAuth } from '../community/AuthProvider';
 import type { TriviaSummary } from './TriviaGame';
 
-const ALIAS_KEY = 'trivial-alias';
 const MAX_POINTS_HINT = 30000;
 
 interface Props {
   summary: TriviaSummary;
+  alias: string;
+  onAliasChange: (value: string) => void;
   onRecorded: (id: string) => void;
 }
 
-function loadAlias(): string {
-  try {
-    return window.localStorage.getItem(ALIAS_KEY) ?? '';
-  } catch {
-    return '';
-  }
-}
-
-export default function TriviaSubmit({ summary, onRecorded }: Props) {
+export default function TriviaSubmit({ summary, alias, onAliasChange, onRecorded }: Props) {
   const { user, openLogin } = useAuth();
-  const [alias, setAlias] = useState(() => loadAlias());
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [error, setError] = useState('');
 
@@ -34,11 +26,6 @@ export default function TriviaSubmit({ summary, onRecorded }: Props) {
     setStatus('sending');
     setError('');
     const clean = sanitizePlayerAlias(alias) || 'Anónimo';
-    try {
-      window.localStorage.setItem(ALIAS_KEY, clean);
-    } catch {
-      // sin almacenamiento: se publica igualmente
-    }
     const result = await submitTriviaScore({
       userId: user?.id ?? null,
       player: clean,
@@ -65,8 +52,8 @@ export default function TriviaSubmit({ summary, onRecorded }: Props) {
           MARCADOR PUBLICADO EN EL TABLÓN
         </p>
         <p className="mt-2 text-text-muted text-xs leading-relaxed">
-          Tu {effectiveScore} pts como «{sanitizePlayerAlias(alias) || 'Anónimo'}»{' '}
-          {user ? 'quedan verificadas con tu cuenta.' : ' quedan como anónimas.'} Mira tu posición más abajo.
+          Tus {effectiveScore} pts firmados como «{sanitizePlayerAlias(alias) || 'Anónimo'}»{' '}
+          {user ? 'quedan verificados con tu cuenta.' : ' quedan como anónimos.'} Mira tu posición más abajo.
         </p>
       </div>
     );
@@ -103,7 +90,7 @@ export default function TriviaSubmit({ summary, onRecorded }: Props) {
           <input
             type="text"
             value={alias}
-            onChange={(e) => setAlias(e.target.value.slice(0, 24))}
+            onChange={(e) => onAliasChange(e.target.value.slice(0, 24))}
             maxLength={24}
             placeholder={user ? (user.email ?? '').split('@')[0] : 'Anónimo'}
             disabled={status === 'sending'}

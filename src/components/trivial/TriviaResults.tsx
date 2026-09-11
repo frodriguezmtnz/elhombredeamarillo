@@ -135,12 +135,6 @@ export default function TriviaResults({ summary, deck, onPlayAgain, onNewMode }:
         >
           CAMBIAR DE PRUEBA
         </button>
-        <a
-          href="/expedientes"
-          className="inline-flex items-center gap-3 min-h-[48px] px-5 border border-border text-text-muted text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:border-yellow hover:text-yellow transition-all"
-        >
-          IR A LOS EXPEDIENTES <b>↗</b>
-        </a>
         <TriviaShare summary={summary} rank={rank.name} />
       </div>
     </div>

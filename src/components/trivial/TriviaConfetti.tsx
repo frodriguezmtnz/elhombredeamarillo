@@ -95,6 +95,7 @@ export default function TriviaConfetti({ onDone }: { onDone?: () => void }) {
   }, [onDone]);
 
   return (
-    <canvas ref={canvasRef} role="presentation" className="fixed inset-0 z-[70] w-full h-full pointer-events-none" />
+    // biome-ignore lint/a11y/noAriaHiddenOnFocusable: canvas decorativo, sin interacción posible
+    <canvas ref={canvasRef} aria-hidden="true" className="fixed inset-0 z-[70] w-full h-full pointer-events-none" />
   );
 }

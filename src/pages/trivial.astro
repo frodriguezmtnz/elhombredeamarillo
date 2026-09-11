@@ -45,7 +45,7 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.season > 0).length;
 
   <main class="pt-[var(--header-h)]">
     <!-- Hero -->
-    <section class="relative overflow-hidden trivial-side" aria-labelledby="trivial-title">
+    <section class="trivial-hero relative overflow-hidden trivial-side" aria-labelledby="trivial-title">
       <div class="absolute inset-0 bg-gradient-to-br from-yellow/5 via-transparent to-rust/5 pointer-events-none"></div>
       <div class="relative mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 lg:py-24">
         <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-3">
@@ -55,7 +55,7 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.season > 0).length;
           TRIVIAL <span class="text-yellow">DEL PUEBLO</span>
         </h1>
         <p class="mt-4 max-w-[60ch] text-text-muted text-sm leading-relaxed">
-          ¿Crees que las reglas del pueblo no tienen secretos? Responde antes de que suene el cuerno: {totalPreguntas} preguntas sobre FROM, sus criaturas, su producción y este mismo archivo.
+          ¿Crees que las reglas del pueblo no tienen secretos? Responde antes de que suene la campana de Boyd: {totalPreguntas} preguntas sobre FROM, sus criaturas, su producción y este mismo archivo.
         </p>
 
         <!-- CTA -->
@@ -108,8 +108,8 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.season > 0).length;
           <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">01 // TOQUE DE QUEDA</span>
           <h3 class="mt-2 font-pixel text-xl uppercase">20 segundos por pregunta</h3>
           <p class="mt-2 text-text-muted text-xs leading-relaxed">
-            El cuerno suena al empezar cada pregunta. Responder rápido da bonus: dudar demasiado
-            solo garantiza que te encuentren fuera.
+            La campana de Boyd suena al empezar cada pregunta. Responder rápido da bonus: dudar
+            demasiado solo garantiza que te encuentren fuera.
           </p>
         </div>
         <div class="rounded-2xl border border-border bg-surface p-5">

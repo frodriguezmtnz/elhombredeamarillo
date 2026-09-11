@@ -11,6 +11,8 @@ interface Props {
   refreshKey: number;
   /** Id de la fila recién publicada por el usuario para resaltarla */
   highlightId: string | null;
+  /** Alias actual: recuerda con qué nombre se firmará */
+  alias: string;
 }
 
 const SCOPES: { key: TriviaLeaderboardScope; label: string }[] = [
@@ -18,7 +20,7 @@ const SCOPES: { key: TriviaLeaderboardScope; label: string }[] = [
   { key: 'all', label: 'HISTÓRICO' },
 ];
 
-export default function TriviaLeaderboard({ refreshKey, highlightId }: Props) {
+export default function TriviaLeaderboard({ refreshKey, highlightId, alias }: Props) {
   const [scope, setScope] = useState<TriviaLeaderboardScope>('week');
   const [entries, setEntries] = useState<TriviaLeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,7 +77,12 @@ export default function TriviaLeaderboard({ refreshKey, highlightId }: Props) {
   return (
     <div className="rounded-2xl border border-border bg-surface p-5 lg:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono">TABLÓN DEL PUEBLO</p>
+        <p className="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono">
+          TABLÓN DEL PUEBLO
+          <span className="ml-3 text-[10px] font-body font-normal normal-case tracking-normal text-text-muted/50">
+            firmas como «{alias.trim() || 'Anónimo'}»
+          </span>
+        </p>
         <div className="flex gap-1" role="tablist" aria-label="Ámbito del tablón">
           {SCOPES.map((item) => (
             <button
