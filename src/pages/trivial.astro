@@ -8,7 +8,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const SITE = Astro.site?.origin ?? 'https://elhombredeamarillo.vercel.app';
 const totalPreguntas = TRIVIA_QUESTIONS.length;
 const categorias = new Set(TRIVIA_QUESTIONS.map((q) => q.category)).size;
-const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.season > 0).length;
+const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
 ---
 
 <BaseLayout
@@ -132,9 +132,10 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.season > 0).length;
         </div>
       </div>
       <p class="mt-8 text-[11px] text-text-muted/70 font-mono leading-relaxed">
-        Aviso: las categorías «Trama por temporadas» y muchas de «Criaturas» contienen spoilers hasta
-        la T3. Si estás al día del canal, usa el modo SIN SPOILERS. Las explicaciones de cada respuesta
-        distinguen entre hechos de pantalla y material confirmado por la producción.
+        Aviso: las categorías de trama («Trama por temporadas», «Criaturas», «Personajes», «Misterios»…)
+        contienen spoilers hasta la T4. Elige el techo de spoilers en «Por temporada» o, si estás al día
+        del canal, usa el modo SIN SPOILERS. Las explicaciones de cada respuesta distinguen entre hechos
+        de pantalla y material confirmado por la producción.
       </p>
     </section>
 

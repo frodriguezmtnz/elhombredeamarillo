@@ -137,9 +137,13 @@ export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props)
           <span className="px-2 py-1 rounded bg-surface-raised border border-border text-[9px] font-bold tracking-[.1em] text-text-muted uppercase font-mono">
             {TRIVIA_CATEGORY_LABELS[question.category]}
           </span>
-          {question.season > 0 && (
+          {question.spoilersUpTo > 0 ? (
             <span className="px-2 py-1 rounded bg-rust/10 border border-rust/30 text-[9px] font-bold tracking-[.1em] text-rust-hot uppercase font-mono">
-              T{question.season} · spoilers
+              T{question.spoilersUpTo} · spoilers
+            </span>
+          ) : (
+            <span className="px-2 py-1 rounded bg-yellow/10 border border-yellow/25 text-[9px] font-bold tracking-[.1em] text-yellow/80 uppercase font-mono">
+              sin spoilers
             </span>
           )}
           <span className="text-[9px] font-bold tracking-[.1em] text-text-muted/60 uppercase font-mono">

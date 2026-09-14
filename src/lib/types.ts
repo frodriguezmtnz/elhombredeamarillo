@@ -112,15 +112,35 @@ export interface MysteryData {
 
 // ── Trivial ──
 
-export type TriviaCategory = 'reglas' | 'criaturas' | 'personajes' | 'temporadas' | 'produccion' | 'canal';
+export type TriviaCategory =
+  | 'reglas'
+  | 'criaturas'
+  | 'personajes'
+  | 'temporadas'
+  | 'misterios'
+  | 'lugares'
+  | 'musica'
+  | 'produccion'
+  | 'canal';
+
+export type TriviaSpoilerLevel = 0 | 1 | 2 | 3 | 4;
+
+export type TriviaReach = 'T1' | 'T2' | 'T3' | 'T4' | 'Global' | 'Pre-serie' | 'Producción' | 'Promoción';
 
 export interface TriviaQuestion {
   id: string;
   category: TriviaCategory;
   /** 1 = fácil, 2 = media, 3 = difícil (afecta a la puntuación) */
   difficulty: 1 | 2 | 3;
-  /** 0 = sin spoilers de trama (premisas, producción, canal); 1-3 = temporada requerida */
-  season: 0 | 1 | 2 | 3;
+  /**
+   * Nivel de spoiler: 0 = no revela trama (reglas, producción, reparto accesible
+   * en prensa); N (1-4) = requiere haber visto hasta la temporada N.
+   */
+  spoilersUpTo: TriviaSpoilerLevel;
+  /** Alcance temático de la pregunta (para la píldora en pantalla); opcional */
+  reach?: TriviaReach;
+  /** Palabras clave de búsqueda/orden (opcional; no se muestran en juego) */
+  tags?: string[];
   question: string;
   options: string[];
   /** Índice de la opción correcta sobre `options` (se baraja en cliente) */

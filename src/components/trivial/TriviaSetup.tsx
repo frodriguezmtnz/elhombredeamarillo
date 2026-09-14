@@ -1,4 +1,4 @@
-import { TRIVIA_CATEGORY_LABELS, TRIVIA_QUESTIONS, buildDeck, countByCategory, countForSeason } from '@data/trivial';
+import { TRIVIA_CATEGORY_LABELS, TRIVIA_QUESTIONS, buildDeck, countByCategory, countUpTo } from '@data/trivial';
 import type { TriviaCategory, TriviaQuestion } from '@lib/types';
 
 interface Props {
@@ -19,7 +19,7 @@ const MODES: { key: string; label: string; hint: string; tagline: string; note: 
     key: 'experto',
     label: 'Experto',
     hint: '15 preguntas · solo media o difícil',
-    tagline: 'si ya has visto las 3 temporadas',
+    tagline: 'si ya has visto las 4 temporadas',
     note: 'para iniciados',
   },
   {
@@ -31,10 +31,11 @@ const MODES: { key: string; label: string; hint: string; tagline: string; note: 
   },
 ];
 
-const SEASONS: { key: 1 | 2 | 3; label: string }[] = [
+const SEASONS: { key: 1 | 2 | 3 | 4; label: string }[] = [
   { key: 1, label: 'T1' },
   { key: 2, label: 'T2' },
   { key: 3, label: 'T3' },
+  { key: 4, label: 'T4' },
 ];
 
 const CATEGORIES = Object.keys(TRIVIA_CATEGORY_LABELS) as TriviaCategory[];
@@ -83,7 +84,7 @@ export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
     let modeLabel: string;
 
     if (modeKey === 'rapido') {
-      deck = buildDeck({ count: 10 });
+      deck = buildDeck({ count: 10, balance: true });
       modeLabel = 'Rápido';
     } else if (modeKey === 'experto') {
       deck = buildDeck({ count: 15, minDifficulty: 2 });
@@ -92,9 +93,9 @@ export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
       deck = buildDeck({ count: 10, safeOnly: true });
       modeLabel = 'Sin spoilers';
     } else if (modeKey.startsWith('temporada-')) {
-      const s = Number(modeKey.split('-')[1]) as 1 | 2 | 3;
-      deck = buildDeck({ count: 8, season: s });
-      modeLabel = `Temporada ${s}`;
+      const s = Number(modeKey.split('-')[1]) as 1 | 2 | 3 | 4;
+      deck = buildDeck({ count: 8, upTo: s });
+      modeLabel = `Hasta T${s}`;
     } else {
       const cat = modeKey.replace('categoria-', '') as TriviaCategory;
       deck = buildDeck({ count: 10, categories: [cat] });
@@ -165,7 +166,7 @@ export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
 
       {/* 02 · Temporadas: píldoras con aviso de spoilers */}
       <div>
-        <SectionHeader index="02" title="Por temporada" sub="spoilers de esa temporada + reglas generales" />
+        <SectionHeader index="02" title="Por temporada" sub="spoilers hasta la temporada elegida" />
         <div className="flex flex-wrap gap-3 mt-5">
           {SEASONS.map((s) => (
             <button
@@ -174,9 +175,10 @@ export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
               onClick={() => start(`temporada-${s.key}`)}
               className="group inline-flex items-center gap-3 min-h-[44px] px-4 rounded-full border border-border text-[11px] font-bold tracking-[.12em] uppercase font-mono text-text-muted hover:text-yellow hover:border-yellow/50 transition-all cursor-pointer"
             >
-              <span className="font-pixel text-lg text-yellow/60 group-hover:text-yellow">T{s.key}</span>· 8 preguntas
+              <span className="font-pixel text-lg text-yellow/60 group-hover:text-yellow">T{s.key}</span>· hasta T
+              {s.key}
               <span className="px-1.5 py-0.5 rounded bg-rust/15 border border-rust/30 text-[8px] text-rust-hot tracking-[.08em]">
-                {countForSeason(s.key)} disp.
+                {countUpTo(s.key)} disp.
               </span>
             </button>
           ))}

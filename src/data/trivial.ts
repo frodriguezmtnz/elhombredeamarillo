@@ -11,9 +11,11 @@ import rawQuestions from './trivial.json';
  * Convenciones del JSON:
  * - `answer` es el índice de la opción correcta SOBRE EL ARRAY TAL CUAL ESTÁ
  *   escrito ahí; el mazo se baraja en cliente (opciones incluidas).
- * - `season: 0` = la pregunta no revela trama (reglas generales, producción, canal).
- * - `season: N` = requiere haber visto hasta la temporada N (spoilers).
- * - Revisar/actualizar preguntas de `temporadas` y `produccion` cuando estrene la T4.
+ * - `spoilersUpTo: 0` = no revela trama (reglas, producción, reparto accesible
+ *   en prensa). `spoilersUpTo: N` = requiere haber visto hasta la temporada N.
+ * - `reach` es una pista temática para la píldora en pantalla (opcional).
+ * - `tags` son palabras clave internas (no se muestran en juego).
+ * - Revisar/actualizar preguntas de `temporadas` y `produccion` cuando estrene la T5.
  */
 
 export const TRIVIA_CATEGORY_LABELS: Record<TriviaCategory, string> = {
@@ -21,9 +23,14 @@ export const TRIVIA_CATEGORY_LABELS: Record<TriviaCategory, string> = {
   criaturas: 'CRIATURAS Y ENTIDADES',
   personajes: 'PERSONAJES',
   temporadas: 'TRAMA POR TEMPORADAS',
+  misterios: 'MISTERIOS Y OBJETOS',
+  lugares: 'LUGARES Y FROMVILLE',
+  musica: 'MÚSICA Y GRAMOLA',
   produccion: 'PRODUCCIÓN',
   canal: 'EL CANAL',
 };
+
+const KNOWN_REACH = ['T1', 'T2', 'T3', 'T4', 'Global', 'Pre-serie', 'Producción', 'Promoción'];
 
 export interface TriviaRank {
   key: string;
@@ -83,12 +90,24 @@ function validateQuestions(questions: unknown): TriviaQuestion[] {
       throw new Error(`${at} (${item.id}): categoría desconocida`);
     if (item.difficulty !== 1 && item.difficulty !== 2 && item.difficulty !== 3)
       throw new Error(`${at} (${item.id}): difficulty debe ser 1, 2 o 3`);
-    if (item.season !== 0 && item.season !== 1 && item.season !== 2 && item.season !== 3)
-      throw new Error(`${at} (${item.id}): season debe ser 0, 1, 2 o 3`);
+    if (
+      item.spoilersUpTo !== 0 &&
+      item.spoilersUpTo !== 1 &&
+      item.spoilersUpTo !== 2 &&
+      item.spoilersUpTo !== 3 &&
+      item.spoilersUpTo !== 4
+    )
+      throw new Error(`${at} (${item.id}): spoilersUpTo debe ser 0, 1, 2, 3 o 4`);
+    if (item.reach !== undefined && !KNOWN_REACH.includes(item.reach))
+      throw new Error(`${at} (${item.id}): reach desconocido (${item.reach})`);
+    if (item.tags !== undefined && (!Array.isArray(item.tags) || item.tags.some((t) => typeof t !== 'string')))
+      throw new Error(`${at} (${item.id}): tags debe ser un array de strings`);
     if (!Array.isArray(item.options) || item.options.length !== 4)
       throw new Error(`${at} (${item.id}): debe tener exactamente 4 opciones`);
     if (item.options.some((o) => typeof o !== 'string' || o.trim().length === 0))
       throw new Error(`${at} (${item.id}): alguna opción está vacía`);
+    if (new Set(item.options).size !== item.options.length)
+      throw new Error(`${at} (${item.id}): hay opciones duplicadas`);
     if (
       typeof item.answer !== 'number' ||
       !Number.isInteger(item.answer) ||
@@ -120,10 +139,28 @@ export function shuffle<T>(items: T[]): T[] {
 export interface DeckConfig {
   count: number;
   categories?: TriviaCategory[];
-  season?: 1 | 2 | 3;
+  /** Modo "hasta la temporada N": incluye spoilersUpTo <= N (en todas las categorías) */
+  upTo?: 1 | 2 | 3 | 4;
   minDifficulty?: 1 | 2 | 3;
-  /** Si es true, solo preguntas sin spoilers de trama (season === 0) */
+  /** Si es true, solo preguntas sin spoilers de trama (spoilersUpTo === 0) */
   safeOnly?: boolean;
+  /** Si es true, pondera el muestreo hacia preguntas fáciles/medias (modo Rápido) */
+  balance?: boolean;
+}
+
+// Peso de muestreo por dificultad: favorece fácil(1)/media(2) sobre difícil(3).
+const BALANCE_WEIGHT: Record<1 | 2 | 3, number> = { 1: 3, 2: 2, 3: 1 };
+
+/** Muestreo sin reemplazo ponderado (Efraimidis–Spirakis) sobre un pool barajable. */
+function weightedSample(pool: TriviaQuestion[], count: number): TriviaQuestion[] {
+  return pool
+    .map((q) => {
+      const weight = BALANCE_WEIGHT[q.difficulty] ?? 1;
+      return { q, key: Math.random() ** (1 / weight) };
+    })
+    .sort((a, b) => a.key - b.key)
+    .slice(0, count)
+    .map((x) => x.q);
 }
 
 /**
@@ -134,28 +171,28 @@ export function buildDeck(config: DeckConfig): TriviaQuestion[] {
   let pool = TRIVIA_QUESTIONS;
 
   if (config.safeOnly) {
-    pool = pool.filter((q) => q.season === 0);
+    pool = pool.filter((q) => q.spoilersUpTo === 0);
   }
   if (config.categories && config.categories.length > 0) {
     const cats = config.categories;
     pool = pool.filter((q) => cats.includes(q.category));
   }
-  if (config.season !== undefined) {
-    const s = config.season;
-    pool = pool.filter((q) => q.season === s || q.season === 0);
+  if (config.upTo !== undefined) {
+    const n = config.upTo;
+    pool = pool.filter((q) => q.spoilersUpTo <= n);
   }
   const minDifficulty = config.minDifficulty;
   if (minDifficulty !== undefined) {
     pool = pool.filter((q) => q.difficulty >= minDifficulty);
   }
 
-  return shuffle(pool)
-    .slice(0, config.count)
-    .map((q) => {
-      const correctOption = q.options[q.answer];
-      const mixed = shuffle(q.options);
-      return { ...q, options: mixed, answer: mixed.indexOf(correctOption) };
-    });
+  const picked = config.balance ? weightedSample(pool, config.count) : shuffle(pool).slice(0, config.count);
+
+  return picked.map((q) => {
+    const correctOption = q.options[q.answer];
+    const mixed = shuffle(q.options);
+    return { ...q, options: mixed, answer: mixed.indexOf(correctOption) };
+  });
 }
 
 export function getRank(accuracyPercent: number): TriviaRank {
@@ -167,7 +204,7 @@ export function countByCategory(category: TriviaCategory): number {
   return TRIVIA_QUESTIONS.filter((q) => q.category === category).length;
 }
 
-/** Nº de preguntas disponibles para un modo de temporada */
-export function countForSeason(season: 1 | 2 | 3): number {
-  return TRIVIA_QUESTIONS.filter((q) => q.season === season || q.season === 0).length;
+/** Nº de preguntas disponibles con spoilers hasta la temporada N */
+export function countUpTo(season: 1 | 2 | 3 | 4): number {
+  return TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo <= season).length;
 }
