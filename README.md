@@ -2,11 +2,12 @@
 
 Web de contenido y comunidad para el canal de YouTube `@koiboy_OG`, dedicado al análisis, las teorías y los debates sobre la serie FROM.
 
-Tres espacios conectados con estética de archivo de investigación:
+Cuatro espacios conectados con estética de archivo de investigación:
 
 - **Inicio (`/`)** — Umbral cinematográfico con hero, portales a las secciones y últimos vídeos del canal.
 - **Vídeos (`/videos`)** — Biblioteca audiovisual con búsqueda, filtros, orden, paginación, vídeo destacado y directorio de creadores.
 - **Expedientes (`/expedientes`)** — Muro de teorías con conexiones interactivas, cronología de investigación y archivo comunitario de misterios votables.
+- **Trivial (`/trivial`)** — Prueba de iniciación: preguntas sobre el pueblo con rangos, tablón verificado y modos hasta la T4 / sin spoilers.
 
 ## Stack
 
@@ -48,12 +49,11 @@ pnpm icons     # regenera los iconos PWA desde favicon.svg
 
 ## Variables de entorno
 
-Copia `.env.example` a `.env.local` y rellena los valores (pide credenciales a Supabase/YouTube).
+Copia `.env.example` a `.env` y rellena los valores (pide las credenciales de Supabase).
 
 ```env
-SUPABASE_URL=https://xxx.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
-YOUTUBE_API_KEY=AIzaSy...
+PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
 ```
 
 ## Base de datos
@@ -70,10 +70,10 @@ src/
 │   ├── effects/      # Efectos visuales y escenas Three.js
 │   ├── ui/           # Header, Footer, Icon, Pagination
 │   └── videos/       # Biblioteca de vídeos (React islands)
-├── data/             # Contenido editorial estático (vídeos, expedientes)
+├── data/             # Contenido editorial estático (vídeos, expedientes, trivial.json)
 ├── layouts/          # BaseLayout
 ├── lib/              # Helpers y clientes (youtube, supabase, utils)
-├── pages/            # index, videos, expedientes, sitemap.xml
+├── pages/            # index, videos, expedientes, trivial, sitemap.xml
 └── styles/           # global.css (Tailwind + variables)
 ```
 
