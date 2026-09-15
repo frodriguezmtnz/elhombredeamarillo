@@ -92,19 +92,14 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
       </div>
     </section>
 
-    <!-- Juego -->
-    <section id="juego" class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 pb-16 scroll-mt-[calc(var(--header-h)+1rem)]" aria-label="Juego trivial">
-      <TriviaBoard client:visible />
-    </section>
-
     <!-- Cómo funciona -->
-    <section id="reglas" class="trivial-side mx-auto max-w-[var(--shell)] px-5 lg:px-8 pb-20 border-t border-border pt-12 scroll-mt-[calc(var(--header-h)+1rem)]" aria-labelledby="como-title">
-      <header class="mb-8">
+    <section id="reglas" class="trivial-side mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-20 scroll-mt-[calc(var(--header-h)+1rem)]" aria-labelledby="como-title">
+      <header class="mb-8 reveal-item">
         <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">PROTOCOLO DE LA PRUEBA</p>
         <h2 class="font-pixel text-[clamp(1.6rem,3.5vw,2.5rem)] uppercase" id="como-title">Cómo se juega</h2>
       </header>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="rounded-2xl border border-border bg-surface p-5">
+        <div class="rounded-2xl border border-border bg-surface p-5 reveal-item stagger">
           <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">01 // TOQUE DE QUEDA</span>
           <h3 class="mt-2 font-pixel text-xl uppercase">20 segundos por pregunta</h3>
           <p class="mt-2 text-text-muted text-xs leading-relaxed">
@@ -112,7 +107,7 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
             demasiado solo garantiza que te encuentren fuera.
           </p>
         </div>
-        <div class="rounded-2xl border border-border bg-surface p-5">
+        <div class="rounded-2xl border border-border bg-surface p-5 reveal-item stagger">
           <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">02 // TALISMANES</span>
           <h3 class="mt-2 font-pixel text-xl uppercase">Rachas y dificultad</h3>
           <p class="mt-2 text-text-muted text-xs leading-relaxed">
@@ -120,7 +115,7 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
             protección: las rachas dan puntos extra hasta x5.
           </p>
         </div>
-        <div class="rounded-2xl border border-border bg-surface p-5">
+        <div class="rounded-2xl border border-border bg-surface p-5 reveal-item stagger">
           <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">03 // TU RANGO</span>
           <h3 class="mt-2 font-pixel text-xl uppercase">De Cautivo a Hombre de Amarillo</h3>
           <p class="mt-2 text-text-muted text-xs leading-relaxed">
@@ -137,6 +132,11 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
         del canal, usa el modo SIN SPOILERS. Las explicaciones de cada respuesta distinguen entre hechos
         de pantalla y material confirmado por la producción.
       </p>
+    </section>
+
+    <!-- Juego -->
+    <section id="juego" class="mx-auto max-w-[var(--shell)] border-t border-border pt-12 px-5 lg:px-8 pb-16 scroll-mt-[calc(var(--header-h)+1rem)]" aria-label="Juego trivial">
+      <TriviaBoard client:visible />
     </section>
 
     <div class="trivial-side">

@@ -1,5 +1,7 @@
 import { TRIVIA_CATEGORY_LABELS, TRIVIA_QUESTIONS, buildDeck, countByCategory, countUpTo } from '@data/trivial';
 import type { TriviaCategory, TriviaQuestion } from '@lib/types';
+import { useRef } from 'react';
+import { useReveal } from './useReveal';
 
 interface Props {
   onStart: (deck: TriviaQuestion[], modeLabel: string) => void;
@@ -79,6 +81,9 @@ function Divider() {
 }
 
 export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  useReveal(rootRef);
+
   function start(modeKey: string) {
     let deck: TriviaQuestion[];
     let modeLabel: string;
@@ -106,8 +111,8 @@ export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-6 lg:p-10">
-      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+    <div ref={rootRef} className="rounded-2xl border border-border bg-surface p-6 lg:p-10">
+      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6 reveal-item">
         <div>
           <p className="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">
             EXPEDIENTE TRIVIAL · SELECCIÓN DE PRUEBA
@@ -134,14 +139,16 @@ export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
 
       {/* 01 · Modos principales: el camino rápido, destacado */}
       <div className="mt-12">
-        <SectionHeader index="01" title="Modos del pueblo" sub="elige uno y la campana empezará a sonar" primary />
+        <div className="reveal-item">
+          <SectionHeader index="01" title="Modos del pueblo" sub="elige uno y la campana empezará a sonar" primary />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-6">
           {MODES.map((mode, i) => (
             <button
               key={mode.key}
               type="button"
               onClick={() => start(mode.key)}
-              className="group flex flex-col text-left rounded-xl border-2 border-yellow/30 bg-surface-raised p-6 hover:border-yellow hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(228,183,34,0.15)] transition-all cursor-pointer"
+              className="group flex flex-col text-left rounded-xl border-2 border-yellow/30 bg-surface-raised p-6 hover:border-yellow hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(228,183,34,0.15)] transition-all cursor-pointer reveal-item stagger"
             >
               <span className="font-pixel text-4xl text-yellow/50 group-hover:text-yellow transition-colors leading-none">
                 {String(i + 1).padStart(2, '0')}
