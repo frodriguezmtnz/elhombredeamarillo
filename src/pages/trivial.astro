@@ -1,4 +1,5 @@
 ---
+import NeonFromVille from '../components/trivial/NeonFromVille.astro';
 import TriviaBoard from '../components/trivial/TriviaBoard';
 import Footer from '../components/ui/Footer.astro';
 import Header from '../components/ui/Header.astro';
@@ -47,6 +48,7 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
     <!-- Hero -->
     <section class="trivial-hero relative overflow-hidden trivial-side" aria-labelledby="trivial-title">
       <div class="absolute inset-0 bg-gradient-to-br from-yellow/5 via-transparent to-rust/5 pointer-events-none"></div>
+      <NeonFromVille />
       <div class="relative mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-16 lg:py-24">
         <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-3">
           PRUEBA DE INICIACIÓN // ARCHIVO LÚDICO

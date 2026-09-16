@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Neón Trivial — Opción A (CSS neón)</title>
+    <style>
+/**
+ * Estilos compartidos del cartel de neón (A/C/D).
+ * scripts/build-neon-sandbox.mjs los INYECTA inline en cada HTML.
+ */
+
+@font-face {
+  font-family: 'VT323';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../node_modules/@fontsource/vt323/files/vt323-latin-400-normal.woff') format('woff');
+}
+
+:root {
+  color-scheme: dark;
+  --yellow: #f4c943;
+  --yellow-deep: #e4b722;
+  --red: #ff3b30;
+  --red-deep: #d36255;
+  --white: #fff6da;
+  --ivory: #f1ebdc;
+  --fr: 6.1s; /* loop ≈ (loopEnd-introEnd)/fr del spec */
+}
+
+html, body { margin: 0; height: 100%; background: #070805; color: var(--ivory); font: 13px/1.5 'JetBrains Mono', ui-monospace, monospace; }
+#wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px 48px; }
+header { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: baseline; margin-bottom: 8px; }
+h1 { font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); margin: 0; }
+.tag { font-size: 10px; letter-spacing: .14em; color: #6d6a55; }
+
+/* ─── lienzo 1200x480 escalado con container queries ─── */
+#stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1200 / 480;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 70% at 50% 45%, rgba(244, 201, 67, 0.05), transparent 70%),
+    radial-gradient(40% 55% at 50% 55%, rgba(255, 59, 48, 0.03), transparent 70%),
+    #0c0d0a;
+  border: 1px solid #212318;
+  border-radius: 14px;
+  container-type: inline-size;
+}
+#stage.v-d { background: transparent; border-color: #212318; }
+.bg-label { position: absolute; top: 8px; left: 10px; font-size: 10px; letter-spacing: .14em; color: #6d6a55; text-transform: uppercase; z-index: 6; }
+
+/* el contenedor del cartel recibe el tilt 3D */
+#sign {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5cqw;
+  transform: var(--tilt, none);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* ─── tipografía neón: núcleo blanco + halo de color ─── */
+.line { display: flex; line-height: .92; white-space: pre; }
+.ltr {
+  position: relative;
+  font-family: 'VT323', 'Courier New', monospace;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.lit .ltr { opacity: 1; animation: ignite .8s ease both; animation-delay: calc(var(--i) * 60ms); }
+
+.line-trivial .ltr {
+  font-size: 16.3cqw;
+  color: var(--white);
+  text-shadow:
+    0 0 1px #fff,
+    0 0 7px var(--yellow),
+    0 0 18px var(--yellow),
+    0 0 40px var(--yellow-deep),
+    0 0 90px rgba(244, 201, 67, .45);
+}
+.line-fv .ltr {
+  font-size: 7.5cqw;
+  color: #ffdfda;
+  text-shadow:
+    0 0 1px #fff,
+    0 0 7px var(--red),
+    0 0 18px var(--red),
+    0 0 40px var(--red-deep),
+    0 0 90px rgba(255, 59, 48, .45);
+}
+#stage.v-c .line-fv .ltr { font-size: 12.5cqw; }
+#stage.v-d .line-fv .ltr { font-size: 16cqw; }
+
+/* parpadeo: zumbido estable + tubo averiado en FromVille */
+.line-trivial { animation: hum var(--fr) steps(1, end) infinite, glitch calc(var(--fr) * 1.37) steps(1, end) infinite; }
+.line-fv { animation: stutter calc(var(--fr) * .72) steps(1, end) infinite; }
+@keyframes hum { 0%, 100% { opacity: 1 } 50% { opacity: .985 } 73% { opacity: .965 } }
+@keyframes glitch { 0%, 90%, 93%, 100% { opacity: 1 } 91% { opacity: .55 } 92% { opacity: .85 } }
+@keyframes stutter {
+  0%, 17%, 19%, 23.5%, 25%, 50%, 52%, 70%, 72.5%, 75%, 100% { opacity: 1 }
+  18%, 24% { opacity: .16 }
+  51% { opacity: .5 }
+  71% { opacity: .08 }
+  73% { opacity: .85 }
+  74% { opacity: .12 }
+}
+@keyframes ignite {
+  0%, 22% { opacity: 0 }
+  24% { opacity: 1 }
+  28% { opacity: .1 }
+  32%, 46% { opacity: 1 }
+  50% { opacity: .25 }
+  54%, 100% { opacity: 1 }
+}
+
+/* subrayado rojo bajo FromVille */
+.underline {
+  width: 34cqw;
+  height: .35cqw;
+  border-radius: 999px;
+  background: #ffdfda;
+  box-shadow: 0 0 6px var(--red), 0 0 18px var(--red), 0 0 40px rgba(211, 98, 85, .6);
+  animation: stutter calc(var(--fr) * .72) steps(1, end) infinite;
+}
+#stage.v-c .underline { width: 46cqw; }
+#stage.v-d .underline { display: none; }
+
+/* marco del cartel */
+.frame {
+  position: absolute;
+  inset: 7.5% 3.3%;
+  border: .18cqw solid var(--red);
+  border-radius: 1.5cqw;
+  box-shadow:
+    0 0 6px var(--red),
+    0 0 20px rgba(255, 59, 48, .7),
+    0 0 46px rgba(211, 98, 85, .4),
+    inset 0 0 14px rgba(255, 59, 48, .22);
+  animation: hum var(--fr) steps(1, end) infinite;
+  pointer-events: none;
+}
+#stage.v-d .frame { display: none; }
+
+/* pupila del talismán: ojo que te observa (modo 'eye') */
+.pupil { pointer-events: none; }
+
+/* talismán (calcado de src/components/ui/Talisman404.astro) */
+.talisman {
+  position: absolute;
+  left: 3.5%;
+  top: 50%;
+  width: 13cqw;
+  height: auto;
+  transform: translateY(-50%);
+  filter: drop-shadow(0 0 6px rgba(244, 201, 67, .55)) drop-shadow(0 0 22px rgba(244, 201, 67, .25));
+  animation: hum calc(var(--fr) * 1.3) steps(1, end) infinite;
+  pointer-events: none;
+}
+#stage.v-d .talisman { display: none; }
+
+/* araña colgando y balanceándose */
+.spider {
+  position: absolute;
+  right: 8.5%;
+  top: 0;
+  width: 9cqw;
+  height: auto;
+  transform-origin: 50% 0;
+  animation: dangle 6.4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes dangle { from { transform: rotate(-3deg) } to { transform: rotate(3deg) } }
+#stage.v-d .spider { display: none; }
+
+/* foco de cursor (spotlight / combo) */
+#spot {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity .35s ease;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  background: radial-gradient(circle 170px at var(--sx, 50%) var(--sy, 50%), rgba(255, 246, 218, .5), rgba(255, 59, 48, .2) 45%, transparent 70%);
+}
+#spot.on { opacity: 1; }
+
+/* ─── controles ─── */
+#controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; align-items: center; }
+#controls button, #controls label, #controls select {
+  font: 11px 'JetBrains Mono', monospace;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #212318;
+  background: #0c0d0a;
+  color: var(--ivory);
+  cursor: pointer;
+}
+#controls button:hover, #controls button.active, #controls select:hover { border-color: var(--yellow); color: var(--yellow); }
+.hint { font-size: 11px; color: #6d6a55; }
+
+/* ─── modo estático (reduced-motion) ─── */
+.static .ltr { opacity: 1 !important; animation: none !important; }
+.static .line, .static .underline, .static .frame, .static .talisman, .static .spider { animation: none !important; }
+.static #spot { display: none; }
+.static #sign { transform: none !important; }
+
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <header>
+        <h1>Neón Trivial — Opción A · CSS neón</h1>
+        <span class="tag">letras span a span · glow por text-shadow · 5 efectos de cursor</span>
+      </header>
+
+      <div id="stage" class="v-a">
+        <span class="bg-label">#juego · fondo</span>
+        <div id="sign">
+          <div class="frame"></div>
+<svg class="talisman" viewBox="0 0 400 400" aria-hidden="true">
+  <circle cx="200" cy="200" r="176" fill="#12140f" stroke="#2c2d1f" stroke-width="1.5" />
+  <circle cx="200" cy="200" r="166" fill="none" stroke="#8f824c" stroke-opacity="0.6" stroke-width="1" />
+  <circle cx="200" cy="200" r="133" fill="none" stroke="#8f824c" stroke-opacity="0.6" stroke-width="1" />
+  <g fill="none" stroke="#f4c943" stroke-opacity="0.55" stroke-width="2" stroke-linecap="round">
+    <path d="M200 66 v16 M200 318 v16 M66 200 h16 M318 200 h16 M105 105 l13 13 M282 282 l13 13 M295 105 l-13 13 M118 282 l-13 13" />
+  </g>
+  <circle cx="200" cy="200" r="150" fill="none" stroke="#f4c943" stroke-opacity="0.85" stroke-width="26" stroke-linecap="round" stroke-dasharray="3 20 9 15 5 26 13 18 7 12 16 24 4 22 11 17 6 19 8 16" />
+  <ellipse cx="200" cy="200" rx="58" ry="36" fill="none" stroke="#f4c943" stroke-opacity="0.8" stroke-width="2" />
+  <circle cx="200" cy="200" r="22" fill="none" stroke="#f4c943" stroke-opacity="0.65" stroke-width="1.5" />
+  <circle cx="200" cy="200" r="11" fill="#0a0a08" stroke="#d8b33c" stroke-width="1.6" />
+  <circle class="pupil" cx="200" cy="200" r="3.5" fill="#f4c943" />
+  <path d="M148 168 q52 -7 104 0" fill="none" stroke="#f4c943" stroke-opacity="0.35" stroke-width="1.5" />
+  <path d="M148 232 q52 7 104 0" fill="none" stroke="#f4c943" stroke-opacity="0.35" stroke-width="1.5" />
+</svg>
+
+          <div class="line line-trivial" data-word="TRIVIAL"></div>
+          <div class="line line-fv" data-word="FromVille"></div>
+          <div class="underline"></div>
+<svg class="spider" viewBox="0 0 120 260" aria-hidden="true">
+  <line x1="60" y1="0" x2="60" y2="150" stroke="rgba(241,235,220,0.28)" stroke-width="1.4" />
+  <g transform="translate(60 170)" fill="none" stroke-linecap="round">
+    <g stroke="#0a0a08" stroke-width="4">
+      <path d="M-7 -6 L-25 -20 L-37 -6 M-8 -1 L-29 -4 L-43 8 M-7 4 L-27 11 L-39 23 M-5 9 L-20 20 L-28 34" />
+      <path d="M7 -6 L25 -20 L37 -6 M8 -1 L29 -4 L43 8 M7 4 L27 11 L39 23 M5 9 L20 20 L28 34" />
+    </g>
+    <g stroke="rgba(241,235,220,0.32)" stroke-width="1.4">
+      <path d="M-7 -6 L-25 -20 L-37 -6 M-8 -1 L-29 -4 L-43 8 M-7 4 L-27 11 L-39 23 M-5 9 L-20 20 L-28 34" />
+      <path d="M7 -6 L25 -20 L37 -6 M8 -1 L29 -4 L43 8 M7 4 L27 11 L39 23 M5 9 L20 20 L28 34" />
+    </g>
+    <ellipse cx="0" cy="9" rx="15" ry="17" fill="#0a0a08" stroke="rgba(241,235,220,0.28)" stroke-width="1.4" />
+    <ellipse cx="0" cy="-10" rx="8.5" ry="7" fill="#0a0a08" stroke="rgba(241,235,220,0.28)" stroke-width="1.4" />
+    <circle cx="-3.2" cy="-12" r="1.5" fill="#f4c943" />
+    <circle cx="3.2" cy="-12" r="1.5" fill="#f4c943" />
+  </g>
+</svg>
+
+        </div>
+        <div id="spot"></div>
+      </div>
+
+      <div id="controls">
+        <label>Efecto cursor
+          <select id="selFx">
+            <option value="off">Sin efecto</option>
+            <option value="spotlight" selected>Foco que sigue al cursor</option>
+            <option value="tilt">Inclinación 3D (parallax)</option>
+            <option value="magnetic">Letras magnéticas</option>
+            <option value="eye">Ojo que te observa (talisman)</option>
+            <option value="combo">Combo: foco + inclinación</option>
+          </select>
+        </label>
+        <button id="btnReplay">Volver a encender</button>
+        <button id="btnStatic">Reduced-motion (estático)</button>
+      </div>
+      <p class="hint">El foco usa <code>mix-blend-mode: screen</code>: al pasar el cursor, el tubo enciende más. Prueba también «Ojo que te observa».</p>
+    </div>
+
+    <script>
+/**
+ * Motor de letras neón + efectos de cursor compartido por A/C/D.
+ * scripts/build-neon-sandbox.mjs lo INYECTA inline en cada HTML:
+ * con file:// los orígenes son opacos y no se pueden cargar .js hermanos.
+ */
+(() => {
+  const stage = document.getElementById('stage');
+  const spot = document.getElementById('spot');
+  const sel = document.getElementById('selFx');
+  const reduce = !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── 1. construir letras desde data-word ── */
+  const buildLetters = () => {
+    const lines = stage.querySelectorAll('.line[data-word]');
+    lines.forEach((line, i) => {
+      const word = line.getAttribute('data-word');
+      line.innerHTML = '';
+      for (let j = 0; j < word.length; j++) {
+        const span = document.createElement('span');
+        span.className = 'ltr';
+        span.textContent = word[j];
+        span.style.setProperty('--i', String(i * 10 + j));
+        line.appendChild(span);
+      }
+    });
+  };
+  buildLetters();
+
+  const letters = [...stage.querySelectorAll('.ltr')];
+  const pupils = [...stage.querySelectorAll('.pupil')];
+
+  /* ── 2. ignición (encendido escalonado) ── */
+  const ignite = () => {
+    stage.classList.remove('lit');
+    void stage.offsetWidth; // reflow para reiniciar animaciones
+    stage.classList.add('lit');
+  };
+  window.__neonReplay = ignite;
+  if (reduce) stage.classList.add('lit', 'static');
+  else ignite();
+
+  /* ── 3. efectos de cursor ── */
+  let fx = sel ? sel.value : 'spotlight';
+  let px = -9999;
+  let py = -9999;
+  let sx = -9999;
+  let sy = -9999;
+  let centers = [];
+
+  const measure = () => {
+    const r = stage.getBoundingClientRect();
+    centers = letters.map((el) => {
+      const b = el.getBoundingClientRect();
+      return { x: b.left - r.left + b.width / 2, y: b.top - r.top + b.height / 2 };
+    });
+  };
+  measure();
+  window.addEventListener('resize', measure);
+
+  stage.addEventListener('pointermove', (e) => {
+    const r = stage.getBoundingClientRect();
+    px = e.clientX - r.left;
+    py = e.clientY - r.top;
+  });
+  stage.addEventListener('pointerleave', () => {
+    px = -9999;
+    py = -9999;
+  });
+
+  const clearFx = () => {
+    for (const el of letters) el.style.transform = '';
+    for (const el of pupils) el.style.transform = '';
+    spot.classList.remove('on');
+    stage.style.setProperty('--tilt', '');
+  };
+
+  const setFx = (m) => {
+    fx = m;
+    if (sel) sel.value = m;
+    clearFx();
+  };
+  if (sel) sel.addEventListener('change', () => setFx(sel.value));
+
+  const frame = () => {
+    requestAnimationFrame(frame);
+    if (reduce) return;
+    sx += (px - sx) * 0.16;
+    sy += (py - sy) * 0.16;
+    const active = px > -999;
+    const r = stage.getBoundingClientRect();
+
+    if (fx === 'spotlight' || fx === 'combo') {
+      spot.classList.toggle('on', active);
+      if (active) {
+        spot.style.setProperty('--sx', `${sx}px`);
+        spot.style.setProperty('--sy', `${sy}px`);
+      }
+    }
+
+    if (fx === 'tilt' || fx === 'combo') {
+      if (active) {
+        const nx = (sx - r.width / 2) / (r.width / 2);
+        const ny = (sy - r.height / 2) / (r.height / 2);
+        stage.style.setProperty(
+          '--tilt',
+          `perspective(900px) rotateY(${(nx * 7).toFixed(2)}deg) rotateX(${(-ny * 7).toFixed(2)}deg)`,
+        );
+      } else {
+        stage.style.setProperty('--tilt', '');
+      }
+    }
+
+    if (fx === 'magnetic') {
+      for (let i = 0; i < letters.length; i++) {
+        const c = centers[i];
+        if (!c) continue;
+        const dx = c.x - sx;
+        const dy = c.y - sy;
+        const d = Math.sqrt(dx * dx + dy * dy) || 1;
+        const f = Math.max(0, 1 - d / 230);
+        const push = f * f * 26;
+        letters[i].style.transform = `translate(${((dx / d) * push).toFixed(1)}px, ${((dy / d) * push).toFixed(1)}px)`;
+      }
+    }
+
+    if (fx === 'eye') {
+      for (let k = 0; k < pupils.length; k++) {
+        const pb = pupils[k].getBoundingClientRect();
+        const cx = pb.left - r.left + pb.width / 2;
+        const cy = pb.top - r.top + pb.height / 2;
+        const edx = px - cx;
+        const edy = py - cy;
+        const ed = Math.sqrt(edx * edx + edy * edy) || 1;
+        const reach = Math.min(6, ed / 30);
+        pupils[k].style.transform =
+          `translate(${((edx / ed) * reach).toFixed(1)}px, ${((edy / ed) * reach).toFixed(1)}px)`;
+      }
+    }
+  };
+  requestAnimationFrame(frame);
+
+  /* ── 4. controles de la página ── */
+  const btnReplay = document.getElementById('btnReplay');
+  if (btnReplay) btnReplay.addEventListener('click', ignite);
+  const btnStatic = document.getElementById('btnStatic');
+  if (btnStatic) {
+    btnStatic.addEventListener('click', () => {
+      const on = !btnStatic.classList.contains('active');
+      btnStatic.classList.toggle('active', on);
+      stage.classList.toggle('static', on);
+    });
+  }
+
+  /* ── 5. la comparativa manda por postMessage (sin acceso cross-frame) ── */
+  window.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.neonFx) setFx(d.neonFx);
+    if (d.neonReplay) ignite();
+    if (typeof d.neonStatic === 'boolean' && btnStatic) {
+      if (btnStatic.classList.contains('active') !== d.neonStatic) btnStatic.click();
+    }
+  });
+})();
+
+    </script>
+  </body>
+</html>

@@ -11,6 +11,9 @@
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "icons": "node scripts/generate-icons.mjs",
+    "neon:lottie": "node scripts/build-neon-lottie.mjs",
+    "neon:sandbox": "node scripts/build-neon-sandbox.mjs",
+    "sandbox": "node scripts/serve-sandbox.mjs",
     "dev:road": "pnpm --filter the-road dev",
     "build:road": "pnpm --filter the-road build",
     "preview:road": "pnpm --filter the-road preview",
@@ -37,6 +40,7 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@types/three": "^0.185.4",
+    "opentype.js": "^2.0.0",
     "sharp": "^0.35.3",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.8.0"
