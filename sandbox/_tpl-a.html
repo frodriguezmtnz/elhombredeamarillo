@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Neón Trivial — Opción A (CSS neón)</title>
+    <style>
+/*__NEON_CSS__*/
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <header>
+        <h1>Neón Trivial — Opción A · CSS neón</h1>
+        <span class="tag">letras span a span · glow por text-shadow · 5 efectos de cursor</span>
+      </header>
+
+      <div id="stage" class="v-a">
+        <span class="bg-label">#juego · fondo</span>
+        <div id="sign">
+          <div class="frame"></div>
+<!--__NEON_TALISMAN__-->
+          <div class="line line-trivial" data-word="TRIVIAL"></div>
+          <div class="line line-fv" data-word="FromVille"></div>
+          <div class="underline"></div>
+<!--__NEON_SPIDER__-->
+        </div>
+        <div id="spot"></div>
+      </div>
+
+      <div id="controls">
+        <label>Efecto cursor
+          <select id="selFx">
+            <option value="off">Sin efecto</option>
+            <option value="spotlight" selected>Foco que sigue al cursor</option>
+            <option value="tilt">Inclinación 3D (parallax)</option>
+            <option value="magnetic">Letras magnéticas</option>
+            <option value="eye">Ojo que te observa (talisman)</option>
+            <option value="combo">Combo: foco + inclinación</option>
+          </select>
+        </label>
+        <button id="btnReplay">Volver a encender</button>
+        <button id="btnStatic">Reduced-motion (estático)</button>
+      </div>
+      <p class="hint">El foco usa <code>mix-blend-mode: screen</code>: al pasar el cursor, el tubo enciende más. Prueba también «Ojo que te observa».</p>
+    </div>
+
+    <script>
+/*__NEON_JS__*/
+    </script>
+  </body>
+</html>

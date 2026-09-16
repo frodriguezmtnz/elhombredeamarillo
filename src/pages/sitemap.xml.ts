@@ -6,6 +6,7 @@ const staticPages = [
   { path: '', lastmod: '2026-08-19' },
   { path: '/videos', lastmod: '2026-08-19' },
   { path: '/expedientes', lastmod: '2026-08-19' },
+  { path: '/trivial', lastmod: '2026-09-10' },
   { path: '/the-road/', lastmod: '2026-09-05' },
 ];
 

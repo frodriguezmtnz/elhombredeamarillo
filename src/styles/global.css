@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* ─── Custom theme (Tailwind v4 CSS-first) ─── */
 @theme {
@@ -24,10 +24,10 @@
 
   --color-ivory: #f1ebdc;
 
-  --font-display: 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-pixel: 'VT323', monospace;
+  --font-display: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-pixel: "VT323", monospace;
 
   --spacing-header: 72px;
 }
@@ -98,6 +98,29 @@ html {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* ─── Trivial: modo inmersivo (se difumina lo que rodea al juego) ─── */
+.trivial-side {
+  transition: filter 0.45s ease, opacity 0.45s ease;
+}
+
+body.trivial-immersive .trivial-side {
+  filter: blur(7px) brightness(0.45);
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* El hero ocupa espacio sobre el juego: durante la partida se retira
+   para que el tablero quede arriba, centrado bajo la cabecera */
+body.trivial-immersive .trivial-hero {
+  display: none;
+}
+
+body.trivial-immersive #juego {
+  padding-top: 2rem;
+  min-height: calc(100vh - var(--header-h));
 }
 
 /* ─── Reduced motion ─── */

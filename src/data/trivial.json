@@ -1,0 +1,2557 @@
+[
+  {
+    "id": "Q001",
+    "category": "musica",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "gramola",
+      "música",
+      "conteo"
+    ],
+    "question": "¿Cuántas canciones han reproducido las gramolas en las ocasiones en que las hemos visto iluminarse?",
+    "options": [
+      "14",
+      "12",
+      "17",
+      "15"
+    ],
+    "answer": 0,
+    "explanation": "Conteo acumulado de reproducciones mostradas en pantalla."
+  },
+  {
+    "id": "Q002",
+    "category": "musica",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "gramola",
+      "música",
+      "títulos"
+    ],
+    "question": "¿De cuántas canciones diferentes hemos podido leer el título en las gramolas, sin contar repetidas?",
+    "options": [
+      "36",
+      "32",
+      "40",
+      "38"
+    ],
+    "answer": 0,
+    "explanation": "Conteo de títulos distintos visibles en las gramolas."
+  },
+  {
+    "id": "Q003",
+    "category": "musica",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "gramola",
+      "música",
+      "canciones"
+    ],
+    "question": "¿Cuál de estas canciones no ha sonado en la gramola?",
+    "options": [
+      "If It Be Your Will",
+      "Who By Fire",
+      "Blue",
+      "Satisfaction"
+    ],
+    "answer": 3,
+    "explanation": "«Satisfaction» no ha sonado en la gramola."
+  },
+  {
+    "id": "Q004",
+    "category": "personajes",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "muertes",
+      "personajes",
+      "conteo"
+    ],
+    "question": "¿Cuántos personajes con nombre han fallecido en total hasta el final de la temporada 4, inclusive?",
+    "options": [
+      "42",
+      "47",
+      "46",
+      "43"
+    ],
+    "answer": 0,
+    "explanation": "Conteo total de personajes con nombre fallecidos hasta el cierre de la T4."
+  },
+  {
+    "id": "Q005",
+    "category": "lugares",
+    "difficulty": 3,
+    "spoilersUpTo": 3,
+    "reach": "T3",
+    "tags": [
+      "Camden",
+      "Henry",
+      "dirección"
+    ],
+    "question": "¿Cuál es la dirección de la casa de Henry en Camden, Maine?",
+    "options": [
+      "1597 Burrow Street",
+      "1647 Fennertry Crescent",
+      "1763 Milne Dr",
+      "1485 Scotia Terrace"
+    ],
+    "answer": 0,
+    "explanation": "La dirección mostrada es 1597 Burrow Street."
+  },
+  {
+    "id": "Q007",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 3,
+    "reach": "T3",
+    "tags": [
+      "cuevas",
+      "Victor",
+      "objetos"
+    ],
+    "question": "¿Qué objeto no ve Victor cuando baja a las cuevas con su padre?",
+    "options": [
+      "Una bicicleta",
+      "Una maleta",
+      "Un vestido blanco",
+      "Una linterna roja"
+    ],
+    "answer": 3,
+    "explanation": "La linterna roja es el objeto que no aparece entre los que ve Victor."
+  },
+  {
+    "id": "Q008",
+    "category": "personajes",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Jade",
+      "Miranda",
+      "violín"
+    ],
+    "question": "¿De quién es el violín que toca Jade?",
+    "options": [
+      "Jade",
+      "Miranda",
+      "Christopher",
+      "Victor"
+    ],
+    "answer": 1,
+    "explanation": "El violín pertenecía a Miranda."
+  },
+  {
+    "id": "Q009",
+    "category": "criaturas",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "cigarras",
+      "maldición",
+      "Marielle"
+    ],
+    "question": "¿Quién es la primera persona afectada por la maldición de las cigarras?",
+    "options": [
+      "Julie",
+      "Randall",
+      "Marielle",
+      "Los tres a la vez"
+    ],
+    "answer": 2,
+    "explanation": "Marielle es la primera afectada."
+  },
+  {
+    "id": "Q010",
+    "category": "personajes",
+    "difficulty": 1,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Randall",
+      "dron"
+    ],
+    "question": "¿Cuál de estos personajes tenía un dron?",
+    "options": [
+      "Randall",
+      "Jim",
+      "Kenny",
+      "Elgin"
+    ],
+    "answer": 0,
+    "explanation": "El dron pertenecía a Randall."
+  },
+  {
+    "id": "Q011",
+    "category": "personajes",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "autobús",
+      "Elgin",
+      "Randall"
+    ],
+    "question": "¿Qué personajes del autobús estaban viajando para visitar a algún familiar cuando entraron en Fromville?",
+    "options": [
+      "Elgin y Randall",
+      "Elgin y Marielle",
+      "Randall y Tillie",
+      "Tom y Khatri"
+    ],
+    "answer": 0,
+    "explanation": "Elgin y Randall viajaban para visitar a familiares."
+  },
+  {
+    "id": "Q012",
+    "category": "misterios",
+    "difficulty": 1,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Jade",
+      "coche",
+      "Audi"
+    ],
+    "question": "¿De qué marca era el coche de Jade?",
+    "options": [
+      "Audi",
+      "BMW",
+      "Mercedes",
+      "Tesla"
+    ],
+    "answer": 0,
+    "explanation": "El coche de Jade era un Audi."
+  },
+  {
+    "id": "Q013",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "Julie",
+      "storywalking",
+      "mazmorra"
+    ],
+    "question": "¿Cuántas veces ha viajado Julie a otro momento de la historia mediante la mazmorra?",
+    "options": [
+      "4",
+      "3",
+      "5",
+      "2"
+    ],
+    "answer": 0,
+    "explanation": "Se cuentan cuatro desplazamientos: Boyd, la caravana/RV, la carretera con el Hombre de Amarillo y Jim."
+  },
+  {
+    "id": "Q014",
+    "category": "personajes",
+    "difficulty": 2,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Nathan",
+      "profesión"
+    ],
+    "question": "¿A qué se dedicaba Nathan antes de llegar a Fromville?",
+    "options": [
+      "Criar animales",
+      "Profesor de primaria",
+      "Creador de atracciones",
+      "Enfermero"
+    ],
+    "answer": 0,
+    "explanation": "Nathan trabajaba con animales."
+  },
+  {
+    "id": "Q015",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Sara",
+      "Khatri",
+      "marca"
+    ],
+    "question": "¿De qué producto es la marca que dibuja Sara sobre lo que entierra Khatri?",
+    "options": [
+      "Chocolate",
+      "Caramelo",
+      "Pañuelos",
+      "Bebida"
+    ],
+    "answer": 0,
+    "explanation": "La marca corresponde a chocolate."
+  },
+  {
+    "id": "Q016",
+    "category": "lugares",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "árbol caído",
+      "entrada",
+      "carretera"
+    ],
+    "question": "En las entradas que hemos visto a Fromville, la raíz del árbol de la carretera se ubica, desde la perspectiva del conductor…",
+    "options": [
+      "Siempre a la izquierda",
+      "Siempre a la derecha",
+      "A ambos lados, pero más veces a la izquierda",
+      "A ambos lados, pero más veces a la derecha"
+    ],
+    "answer": 3,
+    "explanation": "Los Stevens la ven a la izquierda; los Matthews y la ambulancia, a la derecha."
+  },
+  {
+    "id": "Q017",
+    "category": "personajes",
+    "difficulty": 3,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Khatri",
+      "Boyd",
+      "Donna"
+    ],
+    "question": "¿De quién eran las palabras que la visión del padre Khatri no recuerda y que se dijeron cuando conocieron a Boyd al llegar a Fromville?",
+    "options": [
+      "Donna",
+      "Abby",
+      "Ellis",
+      "Kenny"
+    ],
+    "answer": 0,
+    "explanation": "Las palabras eran de Donna."
+  },
+  {
+    "id": "Q018",
+    "category": "personajes",
+    "difficulty": 3,
+    "spoilersUpTo": 2,
+    "reach": "Pre-serie",
+    "tags": [
+      "cronología",
+      "llegadas",
+      "Sara",
+      "Nathan"
+    ],
+    "question": "¿Cuál de estos personajes fue el último en llegar a Fromville antes de la llegada de Jade, Tobey y los Matthews en el episodio 1?",
+    "options": [
+      "Kristi",
+      "Kenny",
+      "Sara y Nathan",
+      "Khatri"
+    ],
+    "answer": 2,
+    "explanation": "Sara afirma llevar solo unos meses en el pueblo; Kristi llevaba seis meses desaparecida cuando llega Marielle."
+  },
+  {
+    "id": "Q019",
+    "category": "personajes",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "Pre-serie",
+    "tags": [
+      "cronología",
+      "llegadas",
+      "Donna"
+    ],
+    "question": "¿Cuál de estos personajes fue el primero en llegar a Fromville, sin contar a Victor?",
+    "options": [
+      "Khatri",
+      "Donna",
+      "Kenny",
+      "Kristi"
+    ],
+    "answer": 1,
+    "explanation": "Entre las opciones, Donna es quien llegó primero."
+  },
+  {
+    "id": "Q020",
+    "category": "lugares",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "edificios",
+      "pueblo",
+      "conteo"
+    ],
+    "question": "¿Cuántos edificios comunitarios y residenciales actualmente utilizables hay en el pueblo principal de From, sin contar Colony House?",
+    "options": [
+      "14",
+      "13",
+      "11",
+      "12"
+    ],
+    "answer": 2,
+    "explanation": "Se cuentan 11: diner, comisaría, clínica, bar, iglesia, casa Liu, casa de Sara, casa azul, casa gris, casa verde y granero."
+  },
+  {
+    "id": "Q021",
+    "category": "lugares",
+    "difficulty": 2,
+    "spoilersUpTo": 3,
+    "reach": "T3",
+    "tags": [
+      "asentamiento",
+      "Ethan",
+      "Victor"
+    ],
+    "question": "¿Quiénes descubren el asentamiento?",
+    "options": [
+      "Kenny y Jim",
+      "Ethan y Victor",
+      "Sara y Boyd",
+      "Elgin y Fatima"
+    ],
+    "answer": 1,
+    "explanation": "Ethan y Victor son quienes lo descubren."
+  },
+  {
+    "id": "Q022",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Cromenockle",
+      "libro",
+      "autor"
+    ],
+    "question": "¿Quién es el autor o autora de «El vuelo del Cromenockle»?",
+    "options": [
+      "Kay Dillon",
+      "Jiff Horning",
+      "Robert Ludlum",
+      "Judy Blume"
+    ],
+    "answer": 0,
+    "explanation": "La autora acreditada es Kay Dillon."
+  },
+  {
+    "id": "Q023",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Gooligog",
+      "libro",
+      "autor"
+    ],
+    "question": "¿Quién es el autor o autora de «Las aventuras del gran Gooligog»?",
+    "options": [
+      "Kay Dillon",
+      "Jiff Horning",
+      "Robert Ludlum",
+      "Judy Blume"
+    ],
+    "answer": 1,
+    "explanation": "El autor acreditado es Jiff Horning."
+  },
+  {
+    "id": "Q024",
+    "category": "criaturas",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "monstruos",
+      "arquetipos"
+    ],
+    "question": "¿Qué profesión o arquetipo de monstruo no hemos visto?",
+    "options": [
+      "Enfermera",
+      "Lechero",
+      "Animadora",
+      "Recepcionista"
+    ],
+    "answer": 3,
+    "explanation": "No se ha mostrado un monstruo con arquetipo de recepcionista."
+  },
+  {
+    "id": "Q025",
+    "category": "criaturas",
+    "difficulty": 3,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "caja de música",
+      "bailarina"
+    ],
+    "question": "¿Qué pierna tiene rota la bailarina de la caja de música?",
+    "options": [
+      "Izquierda",
+      "Derecha",
+      "Ninguna",
+      "Las dos"
+    ],
+    "answer": 1,
+    "explanation": "La pierna rota es la derecha."
+  },
+  {
+    "id": "Q026",
+    "category": "personajes",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Khatri",
+      "Boyd",
+      "visiones"
+    ],
+    "question": "¿En cuántos episodios se le ha aparecido Khatri a Boyd como visión después de fallecer?",
+    "options": [
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "answer": 2,
+    "explanation": "El total acumulado es de siete episodios."
+  },
+  {
+    "id": "Q027",
+    "category": "personajes",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "visiones",
+      "fallecidos",
+      "conteo"
+    ],
+    "question": "¿Cuántos personajes humanos se han aparecido como visión después de fallecer, sin incluir entidades?",
+    "options": [
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "answer": 1,
+    "explanation": "El conteo es de cuatro personajes humanos fallecidos."
+  },
+  {
+    "id": "Q028",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "Sophia",
+      "diálogos",
+      "T4"
+    ],
+    "question": "¿Con qué dos personajes no ha dialogado Sophia hasta el final de la temporada 4, inclusive?",
+    "options": [
+      "Victor y Jade",
+      "Boyd y Jade",
+      "Julie y Boyd",
+      "Kristi y Marielle"
+    ],
+    "answer": 0,
+    "explanation": "Hasta el cierre de la T4, Sophia no ha dialogado con Victor ni con Jade."
+  },
+  {
+    "id": "Q029",
+    "category": "criaturas",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Niño de Blanco",
+      "Donna"
+    ],
+    "question": "¿Quién de estos personajes aún no ha visto al Niño de Blanco?",
+    "options": [
+      "Ethan",
+      "Elgin",
+      "Donna",
+      "Tabitha"
+    ],
+    "answer": 2,
+    "explanation": "Donna es la opción que no lo ha visto."
+  },
+  {
+    "id": "Q030",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Colony House",
+      "masacre",
+      "muertes"
+    ],
+    "question": "Según Donna, ¿cuántas personas mueren en la masacre de Colony House?",
+    "options": [
+      "12",
+      "10",
+      "14",
+      "15"
+    ],
+    "answer": 2,
+    "explanation": "Donna sitúa el total en 14 personas."
+  },
+  {
+    "id": "Q031",
+    "category": "personajes",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Kenny",
+      "nombre"
+    ],
+    "question": "¿Cuál es el verdadero nombre de Kenny?",
+    "options": [
+      "Fu-Hen",
+      "Ye Wnjie",
+      "Bing-Qian",
+      "Wei"
+    ],
+    "answer": 0,
+    "explanation": "El nombre real de Kenny es Fu-Hen."
+  },
+  {
+    "id": "Q032",
+    "category": "personajes",
+    "difficulty": 3,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Martin",
+      "origen"
+    ],
+    "question": "¿Cuál es el lugar de origen de Martin?",
+    "options": [
+      "Millbrook",
+      "New Hope",
+      "Boston",
+      "Houston"
+    ],
+    "answer": 0,
+    "explanation": "Martin procede de Millbrook."
+  },
+  {
+    "id": "Q033",
+    "category": "lugares",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "autobús",
+      "Grand Rapids"
+    ],
+    "question": "¿De qué ciudad procede el autobús que llega a Fromville?",
+    "options": [
+      "Grand Rapids",
+      "Grand Canyon",
+      "Grand Junction",
+      "Grand Forks"
+    ],
+    "answer": 0,
+    "explanation": "El autobús procede de Grand Rapids."
+  },
+  {
+    "id": "Q034",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "Jade",
+      "reencarnaciones",
+      "visiones"
+    ],
+    "question": "¿Cuántas versiones o reencarnaciones de sí mismo ha visto Jade en visiones, sin contar al Jade actual ni su versión infantil de la alucinación?",
+    "options": [
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "answer": 0,
+    "explanation": "El conteo es de cuatro versiones/reencarnaciones."
+  },
+  {
+    "id": "Q035",
+    "category": "criaturas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "Victor",
+      "cuevas",
+      "monstruos"
+    ],
+    "question": "¿Qué monstruo le dice a Victor que, si sigue bajando a las cuevas, tendrá que quedarse?",
+    "options": [
+      "La mujer rubia del abrigo",
+      "Smiley",
+      "El mecánico",
+      "La enfermera"
+    ],
+    "answer": 0,
+    "explanation": "La advertencia la hace la mujer rubia del abrigo."
+  },
+  {
+    "id": "Q036",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "población",
+      "T4",
+      "conteo"
+    ],
+    "question": "¿Cuál es el número actual de personas puramente humanas vivas en From tras finalizar la temporada 4, sin contar entidades ni monstruos?",
+    "options": [
+      "47",
+      "44",
+      "43",
+      "42"
+    ],
+    "answer": 3,
+    "explanation": "Partiendo del recuento de 47, se descuentan Jim, Elgin, Marielle y Roger; Fatima deja de contar como humana. La llegada y muerte de Dunne no altera el neto final."
+  },
+  {
+    "id": "Q037",
+    "category": "personajes",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Tillie",
+      "familia"
+    ],
+    "question": "¿Cuáles eran los familiares de Tillie?",
+    "options": [
+      "4 nietos y 7 hijos",
+      "4 hijos y 7 nietos",
+      "4 hijos y 4 nietos",
+      "7 hijos y 7 nietos"
+    ],
+    "answer": 1,
+    "explanation": "Tillie habla de 4 hijos y 7 nietos."
+  },
+  {
+    "id": "Q038",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 3,
+    "reach": "T3",
+    "tags": [
+      "ambulancia",
+      "ecografía",
+      "marca"
+    ],
+    "question": "¿De qué marca es el aparato de ecografía de la ambulancia?",
+    "options": [
+      "Mabuse",
+      "Steinburg",
+      "Philips",
+      "GE Vscan"
+    ],
+    "answer": 0,
+    "explanation": "La marca visible es Mabuse."
+  },
+  {
+    "id": "Q039",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "Acosta",
+      "Kristi",
+      "ambulancia"
+    ],
+    "question": "¿Quién acompaña a Acosta en el asiento del copiloto de la ambulancia cuando trata de huir?",
+    "options": [
+      "Marielle",
+      "Kristi",
+      "Kenny",
+      "Sara"
+    ],
+    "answer": 1,
+    "explanation": "Kristi sube al asiento del copiloto."
+  },
+  {
+    "id": "Q040",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "Sara",
+      "Sophia",
+      "Julie"
+    ],
+    "question": "¿Quién ayuda a Sara a pintar la habitación de Sophia?",
+    "options": [
+      "Sophia",
+      "Ellis",
+      "Kenny",
+      "Julie"
+    ],
+    "answer": 3,
+    "explanation": "Julie ayuda a Sara a pintar la habitación."
+  },
+  {
+    "id": "Q041",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Randall",
+      "Kenny",
+      "diner"
+    ],
+    "question": "¿A quién desarma Randall la noche en que pasan todos en el diner?",
+    "options": [
+      "Kenny",
+      "Donna",
+      "Tillie",
+      "Tom"
+    ],
+    "answer": 0,
+    "explanation": "Randall desarma a Kenny."
+  },
+  {
+    "id": "Q042",
+    "category": "musica",
+    "difficulty": 3,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Kelly",
+      "móvil",
+      "canción"
+    ],
+    "question": "¿Qué canción suena en el despertador del móvil de Kelly, la chica del árbol?",
+    "options": [
+      "Wake Up Little Susie",
+      "A Hard Rain's A-Gonna Fall",
+      "Twinkle, Twinkle, Little Star",
+      "Que Sera, Sera"
+    ],
+    "answer": 0,
+    "explanation": "El despertador reproduce «Wake Up Little Susie»."
+  },
+  {
+    "id": "Q043",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Kelly",
+      "árbol",
+      "Kenny",
+      "Ellis"
+    ],
+    "question": "¿Quiénes descubren a Kelly en el árbol?",
+    "options": [
+      "Kenny y Ellis",
+      "Kristi y Kenny",
+      "Ellis y Fatima",
+      "Boyd y Sara"
+    ],
+    "answer": 0,
+    "explanation": "Kenny y Ellis encuentran a Kelly."
+  },
+  {
+    "id": "Q044",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "96 días",
+      "llegada",
+      "T1"
+    ],
+    "question": "¿Cuántos días transcurrieron sin incidentes antes de la llegada de Jade y los Matthews?",
+    "options": [
+      "96",
+      "47",
+      "63",
+      "67"
+    ],
+    "answer": 0,
+    "explanation": "El pueblo llevaba 96 días/noches sin incidentes."
+  },
+  {
+    "id": "Q045",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Faraway Tree",
+      "viajes",
+      "conteo"
+    ],
+    "question": "¿Cuántas personas del ciclo actual sabemos que han viajado mediante algún Faraway Tree?",
+    "options": [
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "answer": 2,
+    "explanation": "Se cuentan Sara, Boyd, Julie, Tabitha, Victor y Dale: seis personas."
+  },
+  {
+    "id": "Q046",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Jade",
+      "Jim",
+      "radio"
+    ],
+    "question": "¿Quién le da a Jade la idea de cómo construir una torre de radio para contactar con el exterior?",
+    "options": [
+      "Tom",
+      "El propio Jade",
+      "Jim",
+      "Randall"
+    ],
+    "answer": 2,
+    "explanation": "La idea procede de Jim."
+  },
+  {
+    "id": "Q047",
+    "category": "personajes",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "familia",
+      "parentesco",
+      "muertes"
+    ],
+    "question": "¿Qué relación de parentesco familiar aún no hemos visto fallecer durante los acontecimientos de la serie?",
+    "options": [
+      "Padre",
+      "Madre",
+      "Hijo varón",
+      "Todos han fallecido"
+    ],
+    "answer": 2,
+    "explanation": "La relación que queda sin una muerte mostrada durante los acontecimientos de la serie es la de hijo varón."
+  },
+  {
+    "id": "Q048",
+    "category": "personajes",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "familias",
+      "apellidos",
+      "llegadas"
+    ],
+    "question": "¿Cuántas familias de las que conocemos el apellido han llegado a Fromville en el ciclo actual, contando solo grupos de más de un integrante que llegan juntos?",
+    "options": [
+      "6",
+      "7",
+      "5",
+      "4"
+    ],
+    "answer": 0,
+    "explanation": "Se cuentan Raines, Stevens, Kavanaugh, Matthews, Liu y Myers."
+  },
+  {
+    "id": "Q049",
+    "category": "personajes",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Randall",
+      "Kirkland"
+    ],
+    "question": "¿Cuál es el apellido de Randall?",
+    "options": [
+      "Kavanaugh",
+      "Matthews",
+      "Sinclair",
+      "Kirkland"
+    ],
+    "answer": 3,
+    "explanation": "Su nombre completo es Randall Kirkland."
+  },
+  {
+    "id": "Q050",
+    "category": "personajes",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "heridas",
+      "tratamiento",
+      "conteo"
+    ],
+    "question": "¿Cuántas personas han tenido heridas físicas que duraron varios días y requirieron tratamiento?",
+    "options": [
+      "5",
+      "6",
+      "7",
+      "8 o más"
+    ],
+    "answer": 3,
+    "explanation": "Al menos ocho: Kristi, Randall, Elgin, Boyd, Ethan, Jim, Ellis y Sophia."
+  },
+  {
+    "id": "Q051",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T1",
+    "tags": [
+      "Ethan",
+      "Niño de Blanco",
+      "episodio"
+    ],
+    "question": "¿En qué capítulo se le aparece por última vez el Niño de Blanco a Ethan?",
+    "options": [
+      "Temporada 1, episodio 4",
+      "Temporada 1, episodio 3",
+      "Temporada 2, episodio 10",
+      "Temporada 4, episodio 3"
+    ],
+    "answer": 0,
+    "explanation": "La última aparición ante Ethan es en T1E4."
+  },
+  {
+    "id": "Q052",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Fatima",
+      "Ellis",
+      "boda"
+    ],
+    "question": "¿En qué capítulo se celebra la boda de Fatima y Ellis?",
+    "options": [
+      "Temporada 2, episodio 10",
+      "Temporada 2, episodio 8",
+      "Temporada 3, episodio 2",
+      "Temporada 2, episodio 9"
+    ],
+    "answer": 0,
+    "explanation": "La boda se celebra en T2E10."
+  },
+  {
+    "id": "Q053",
+    "category": "lugares",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "asentamiento",
+      "Boyd"
+    ],
+    "question": "¿Quién no ha viajado nunca al asentamiento?",
+    "options": [
+      "Jade",
+      "Boyd",
+      "Kenny",
+      "Jim"
+    ],
+    "answer": 1,
+    "explanation": "Boyd es la opción que no ha viajado al asentamiento."
+  },
+  {
+    "id": "Q054",
+    "category": "lugares",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "edificios",
+      "Fromville",
+      "conteo"
+    ],
+    "question": "¿Cuántos edificios o estructuras principales hay en pie en total en todo Fromville?",
+    "options": [
+      "16",
+      "12",
+      "14",
+      "15"
+    ],
+    "answer": 0,
+    "explanation": "Se cuentan 5 viviendas más diner, comisaría, iglesia, clínica, bar, granero, Colony House, faro, invernadero, root cellar y mazmorra: 16."
+  },
+  {
+    "id": "Q055",
+    "category": "musica",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T1",
+    "tags": [
+      "Victor",
+      "Eloise",
+      "canción"
+    ],
+    "question": "¿Qué canción hace que Victor recuerde a su hermana?",
+    "options": [
+      "Twinkle, Twinkle, Little Star",
+      "If I Had a Boat",
+      "Que Sera, Sera",
+      "Everybody Knows This Is Nowhere"
+    ],
+    "answer": 0,
+    "explanation": "La canción es «Twinkle, Twinkle, Little Star»."
+  },
+  {
+    "id": "Q056",
+    "category": "misterios",
+    "difficulty": 2,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Victor",
+      "Ethan",
+      "Faraway Tree"
+    ],
+    "question": "¿Qué dibuja Victor en la roca con la que enseña a Ethan cómo funcionan los Faraway Trees?",
+    "options": [
+      "Un punto",
+      "Una línea",
+      "Una cara",
+      "Una flecha"
+    ],
+    "answer": 2,
+    "explanation": "Victor dibuja una cara."
+  },
+  {
+    "id": "Q057",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Boyd",
+      "Sara",
+      "faro",
+      "flecha"
+    ],
+    "question": "¿Hacia dónde apunta la flecha con la que Boyd marca los árboles de referencia cuando viaja con Sara hacia el faro?",
+    "options": [
+      "Arriba",
+      "Abajo",
+      "Izquierda",
+      "Derecha"
+    ],
+    "answer": 0,
+    "explanation": "La flecha apunta hacia arriba."
+  },
+  {
+    "id": "Q058",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "árbol de botellas",
+      "1864",
+      "Boyd"
+    ],
+    "question": "¿Qué número aparece en el papel que Boyd descuelga del árbol de botellas?",
+    "options": [
+      "1864",
+      "1789",
+      "1506",
+      "1978"
+    ],
+    "answer": 0,
+    "explanation": "El papel muestra el número 1864."
+  },
+  {
+    "id": "Q059",
+    "category": "temporadas",
+    "difficulty": 1,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Jade",
+      "Kenny",
+      "comisaría"
+    ],
+    "question": "¿Quién habla con Jade en la comisaría para explicarle que no pueden volver a casa?",
+    "options": [
+      "Kenny",
+      "Kristi",
+      "Boyd",
+      "Ellis"
+    ],
+    "answer": 0,
+    "explanation": "Kenny es quien se lo explica."
+  },
+  {
+    "id": "Q060",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Ellis",
+      "colgante"
+    ],
+    "question": "¿Qué figura geométrica lleva Ellis como colgante?",
+    "options": [
+      "Triángulo",
+      "Cuadrado",
+      "Círculo",
+      "Pentágono"
+    ],
+    "answer": 0,
+    "explanation": "El colgante de Ellis tiene forma de triángulo."
+  },
+  {
+    "id": "Q061",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Victor",
+      "árboles",
+      "medición"
+    ],
+    "question": "¿Cuántas pulgadas se han movido los árboles, según Victor?",
+    "options": [
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "answer": 1,
+    "explanation": "Victor dice que se han movido cuatro pulgadas."
+  },
+  {
+    "id": "Q062",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Kenny",
+      "Sara",
+      "Nathan",
+      "objeto"
+    ],
+    "question": "¿Qué objeto rompió Kenny que servía a Sara para recordar a Nathan?",
+    "options": [
+      "Una figura de porcelana",
+      "Un anillo con símbolo de infinito",
+      "Una pulsera hecha a mano",
+      "Un violín"
+    ],
+    "answer": 0,
+    "explanation": "Kenny rompe una figura de porcelana vinculada al recuerdo de Nathan."
+  },
+  {
+    "id": "Q063",
+    "category": "lugares",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T1",
+    "tags": [
+      "Matthews",
+      "casa",
+      "diner"
+    ],
+    "question": "¿Cuál es el edificio más cercano a la casa de los Matthews que termina derrumbándose?",
+    "options": [
+      "Diner",
+      "Granero",
+      "Comisaría",
+      "Casa de Sara"
+    ],
+    "answer": 0,
+    "explanation": "Entre las opciones, el diner es el edificio más cercano."
+  },
+  {
+    "id": "Q064",
+    "category": "lugares",
+    "difficulty": 2,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Matthews",
+      "casa",
+      "Tian-Chen"
+    ],
+    "question": "¿A quién pertenece la casa a la que se mudan los Matthews?",
+    "options": [
+      "Tian-Chen Liu",
+      "Sara",
+      "Boyd",
+      "Kristi y Marielle"
+    ],
+    "answer": 0,
+    "explanation": "La casa pertenecía a Tian-Chen Liu."
+  },
+  {
+    "id": "Q065",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 3,
+    "reach": "T3",
+    "tags": [
+      "Elgin",
+      "Fatima",
+      "Ellis"
+    ],
+    "question": "¿Con quién hace creer Elgin que está buscando a Fatima?",
+    "options": [
+      "Ellis",
+      "Kenny",
+      "Sara",
+      "Acosta"
+    ],
+    "answer": 0,
+    "explanation": "Elgin hace creer que la busca junto a Ellis."
+  },
+  {
+    "id": "Q066",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 3,
+    "reach": "T3",
+    "tags": [
+      "Tabitha",
+      "hospital",
+      "Camden"
+    ],
+    "question": "¿En qué hospital despierta Tabitha?",
+    "options": [
+      "St. Anthony's Hospital",
+      "Hospital de San Francisco",
+      "Hospital de San Diego",
+      "Hospital de Arizona"
+    ],
+    "answer": 0,
+    "explanation": "Tabitha despierta en St. Anthony's Hospital."
+  },
+  {
+    "id": "Q067",
+    "category": "misterios",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Faraway Trees",
+      "conteo",
+      "misterio"
+    ],
+    "question": "¿Cuántos Faraway Trees existen?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "No se sabe el número concreto"
+    ],
+    "answer": 3,
+    "explanation": "La serie establece que hay varios, pero no fija un número total concreto."
+  },
+  {
+    "id": "Q068",
+    "category": "misterios",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Dale",
+      "teoría",
+      "universo de bolsillo"
+    ],
+    "question": "¿Quién propone que From podría ser un universo de bolsillo?",
+    "options": [
+      "Jim",
+      "Jade",
+      "Tom",
+      "Dale"
+    ],
+    "answer": 3,
+    "explanation": "Dale plantea la hipótesis del universo de bolsillo."
+  },
+  {
+    "id": "Q069",
+    "category": "temporadas",
+    "difficulty": 1,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Ellis",
+      "Dale",
+      "apuñalamiento"
+    ],
+    "question": "¿Quién apuñala a Ellis?",
+    "options": [
+      "Dale",
+      "Abby",
+      "Smiley",
+      "Roger"
+    ],
+    "answer": 0,
+    "explanation": "Dale apuñala a Ellis."
+  },
+  {
+    "id": "Q070",
+    "category": "misterios",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "bolsa",
+      "letrero",
+      "cabra"
+    ],
+    "question": "¿Qué había en la bolsa colgada del letrero?",
+    "options": [
+      "Nada",
+      "Jim",
+      "Un perro",
+      "Una cabra"
+    ],
+    "answer": 3,
+    "explanation": "En la bolsa había una cabra."
+  },
+  {
+    "id": "Q071",
+    "category": "lugares",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "motel",
+      "Star Magic",
+      "letrero"
+    ],
+    "question": "¿Cuál es el nombre del motel según el antiguo letrero del pueblo?",
+    "options": [
+      "Star Magic",
+      "No tiene nombre",
+      "Colony House",
+      "Saint Anthony"
+    ],
+    "answer": 0,
+    "explanation": "El letrero identifica el motel como «Star Magic»."
+  },
+  {
+    "id": "Q072",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 3,
+    "reach": "T3",
+    "tags": [
+      "Donna",
+      "Dale",
+      "piscina",
+      "Tabitha"
+    ],
+    "question": "¿Quién consuela a Donna cuando tiene que ocultar el cadáver de Dale en la piscina?",
+    "options": [
+      "Tabitha",
+      "Boyd",
+      "Fatima",
+      "Ethan"
+    ],
+    "answer": 0,
+    "explanation": "Tabitha consuela a Donna."
+  },
+  {
+    "id": "Q073",
+    "category": "personajes",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Victor",
+      "Delores",
+      "pendientes"
+    ],
+    "question": "¿De quién eran los pendientes que conserva Victor?",
+    "options": [
+      "Delores",
+      "Eloise",
+      "Miranda",
+      "La hermana de Donna"
+    ],
+    "answer": 0,
+    "explanation": "Los pendientes pertenecían a Delores."
+  },
+  {
+    "id": "Q074",
+    "category": "criaturas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "talismanes",
+      "símbolos",
+      "conteo"
+    ],
+    "question": "¿Cuántos símbolos con forma de «F» hay en cada talismán?",
+    "options": [
+      "12",
+      "10",
+      "14",
+      "16"
+    ],
+    "answer": 0,
+    "explanation": "Cada talismán contiene 12 símbolos de ese tipo."
+  },
+  {
+    "id": "Q075",
+    "category": "misterios",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "Anghkooey",
+      "niños",
+      "Tabitha"
+    ],
+    "question": "¿Cómo se escribe la palabra que repiten los niños que ve Tabitha?",
+    "options": [
+      "Anghkooey",
+      "Ankooey",
+      "Angkooey",
+      "Anghkoey"
+    ],
+    "answer": 0,
+    "explanation": "La grafía usada es «Anghkooey»."
+  },
+  {
+    "id": "Q076",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "Roger",
+      "lago",
+      "muñecos"
+    ],
+    "question": "¿Quién descubre que hay algo oculto —los muñecos de trapo— en el fondo del lago?",
+    "options": [
+      "Patty",
+      "Roger",
+      "Ellis",
+      "Donna"
+    ],
+    "answer": 1,
+    "explanation": "Roger descubre que hay algo oculto en el fondo del lago."
+  },
+  {
+    "id": "Q077",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "T4E10",
+      "Acosta",
+      "Ellis",
+      "vehículos"
+    ],
+    "question": "¿Quiénes conducen los vehículos en el episodio 10 de la temporada 4 cuando huyen después de sacar de su sitio el árbol de botellas?",
+    "options": [
+      "Acosta y Ellis",
+      "Acosta y Sara",
+      "Patty y Ellis",
+      "Kristi y Acosta"
+    ],
+    "answer": 0,
+    "explanation": "Los conductores son Acosta y Ellis."
+  },
+  {
+    "id": "Q078",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "Elgin",
+      "Sophia",
+      "fotos",
+      "T4E9"
+    ],
+    "question": "¿En qué número de foto, de las que ve Elgin en el episodio 9 de la temporada 4, encuentra a Sophia?",
+    "options": [
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "answer": 3,
+    "explanation": "Sophia aparece en la séptima foto."
+  },
+  {
+    "id": "Q079",
+    "category": "produccion",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "reach": "Global",
+    "tags": [
+      "reparto",
+      "Jim",
+      "Eion Bailey"
+    ],
+    "question": "¿Qué actor interpreta a Jim?",
+    "options": [
+      "Eion Bailey",
+      "Robert Joy",
+      "Scott McCord",
+      "Vox Smith"
+    ],
+    "answer": 0,
+    "explanation": "Jim Matthews está interpretado por Eion Bailey."
+  },
+  {
+    "id": "Q080",
+    "category": "produccion",
+    "difficulty": 2,
+    "spoilersUpTo": 3,
+    "reach": "Global",
+    "tags": [
+      "reparto",
+      "Hombre de Amarillo",
+      "Douglas E. Hughes"
+    ],
+    "question": "¿Qué actor interpreta al Hombre de Amarillo?",
+    "options": [
+      "Douglas E. Hughes",
+      "Eion Bailey",
+      "Robert Joy",
+      "Scott McCord"
+    ],
+    "answer": 0,
+    "explanation": "El Hombre de Amarillo está interpretado por Douglas E. Hughes."
+  },
+  {
+    "id": "Q081",
+    "category": "produccion",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "reach": "Global",
+    "tags": [
+      "reparto",
+      "Kristi",
+      "Chloe Van Landschoot"
+    ],
+    "question": "¿Qué actriz interpreta a Kristi?",
+    "options": [
+      "Chloe Van Landschoot",
+      "Hannah Cheramy",
+      "Kaelen Ohm",
+      "Catalina Sandino Moreno"
+    ],
+    "answer": 0,
+    "explanation": "Kristi está interpretada por Chloe Van Landschoot."
+  },
+  {
+    "id": "Q082",
+    "category": "produccion",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "reparto",
+      "Sophia",
+      "Julia Doyle"
+    ],
+    "question": "¿Qué actriz interpreta a Sophia?",
+    "options": [
+      "Julia Doyle",
+      "Elizabeth Saunders",
+      "Hannah Cheramy",
+      "Kaelen Ohm"
+    ],
+    "answer": 0,
+    "explanation": "Sophia está interpretada por Julia Doyle."
+  },
+  {
+    "id": "Q083",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "Julie",
+      "pelo",
+      "episodio"
+    ],
+    "question": "¿En qué capítulo vemos a Julie cortarse el pelo a sí misma?",
+    "options": [
+      "Temporada 3, episodio 10",
+      "Temporada 4, episodio 2",
+      "Temporada 4, episodio 4",
+      "Temporada 4, episodio 3"
+    ],
+    "answer": 2,
+    "explanation": "La escena aparece en T4E4."
+  },
+  {
+    "id": "Q084",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Kristi",
+      "pelo",
+      "T2"
+    ],
+    "question": "¿En qué capítulo de la temporada 2 se corta el pelo Kristi?",
+    "options": [
+      "Episodio 4",
+      "Episodio 5",
+      "Episodio 6",
+      "Episodio 7"
+    ],
+    "answer": 1,
+    "explanation": "Kristi se corta el pelo en T2E5."
+  },
+  {
+    "id": "Q085",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "vehículos",
+      "llegadas",
+      "conteo"
+    ],
+    "question": "¿Cuántos vehículos nuevos han llegado a Fromville desde el inicio de la serie hasta el final de la temporada 4?",
+    "options": [
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "answer": 2,
+    "explanation": "Se cuentan cinco llegadas de vehículos: la RV de los Matthews, el coche de Jade y Tobey, el autobús, la ambulancia y el coche de Pastor Dunne."
+  },
+  {
+    "id": "Q086",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "reach": "T2",
+    "tags": [
+      "Kenny",
+      "Kristi",
+      "Islandia"
+    ],
+    "question": "¿A qué lugar propone Kenny a Kristi viajar cuando salgan de From?",
+    "options": [
+      "Islandia",
+      "Irlanda",
+      "Groenlandia",
+      "Noruega"
+    ],
+    "answer": 0,
+    "explanation": "Kenny propone viajar a Islandia."
+  },
+  {
+    "id": "Q087",
+    "category": "produccion",
+    "difficulty": 3,
+    "spoilersUpTo": 0,
+    "reach": "Promoción",
+    "tags": [
+      "tráiler",
+      "música",
+      "promoción"
+    ],
+    "question": "¿Cuál de estas canciones no ha aparecido en un tráiler oficial de temporada de FROM?",
+    "options": [
+      "We Gotta Get Out of This Place",
+      "A Hard Rain's A-Gonna Fall",
+      "Like a Dream",
+      "Strange Affair"
+    ],
+    "answer": 1,
+    "explanation": "«A Hard Rain's A-Gonna Fall» es la opción que no ha aparecido en un tráiler oficial de temporada."
+  },
+  {
+    "id": "Q088",
+    "category": "criaturas",
+    "difficulty": 2,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "monstruos",
+      "nombres",
+      "conteo"
+    ],
+    "question": "¿Cuántos monstruos tienen nombre propio conocido?",
+    "options": [
+      "2",
+      "3",
+      "4",
+      "1"
+    ],
+    "answer": 1,
+    "explanation": "Se cuentan tres: Fatima, Jasmine y Smiley."
+  },
+  {
+    "id": "Q089",
+    "category": "produccion",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "tags": [
+      "rodaje",
+      "Nueva Escocia",
+      "set"
+    ],
+    "question": "¿Dónde se construyó desde cero el pueblo en el que se rueda FROM?",
+    "options": [
+      "Camden, Maine",
+      "Nueva Escocia, Canadá",
+      "Manitoulin Island, Canadá",
+      "Newberry, Canadá"
+    ],
+    "answer": 1,
+    "explanation": "El set del pueblo se construyó en Nueva Escocia, Canadá."
+  },
+  {
+    "id": "Q090",
+    "category": "produccion",
+    "difficulty": 2,
+    "spoilersUpTo": 1,
+    "reach": "Global",
+    "tags": [
+      "reparto",
+      "Niño de Blanco",
+      "Vox Smith"
+    ],
+    "question": "¿Qué actor interpreta al Niño de Blanco?",
+    "options": [
+      "Vox Smith",
+      "Simon Webster",
+      "Viggo Hanvelt",
+      "Scott McCord"
+    ],
+    "answer": 0,
+    "explanation": "El Niño de Blanco está interpretado por Vox Smith."
+  },
+  {
+    "id": "Q091",
+    "category": "produccion",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "T4",
+    "tags": [
+      "reparto",
+      "Jade niño",
+      "Viggo Hanvelt"
+    ],
+    "question": "¿Qué actor interpreta a Jade en su versión infantil, vista en el episodio 5 de la temporada 4?",
+    "options": [
+      "Vox Smith",
+      "Simon Webster",
+      "Viggo Hanvelt",
+      "Scott McCord"
+    ],
+    "answer": 2,
+    "explanation": "La versión infantil de Jade está interpretada por Viggo Hanvelt."
+  },
+  {
+    "id": "Q092",
+    "category": "produccion",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "reach": "Global",
+    "tags": [
+      "reparto",
+      "Ethan",
+      "Simon Webster"
+    ],
+    "question": "¿Qué actor interpreta a Ethan?",
+    "options": [
+      "Vox Smith",
+      "Simon Webster",
+      "Viggo Hanvelt",
+      "Scott McCord"
+    ],
+    "answer": 1,
+    "explanation": "Ethan Matthews está interpretado por Simon Webster."
+  },
+  {
+    "id": "Q093",
+    "category": "musica",
+    "difficulty": 3,
+    "spoilersUpTo": 4,
+    "reach": "Global",
+    "tags": [
+      "gramola",
+      "marca",
+      "Steinburg"
+    ],
+    "question": "¿De qué marca es la gramola?",
+    "options": [
+      "Mabuse",
+      "Steinburg",
+      "Philips",
+      "GE Vscan"
+    ],
+    "answer": 1,
+    "explanation": "La marca visible de la gramola es Steinburg."
+  },
+  {
+    "id": "Q094",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 1,
+    "reach": "T1",
+    "tags": [
+      "Tabitha",
+      "casa",
+      "electricidad"
+    ],
+    "question": "¿De quién es la idea de cavar en la casa de los Matthews para descubrir de dónde procede la electricidad?",
+    "options": [
+      "Tabitha",
+      "Jim",
+      "Julie",
+      "Ethan"
+    ],
+    "answer": 0,
+    "explanation": "La idea de cavar es de Tabitha."
+  },
+  {
+    "id": "Q095",
+    "category": "reglas",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "question": "Al caer el sol suena un misterioso sonido que recorre el pueblo. ¿Cuál?",
+    "options": [
+      "Una campana",
+      "Un cuerno",
+      "Un tambor",
+      "Un silbato"
+    ],
+    "answer": 0,
+    "explanation": "La pequeña campana que Boyd agita al anochecer es la señal: la noche ha comenzado y nadie debe estar fuera."
+  },
+  {
+    "id": "Q096",
+    "category": "reglas",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "question": "¿Qué objeto es indispensable para sobrevivir a la noche fuera de casa?",
+    "options": [
+      "Una linterna",
+      "Un talismán",
+      "Un arma de fuego",
+      "Un mapa del pueblo"
+    ],
+    "answer": 1,
+    "explanation": "El pequeño talismán protege a quien lo lleva de las criaturas mientras dura la noche."
+  },
+  {
+    "id": "Q097",
+    "category": "reglas",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "question": "Cuando cae la noche, la regla de oro es…",
+    "options": [
+      "Reunirse en la plaza",
+      "Encender hogueras",
+      "Estar dentro de tu casa",
+      "Subir al bosque"
+    ],
+    "answer": 2,
+    "explanation": "El interior de la propia casa protege a sus habitantes; la calle es territorio de las criaturas."
+  },
+  {
+    "id": "Q098",
+    "category": "reglas",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "question": "¿Qué ocurre cuando intentas alejar del pueblo por la autopista?",
+    "options": [
+      "Se acaba la gasolina",
+      "Un animal corta la carretera",
+      "La radio pierde señal",
+      "La carretera te devuelve al pueblo"
+    ],
+    "answer": 3,
+    "explanation": "La autopista es un bucle: por mucho que conduzcas, siempre terminas de vuelta en el pueblo."
+  },
+  {
+    "id": "Q099",
+    "category": "reglas",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "question": "¿Qué truco usan las criaturas por la noche para tentar a sus víctimas?",
+    "options": [
+      "Imitan voces de seres queridos",
+      "Apagan las farolas",
+      "Copian la campana",
+      "Excavan bajo las puertas"
+    ],
+    "answer": 0,
+    "explanation": "Llaman a la puerta o desde el bosque con voces de personas cercanas. Responder puede ser mortal."
+  },
+  {
+    "id": "Q100",
+    "category": "reglas",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "question": "¿Qué anomalía eléctrica caracteriza al pueblo?",
+    "options": [
+      "Funciona con generadores ocultos",
+      "La luz y los aparatos funcionan sin fuente conocida",
+      "Solo hay electricidad de día",
+      "Las pilas se agotan al anochecer"
+    ],
+    "answer": 1,
+    "explanation": "No hay red eléctrica conocida ni central, pero las luces y algunos aparatos funcionan. Es uno de los misterios recurrentes."
+  },
+  {
+    "id": "Q101",
+    "category": "reglas",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "question": "¿Cómo se comportan los teléfonos móviles en el pueblo?",
+    "options": [
+      "No tienen ninguna señal",
+      "Funcionan dentro del pueblo pero no conectan con el exterior",
+      "Solo funcionan en la iglesia",
+      "Solo funcionan de noche"
+    ],
+    "answer": 1,
+    "explanation": "Los residentes pueden llamar y recibir mensajes dentro del pueblo, pero comunicarse con el mundo exterior es imposible."
+  },
+  {
+    "id": "Q102",
+    "category": "reglas",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "question": "¿Cuándo termina la amenaza nocturna?",
+    "options": [
+      "A las tres de la madrugada",
+      "Cuando suena de nuevo la campana",
+      "Con la salida del sol",
+      "Cuando termina la luna llena"
+    ],
+    "answer": 2,
+    "explanation": "Con el alba las criaturas desaparecen y el pueblo puede respirar… hasta el siguiente anochecer."
+  },
+  {
+    "id": "Q103",
+    "category": "reglas",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "question": "¿Qué pasa si te quedas dormido fuera de casa una noche?",
+    "options": [
+      "Despiertas en el autobús de entrada",
+      "El pueblo te devuelve a la cama",
+      "Es prácticamente una sentencia de muerte",
+      "Nada, las criaturas solo atacan en el bosque"
+    ],
+    "answer": 2,
+    "explanation": "Dormir fuera de la protección de una casa propia, o quedarse sin talismán a la intemperie, suele terminar en muerte o desaparición."
+  },
+  {
+    "id": "Q104",
+    "category": "criaturas",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "question": "¿Cómo se llama la entidad con vestido amarillo que atrae a la gente al bosque?",
+    "options": [
+      "La Mujer de Amarillo",
+      "La Dama Blanca",
+      "La Madre del Bosque",
+      "La Vecina"
+    ],
+    "answer": 0,
+    "explanation": "La Mujer de Amarillo es una de las entidades más antiguas y inquietantes del pueblo."
+  },
+  {
+    "id": "Q105",
+    "category": "criaturas",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "question": "¿Qué rasgo facial hace especialmente perturbadora a la Mujer de Amarillo?",
+    "options": [
+      "No tiene ojos",
+      "Su sonrisa demasiado amplia",
+      "Su boca negra",
+      "Tiene dos narices"
+    ],
+    "answer": 1,
+    "explanation": "Esa sonrisa «de más», imposible en un rostro humano, es su firma visual."
+  },
+  {
+    "id": "Q106",
+    "category": "criaturas",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "question": "¿Cómo son las criaturas que acechan las noches?",
+    "options": [
+      "Máquinas oxidadas",
+      "Figuras envueltas en llamas",
+      "Humanoides pálidos y delgados",
+      "Enormes animales negros"
+    ],
+    "answer": 2,
+    "explanation": "Aparecen como humanoides desaliñados y cadavéricos, con comportamientos casi animales."
+  },
+  {
+    "id": "Q107",
+    "category": "criaturas",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "question": "Al moverse, las criaturas suelen…",
+    "options": [
+      "Flotar en silencio",
+      "Desplazarse a cuatro patas y correr en zigzag",
+      "Avanzar siempre en fila",
+      "Quedarse inmóviles hasta el alba"
+    ],
+    "answer": 1,
+    "explanation": "Se mueven con agilidad antinatural, gateando o corriendo en zigzag, y son rapidísimas."
+  },
+  {
+    "id": "Q108",
+    "category": "temporadas",
+    "difficulty": 1,
+    "spoilersUpTo": 1,
+    "question": "Al entrar en el pueblo, los Matthews encuentran un vehículo detenido con todos sus ocupantes muertos. ¿Cuál?",
+    "options": [
+      "Un autobús",
+      "Un tren de cercanías",
+      "Un camión de mudanza",
+      "Un autocar de excursión escolar"
+    ],
+    "answer": 0,
+    "explanation": "El autobús de pasajeros silenciosos es la primera imagen de horror de la serie."
+  },
+  {
+    "id": "Q109",
+    "category": "temporadas",
+    "difficulty": 2,
+    "spoilersUpTo": 2,
+    "question": "¿Qué se esconde tras un socavón en la cantera del pueblo?",
+    "options": [
+      "Un aparcamiento subterráneo",
+      "Una red de cuevas y túneles",
+      "Un avión estrellado",
+      "Un antiguo fuerte"
+    ],
+    "answer": 1,
+    "explanation": "Las cuevas bajo el pueblo revelan una red subterránea con un pasado muy oscuro."
+  },
+  {
+    "id": "Q110",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 2,
+    "question": "¿Qué muestran los flashbacks que viajan a otras épocas?",
+    "options": [
+      "El pueblo solo existió en los años 70",
+      "Grupos de personas atrapadas en distintos períodos",
+      "El futuro del pueblo",
+      "Que las criaturas eran humanas"
+    ],
+    "answer": 1,
+    "explanation": "El pueblo se ha repetido con «ciclos» distintos: siempre hubo alguien atrapado bajo las mismas reglas."
+  },
+  {
+    "id": "Q111",
+    "category": "temporadas",
+    "difficulty": 3,
+    "spoilersUpTo": 1,
+    "question": "¿Qué ocurre en los primeros episodios con el terreno del pueblo?",
+    "options": [
+      "Aparecen círculos en la hierba",
+      "El suelo se llena de gusanos muertos",
+      "Nace un bosque nuevo",
+      "Brota agua negra"
+    ],
+    "answer": 1,
+    "explanation": "El episodio inicial muestra el suelo cuajado de gusanos, presentimiento de lo que se esconde bajo el pueblo."
+  },
+  {
+    "id": "Q112",
+    "category": "produccion",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "question": "¿En qué cadena estadounidense se emitió FROM en su estreno?",
+    "options": [
+      "HBO",
+      "Epix (rebautizada MGM+ después)",
+      "Netflix",
+      "AMC"
+    ],
+    "answer": 1,
+    "explanation": "FROM nació en Epix (2022); la cadena cambió de nombre a MGM+ a partir de la segunda temporada."
+  },
+  {
+    "id": "Q113",
+    "category": "produccion",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "question": "¿En qué año se estrenó la serie?",
+    "options": [
+      "2019",
+      "2020",
+      "2022",
+      "2024"
+    ],
+    "answer": 2,
+    "explanation": "El estreno fue en febrero de 2022."
+  },
+  {
+    "id": "Q114",
+    "category": "produccion",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "question": "¿Quién creó la serie?",
+    "options": [
+      "John Griffin",
+      "Jack Bender",
+      "Michael J. Sigelow",
+      "J.J. Abrams"
+    ],
+    "answer": 0,
+    "explanation": "John Griffin es el creador y showrunner. El concepto original parte de Michael J. Sigelow y Jack Bender produce y dirige buena parte de la serie."
+  },
+  {
+    "id": "Q115",
+    "category": "produccion",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "question": "Productor ejecutivo y director habitual (dirigió el piloto). ¿Quién?",
+    "options": [
+      "David Lynch",
+      "J.J. Abrams",
+      "Jack Bender",
+      "Ryan Murphy"
+    ],
+    "answer": 2,
+    "explanation": "Jack Bender, productor y director clave de Lost y The Sopranos, produce y ha dirigido muchísimos episodios, incluido el piloto."
+  },
+  {
+    "id": "Q116",
+    "category": "produccion",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "question": "¿En qué país se rueda principalmente FROM?",
+    "options": [
+      "Estados Unidos",
+      "Canadá",
+      "Reino Unido",
+      "Irlanda"
+    ],
+    "answer": 1,
+    "explanation": "Aunque la acción transcurre en un pueblo de EE. UU., FROM se rueda en Canadá: el set se construyó desde cero en Nueva Escocia."
+  },
+  {
+    "id": "Q117",
+    "category": "produccion",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "reach": "Promoción",
+    "question": "¿En qué plataforma puede verse la serie en España?",
+    "options": [
+      "Movistar+",
+      "Netflix",
+      "ATRESplayer Premium",
+      "HBO Max"
+    ],
+    "answer": 3,
+    "explanation": "En España FROM puede verse en HBO Max."
+  },
+  {
+    "id": "Q118",
+    "category": "produccion",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "question": "¿Con qué serie de supervivencia en un lugar imposible se la compara casi siempre?",
+    "options": [
+      "Stranger Things",
+      "Perdidos (Lost)",
+      "The Walking Dead",
+      "Twin Peaks"
+    ],
+    "answer": 1,
+    "explanation": "La comparación es clásica: además, Jack Bender es nexo común con Lost."
+  },
+  {
+    "id": "Q119",
+    "category": "produccion",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "question": "¿En qué año se estrenó la segunda temporada?",
+    "options": [
+      "2022",
+      "2023",
+      "2024",
+      "2025"
+    ],
+    "answer": 1,
+    "explanation": "La T2 llegó en febrero de 2023."
+  },
+  {
+    "id": "Q120",
+    "category": "produccion",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "question": "¿En qué año se estrenó la tercera temporada?",
+    "options": [
+      "2023",
+      "2024",
+      "2025",
+      "2026"
+    ],
+    "answer": 1,
+    "explanation": "La T3 se estrenó en 2024."
+  },
+  {
+    "id": "Q121",
+    "category": "produccion",
+    "difficulty": 3,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "question": "¿Cuántos episodios tiene cada una de las temporadas emitidas hasta ahora?",
+    "options": [
+      "8",
+      "10",
+      "12",
+      "13"
+    ],
+    "answer": 1,
+    "explanation": "Cada una de las temporadas emitidas consta de 10 episodios."
+  },
+  {
+    "id": "Q122",
+    "category": "canal",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "question": "¿Cuál es el handle de YouTube de El Hombre de Amarillo?",
+    "options": [
+      "@koiboy_OG",
+      "@amarilloOG",
+      "@theyellowman",
+      "@koiboyTVE"
+    ],
+    "answer": 0,
+    "explanation": "El canal se llama @koiboy_OG. Si no lo sabías… ¿has estado en otro pueblo?"
+  },
+  {
+    "id": "Q123",
+    "category": "canal",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "question": "¿Qué sección de la web reúne las teorías como archivos de investigación?",
+    "options": [
+      "Vídeos",
+      "Expedientes",
+      "Comunidad",
+      "El umbral"
+    ],
+    "answer": 1,
+    "explanation": "Expedientes es el muro de teorías con pistas, dudas y cronología."
+  },
+  {
+    "id": "Q124",
+    "category": "canal",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "question": "¿Cómo se llama el juego 3D para el navegador que aloja la web?",
+    "options": [
+      "Fromville",
+      "The Road",
+      "Crows",
+      "El Talismán"
+    ],
+    "answer": 1,
+    "explanation": "THE ROAD es el juego original de horror: conducir de noche por una carretera que no está en ningún mapa."
+  },
+  {
+    "id": "Q125",
+    "category": "canal",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "question": "¿En qué dos formatos se organiza la biblioteca de vídeos del canal?",
+    "options": [
+      "Reacciones y directos",
+      "Análisis y debates",
+      "Teorías y resúmenes",
+      "Cortos y largos"
+    ],
+    "answer": 1,
+    "explanation": "Análisis y debates: las dos formas de diseccionar cada episodio."
+  },
+  {
+    "id": "Q126",
+    "category": "canal",
+    "difficulty": 3,
+    "spoilersUpTo": 0,
+    "question": "Según el archivo, ¿cuántas teorías base documenta la sección de Expedientes?",
+    "options": [
+      "3",
+      "4",
+      "6",
+      "8"
+    ],
+    "answer": 2,
+    "explanation": "El archivo parte de 6 teorías base transcritas de los vídeos."
+  },
+  {
+    "id": "Q127",
+    "category": "canal",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "question": "¿Qué color vertebra la identidad de la web… y del hombre que le da nombre?",
+    "options": [
+      "Rojo",
+      "Verde",
+      "Negro",
+      "Amarillo"
+    ],
+    "answer": 3,
+    "explanation": "Amarillo, por supuesto. Como el traje que es mejor no seguir con la mirada."
+  },
+  {
+    "id": "Q128",
+    "category": "produccion",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "reach": "Promoción",
+    "tags": [
+      "cabecera",
+      "Pixies",
+      "música"
+    ],
+    "question": "¿Qué canción suena en la cabecera de FROM?",
+    "options": [
+      "Que Sera, Sera (versión de Pixies)",
+      "Badlands",
+      "Paint It Black",
+      "The End"
+    ],
+    "answer": 0,
+    "explanation": "La cabecera usa el «Que Sera, Sera» reinterpretado por Pixies: un contraste deliberado, alegre y escalofriante."
+  },
+  {
+    "id": "Q129",
+    "category": "produccion",
+    "difficulty": 3,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "tags": [
+      "banda sonora",
+      "compositor"
+    ],
+    "question": "¿Quién compone la música de FROM?",
+    "options": [
+      "Ramin Djawadi",
+      "Bear McCreary",
+      "Chris Tilton",
+      "Michael Giacchino"
+    ],
+    "answer": 2,
+    "explanation": "Chris Tilton firma la banda sonora de la serie."
+  },
+  {
+    "id": "Q130",
+    "category": "produccion",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "reach": "Global",
+    "tags": [
+      "temporadas",
+      "episodios"
+    ],
+    "question": "¿Cuántas temporadas y episodios acumula FROM tras su cuarta entrega?",
+    "options": [
+      "3 temporadas · 30 episodios",
+      "4 temporadas · 40 episodios",
+      "4 temporadas · 45 episodios",
+      "5 temporadas · 50 episodios"
+    ],
+    "answer": 1,
+    "explanation": "Cuatro temporadas de diez episodios: 40 capítulos emitidos hasta la T4."
+  },
+  {
+    "id": "Q131",
+    "category": "produccion",
+    "difficulty": 1,
+    "spoilersUpTo": 0,
+    "reach": "Promoción",
+    "tags": [
+      "renovación",
+      "T5"
+    ],
+    "question": "¿Qué está confirmado sobre el futuro de FROM?",
+    "options": [
+      "Renovada por una quinta temporada que será la última",
+      "Cancelada tras la cuarta temporada",
+      "Un spin-off ya en rodaje",
+      "Encargada una sexta temporada"
+    ],
+    "answer": 0,
+    "explanation": "FROM fue renovada por una quinta y última temporada, prevista para 2027."
+  },
+  {
+    "id": "Q132",
+    "category": "produccion",
+    "difficulty": 2,
+    "spoilersUpTo": 0,
+    "reach": "Producción",
+    "tags": [
+      "productoras",
+      "MGM",
+      "AGBO"
+    ],
+    "question": "¿Qué productoras están detrás de FROM?",
+    "options": [
+      "MGM, AGBO y Midnight Radio",
+      "Warner Bros. y Bad Robot",
+      "HBO y Anonymous Content",
+      "Netflix y Chernin Entertainment"
+    ],
+    "answer": 0,
+    "explanation": "La serie la producen MGM Television, AGBO (los hermanos Russo) y Midnight Radio."
+  }
+]

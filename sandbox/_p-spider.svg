@@ -1,0 +1,17 @@
+<svg class="spider" viewBox="0 0 120 260" aria-hidden="true">
+  <line x1="60" y1="0" x2="60" y2="150" stroke="rgba(241,235,220,0.28)" stroke-width="1.4" />
+  <g transform="translate(60 170)" fill="none" stroke-linecap="round">
+    <g stroke="#0a0a08" stroke-width="4">
+      <path d="M-7 -6 L-25 -20 L-37 -6 M-8 -1 L-29 -4 L-43 8 M-7 4 L-27 11 L-39 23 M-5 9 L-20 20 L-28 34" />
+      <path d="M7 -6 L25 -20 L37 -6 M8 -1 L29 -4 L43 8 M7 4 L27 11 L39 23 M5 9 L20 20 L28 34" />
+    </g>
+    <g stroke="rgba(241,235,220,0.32)" stroke-width="1.4">
+      <path d="M-7 -6 L-25 -20 L-37 -6 M-8 -1 L-29 -4 L-43 8 M-7 4 L-27 11 L-39 23 M-5 9 L-20 20 L-28 34" />
+      <path d="M7 -6 L25 -20 L37 -6 M8 -1 L29 -4 L43 8 M7 4 L27 11 L39 23 M5 9 L20 20 L28 34" />
+    </g>
+    <ellipse cx="0" cy="9" rx="15" ry="17" fill="#0a0a08" stroke="rgba(241,235,220,0.28)" stroke-width="1.4" />
+    <ellipse cx="0" cy="-10" rx="8.5" ry="7" fill="#0a0a08" stroke="rgba(241,235,220,0.28)" stroke-width="1.4" />
+    <circle cx="-3.2" cy="-12" r="1.5" fill="#f4c943" />
+    <circle cx="3.2" cy="-12" r="1.5" fill="#f4c943" />
+  </g>
+</svg>

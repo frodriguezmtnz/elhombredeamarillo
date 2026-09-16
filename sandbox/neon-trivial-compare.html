@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Neón Trivial — Comparativa A/B/C/D</title>
+    <style>
+      :root { color-scheme: dark; --yellow: #f4c943; --red: #ff3b30; --ivory: #f1ebdc; --bg: #070805; }
+      html, body { margin: 0; background: var(--bg); color: var(--ivory); font: 13px/1.5 'JetBrains Mono', ui-monospace, monospace; }
+      #wrap { max-width: 1500px; margin: 0 auto; padding: 20px 16px 60px; }
+      h1 { font-size: 16px; letter-spacing: .1em; text-transform: uppercase; color: var(--yellow); margin: 0 0 4px; }
+      .sub { color: #6d6a55; font-size: 11px; letter-spacing: .08em; margin-bottom: 16px; }
+      .sub code { color: var(--yellow); }
+
+      .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; padding: 12px; border: 1px solid #212318; border-radius: 12px; background: #0c0d0a; position: sticky; top: 0; z-index: 10; }
+      .toolbar label { font-size: 11px; color: #a5a085; }
+      .toolbar select, .toolbar button { font: 11px 'JetBrains Mono', monospace; padding: 8px 12px; border-radius: 8px; border: 1px solid #212318; background: #070805; color: var(--ivory); cursor: pointer; }
+      .toolbar select:hover, .toolbar button:hover { border-color: var(--yellow); color: var(--yellow); }
+      .toolbar button.active { border-color: var(--yellow); color: var(--yellow); }
+      .toolbar .sep { width: 1px; align-self: stretch; background: #212318; }
+
+      .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+      @media (max-width: 1200px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+      .col { border: 1px solid #212318; border-radius: 12px; overflow: hidden; background: #0c0d0a; }
+      .col header { padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #212318; gap: 8px; }
+      .col header b { color: var(--yellow); font-size: 12px; letter-spacing: .06em; }
+      .col header a { color: #8a8672; font-size: 10px; text-decoration: none; white-space: nowrap; }
+      .col header a:hover { color: var(--yellow); }
+      iframe { width: 100%; height: 300px; border: 0; display: block; background: #070805; }
+      .note { padding: 6px 12px; font-size: 10px; color: #6d6a55; border-top: 1px solid #212318; }
+
+      table { width: 100%; border-collapse: collapse; margin-top: 22px; font-size: 12px; }
+      caption { text-align: left; color: #8a8672; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+      th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid #212318; vertical-align: top; }
+      th { color: var(--yellow); font-weight: 600; }
+      td.dim { color: #a5a085; }
+      td.win { color: var(--yellow); font-weight: 700; }
+      .foot { margin-top: 26px; color: #6d6a55; font-size: 11px; line-height: 1.7; }
+      .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid #212318; font-size: 10px; margin-right: 6px; }
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <h1>Neón Trivial — Comparativa A · B · C · D</h1>
+      <p class="sub">
+        Elige motor para el fondo de <code>#juego</code>. Recomendado: <code>pnpm sandbox</code> → <code>http://localhost:4599</code>.
+        También funciona con doble-clic (todo autocontenido). El efecto de cursor se puede cambiar aquí (afecta a las 4) o dentro de cada panel.
+      </p>
+
+      <div class="toolbar">
+        <label>Efecto cursor (todas)
+          <select id="fx">
+            <option value="off">Sin efecto</option>
+            <option value="spotlight" selected>Foco que sigue al cursor</option>
+            <option value="tilt">Inclinación 3D (parallax)</option>
+            <option value="magnetic">Letras magnéticas</option>
+            <option value="eye">Ojo que te observa</option>
+            <option value="combo">Combo: foco + inclinación</option>
+          </select>
+        </label>
+        <span class="sep"></span>
+        <button id="replay">Volver a encender</button>
+        <button id="rm">Reduced-motion</button>
+      </div>
+
+      <div class="grid">
+        <div class="col">
+          <header><b>A · CSS neón</b><a href="./neon-trivial-svg.html" target="_blank" rel="noopener">abrir ↗</a></header>
+          <iframe id="fa" src="./neon-trivial-svg.html" title="Opción A"></iframe>
+          <div class="note">TRIVIAL + FromVille + marco + talismán + araña · 5 efectos</div>
+        </div>
+        <div class="col">
+          <header><b>B · Lottie</b><a href="./neon-trivial-lottie.html" target="_blank" rel="noopener">abrir ↗</a></header>
+          <iframe id="fb" src="./neon-trivial-lottie.html" title="Opción B"></iframe>
+          <div class="note">Misma escena en .json · foco/tilt/combo (magnético y ojo no, son capas)</div>
+        </div>
+        <div class="col">
+          <header><b>C · FromVille</b><a href="./neon-trivial-fromville.html" target="_blank" rel="noopener">abrir ↗</a></header>
+          <iframe id="fc" src="./neon-trivial-fromville.html" title="Opción C"></iframe>
+          <div class="note">Escena completa sin TRIVIAL · 5 efectos</div>
+        </div>
+        <div class="col">
+          <header><b>D · solo texto</b><a href="./neon-trivial-fromville-only.html" target="_blank" rel="noopener">abrir ↗</a></header>
+          <iframe id="fd" src="./neon-trivial-fromville-only.html" title="Opción D"></iframe>
+          <div class="note">Solo FROMVILLE rojo, fondo transparente · 5 efectos</div>
+        </div>
+      </div>
+
+      <table>
+        <caption>Métricas (medidas en este repo)</caption>
+        <thead>
+          <tr><th>Criterio</th><th>A · CSS neón</th><th>B · Lottie</th><th>C · FromVille</th><th>D · solo texto</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Contenido</td><td class="dim">Todo + extras</td><td class="dim">Todo + extras (.json)</td><td class="dim">Sin TRIVIAL + extras</td><td class="dim">Solo FROMVILLE</td></tr>
+          <tr><td>Efectos cursor</td><td class="win">5</td><td class="dim">3 (foco/tilt/combo)</td><td class="win">5</td><td class="win">5</td></tr>
+          <tr><td>Runtime JS</td><td class="win">0 (CSS/JS inline)</td><td class="dim">lottie-web ~60 KB gz</td><td class="win">0</td><td class="win">0</td></tr>
+          <tr><td>Asset</td><td class="dim">inline</td><td class="dim">JSON 16.8 KB gz (portable)</td><td class="dim">inline</td><td class="dim">inline</td></tr>
+          <tr><td>Glow</td><td class="win">text-shadow (nítido)</td><td class="dim">trazos apilados (plano)</td><td class="win">text-shadow</td><td class="win">text-shadow</td></tr>
+          <tr><td>Editable</td><td class="win">CSS en vivo</td><td class="dim">regenerar JSON</td><td class="win">CSS en vivo</td><td class="win">CSS en vivo</td></tr>
+          <tr><td>Reuso fuera de la web</td><td class="dim">PNG</td><td class="win">.json en cualquier Lottie</td><td class="dim">PNG</td><td class="dim">PNG</td></tr>
+        </tbody>
+      </table>
+
+      <div class="foot">
+        <span class="pill">A</span> máximo impacto (TRIVIAL + FromVille). <span class="pill">C</span> mismo peso, foco en FromVille.
+        <span class="pill">D</span> el más limpio para superponer. <span class="pill">B</span> solo si quieres el .json portable.
+        <br />A/C/D comparten <code>_neon-base.css</code> + <code>_neon-sign.js</code> (inline por <code>build-neon-sandbox.mjs</code>). La integración real trae <b>una</b> opción a <code>trivial.astro</code>.
+      </div>
+    </div>
+
+    <script>
+      var frames = ['fa', 'fb', 'fc', 'fd'].map(function (id) { return document.getElementById(id); });
+      function broadcast(msg) {
+        // postMessage funciona incluso con orígenes opacos (file://); contentDocument NO
+        frames.forEach(function (f) { if (f && f.contentWindow) f.contentWindow.postMessage(msg, '*'); });
+      }
+      document.getElementById('fx').addEventListener('change', function (e) { broadcast({ neonFx: e.target.value }); });
+      document.getElementById('replay').addEventListener('click', function () { broadcast({ neonReplay: true }); });
+      document.getElementById('rm').addEventListener('click', function () {
+        var on = !this.classList.contains('active');
+        this.classList.toggle('active', on);
+        broadcast({ neonStatic: on });
+      });
+    </script>
+  </body>
+</html>

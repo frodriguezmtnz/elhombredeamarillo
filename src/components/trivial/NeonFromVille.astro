@@ -1,0 +1,157 @@
+---
+/**
+ * Neón "FromVille" (puerto de la Opción D del sandbox) para el hero del trivial.
+ * Solo texto rojo con glow, fondo transparente. Efecto "combo": foco que sigue al
+ * cursor sobre el hero + inclinación 3D del cartel. Decorativo (aria-hidden).
+ */
+---
+
+<div class="neon-fv" data-neon-fv aria-hidden="true">
+  <span class="neon-fv__spot"></span>
+  <span class="neon-fv__sign">
+    <span class="neon-fv__word">
+      {'FromVille'.split('').map((ch, i) => <span class="neon-fv__ltr" style={`--i:${i}`}>{ch}</span>)}
+    </span>
+  </span>
+</div>
+
+<style>
+  .neon-fv {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* foco: halo radial que sigue al cursor, por todo el hero */
+  .neon-fv__spot {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    mix-blend-mode: screen;
+    background: radial-gradient(
+      circle 240px at var(--sx, 50%) var(--sy, 50%),
+      rgba(255, 246, 218, 0.16),
+      rgba(255, 59, 48, 0.1) 45%,
+      transparent 70%
+    );
+  }
+
+  /* cartel inclinado en 3D */
+  .neon-fv__sign {
+    position: absolute;
+    top: 50%;
+    right: clamp(1rem, 7vw, 8rem);
+    transform: translateY(-50%);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .neon-fv__word {
+    display: inline-flex;
+    font-family: 'VT323', ui-monospace, monospace;
+    line-height: 0.9;
+    white-space: pre;
+  }
+
+  .neon-fv__ltr {
+    opacity: 0;
+    font-size: clamp(2.75rem, 8.5vw, 7.5rem);
+    color: #ffdfda;
+    text-shadow:
+      0 0 1px #fff,
+      0 0 7px #ff3b30,
+      0 0 18px #ff3b30,
+      0 0 40px #d36255,
+      0 0 90px rgba(255, 59, 48, 0.45);
+    animation: neon-ignite 0.8s ease both;
+    animation-delay: calc(var(--i) * 60ms);
+  }
+
+  /* ignición escalonada (parpadeo del tubo al encender) */
+  @keyframes neon-ignite {
+    0%, 22% { opacity: 0; }
+    24% { opacity: 1; }
+    28% { opacity: 0.1; }
+    32%, 46% { opacity: 1; }
+    50% { opacity: 0.25; }
+    54%, 100% { opacity: 1; }
+  }
+
+  /* en pantallas pequeñas el cartel no tiene hueco a la derecha: se oculta */
+  @media (max-width: 1023px) {
+    .neon-fv { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .neon-fv__ltr { opacity: 1; animation: none; }
+    .neon-fv__spot { display: none; }
+    .neon-fv__sign { transform: translateY(-50%); }
+  }
+</style>
+
+<script data-astro-rerun>
+  // Efecto "combo" (foco + inclinación 3D), acotado al hero del trivial.
+  (() => {
+    const root = document.querySelector('[data-neon-fv]');
+    if (!root) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const hero = root.closest('.trivial-hero') || root;
+    const spot = root.querySelector('.neon-fv__spot');
+    const sign = root.querySelector('.neon-fv__sign');
+    const REST = 'translateY(-50%)';
+
+    let px = -9999;
+    let py = -9999;
+    let sx = -9999;
+    let sy = -9999;
+    let active = false;
+    let raf = 0;
+
+    const loop = () => {
+      raf = 0;
+      sx += (px - sx) * 0.16;
+      sy += (py - sy) * 0.16;
+      if (spot) {
+        spot.style.setProperty('--sx', `${sx}px`);
+        spot.style.setProperty('--sy', `${sy}px`);
+      }
+      if (sign) {
+        const r = hero.getBoundingClientRect();
+        const nx = (sx - r.width / 2) / (r.width / 2);
+        const ny = (sy - r.height / 2) / (r.height / 2);
+        sign.style.transform = `${REST} perspective(900px) rotateY(${(nx * 7).toFixed(2)}deg) rotateX(${(-ny * 7).toFixed(2)}deg)`;
+      }
+      if (active) raf = requestAnimationFrame(loop);
+    };
+
+    const onMove = (e) => {
+      const r = hero.getBoundingClientRect();
+      px = e.clientX - r.left;
+      py = e.clientY - r.top;
+      if (!active) {
+        active = true;
+        sx = px;
+        sy = py;
+        if (spot) spot.style.opacity = '1';
+      }
+      if (!raf) raf = requestAnimationFrame(loop);
+    };
+
+    const onLeave = () => {
+      active = false;
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (spot) spot.style.opacity = '0';
+      if (sign) sign.style.transform = REST;
+    };
+
+    hero.addEventListener('pointermove', onMove);
+    hero.addEventListener('pointerleave', onLeave);
+  })();
+</script>

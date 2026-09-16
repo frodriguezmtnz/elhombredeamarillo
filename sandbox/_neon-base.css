@@ -1,0 +1,206 @@
+/**
+ * Estilos compartidos del cartel de neón (A/C/D).
+ * scripts/build-neon-sandbox.mjs los INYECTA inline en cada HTML.
+ */
+
+@font-face {
+  font-family: 'VT323';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../node_modules/@fontsource/vt323/files/vt323-latin-400-normal.woff') format('woff');
+}
+
+:root {
+  color-scheme: dark;
+  --yellow: #f4c943;
+  --yellow-deep: #e4b722;
+  --red: #ff3b30;
+  --red-deep: #d36255;
+  --white: #fff6da;
+  --ivory: #f1ebdc;
+  --fr: 6.1s; /* loop ≈ (loopEnd-introEnd)/fr del spec */
+}
+
+html, body { margin: 0; height: 100%; background: #070805; color: var(--ivory); font: 13px/1.5 'JetBrains Mono', ui-monospace, monospace; }
+#wrap { max-width: 1200px; margin: 0 auto; padding: 24px 16px 48px; }
+header { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: baseline; margin-bottom: 8px; }
+h1 { font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); margin: 0; }
+.tag { font-size: 10px; letter-spacing: .14em; color: #6d6a55; }
+
+/* ─── lienzo 1200x480 escalado con container queries ─── */
+#stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1200 / 480;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 70% at 50% 45%, rgba(244, 201, 67, 0.05), transparent 70%),
+    radial-gradient(40% 55% at 50% 55%, rgba(255, 59, 48, 0.03), transparent 70%),
+    #0c0d0a;
+  border: 1px solid #212318;
+  border-radius: 14px;
+  container-type: inline-size;
+}
+#stage.v-d { background: transparent; border-color: #212318; }
+.bg-label { position: absolute; top: 8px; left: 10px; font-size: 10px; letter-spacing: .14em; color: #6d6a55; text-transform: uppercase; z-index: 6; }
+
+/* el contenedor del cartel recibe el tilt 3D */
+#sign {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5cqw;
+  transform: var(--tilt, none);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* ─── tipografía neón: núcleo blanco + halo de color ─── */
+.line { display: flex; line-height: .92; white-space: pre; }
+.ltr {
+  position: relative;
+  font-family: 'VT323', 'Courier New', monospace;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.lit .ltr { opacity: 1; animation: ignite .8s ease both; animation-delay: calc(var(--i) * 60ms); }
+
+.line-trivial .ltr {
+  font-size: 16.3cqw;
+  color: var(--white);
+  text-shadow:
+    0 0 1px #fff,
+    0 0 7px var(--yellow),
+    0 0 18px var(--yellow),
+    0 0 40px var(--yellow-deep),
+    0 0 90px rgba(244, 201, 67, .45);
+}
+.line-fv .ltr {
+  font-size: 7.5cqw;
+  color: #ffdfda;
+  text-shadow:
+    0 0 1px #fff,
+    0 0 7px var(--red),
+    0 0 18px var(--red),
+    0 0 40px var(--red-deep),
+    0 0 90px rgba(255, 59, 48, .45);
+}
+#stage.v-c .line-fv .ltr { font-size: 12.5cqw; }
+#stage.v-d .line-fv .ltr { font-size: 16cqw; }
+
+/* parpadeo: zumbido estable + tubo averiado en FromVille */
+.line-trivial { animation: hum var(--fr) steps(1, end) infinite, glitch calc(var(--fr) * 1.37) steps(1, end) infinite; }
+.line-fv { animation: stutter calc(var(--fr) * .72) steps(1, end) infinite; }
+@keyframes hum { 0%, 100% { opacity: 1 } 50% { opacity: .985 } 73% { opacity: .965 } }
+@keyframes glitch { 0%, 90%, 93%, 100% { opacity: 1 } 91% { opacity: .55 } 92% { opacity: .85 } }
+@keyframes stutter {
+  0%, 17%, 19%, 23.5%, 25%, 50%, 52%, 70%, 72.5%, 75%, 100% { opacity: 1 }
+  18%, 24% { opacity: .16 }
+  51% { opacity: .5 }
+  71% { opacity: .08 }
+  73% { opacity: .85 }
+  74% { opacity: .12 }
+}
+@keyframes ignite {
+  0%, 22% { opacity: 0 }
+  24% { opacity: 1 }
+  28% { opacity: .1 }
+  32%, 46% { opacity: 1 }
+  50% { opacity: .25 }
+  54%, 100% { opacity: 1 }
+}
+
+/* subrayado rojo bajo FromVille */
+.underline {
+  width: 34cqw;
+  height: .35cqw;
+  border-radius: 999px;
+  background: #ffdfda;
+  box-shadow: 0 0 6px var(--red), 0 0 18px var(--red), 0 0 40px rgba(211, 98, 85, .6);
+  animation: stutter calc(var(--fr) * .72) steps(1, end) infinite;
+}
+#stage.v-c .underline { width: 46cqw; }
+#stage.v-d .underline { display: none; }
+
+/* marco del cartel */
+.frame {
+  position: absolute;
+  inset: 7.5% 3.3%;
+  border: .18cqw solid var(--red);
+  border-radius: 1.5cqw;
+  box-shadow:
+    0 0 6px var(--red),
+    0 0 20px rgba(255, 59, 48, .7),
+    0 0 46px rgba(211, 98, 85, .4),
+    inset 0 0 14px rgba(255, 59, 48, .22);
+  animation: hum var(--fr) steps(1, end) infinite;
+  pointer-events: none;
+}
+#stage.v-d .frame { display: none; }
+
+/* pupila del talismán: ojo que te observa (modo 'eye') */
+.pupil { pointer-events: none; }
+
+/* talismán (calcado de src/components/ui/Talisman404.astro) */
+.talisman {
+  position: absolute;
+  left: 3.5%;
+  top: 50%;
+  width: 13cqw;
+  height: auto;
+  transform: translateY(-50%);
+  filter: drop-shadow(0 0 6px rgba(244, 201, 67, .55)) drop-shadow(0 0 22px rgba(244, 201, 67, .25));
+  animation: hum calc(var(--fr) * 1.3) steps(1, end) infinite;
+  pointer-events: none;
+}
+#stage.v-d .talisman { display: none; }
+
+/* araña colgando y balanceándose */
+.spider {
+  position: absolute;
+  right: 8.5%;
+  top: 0;
+  width: 9cqw;
+  height: auto;
+  transform-origin: 50% 0;
+  animation: dangle 6.4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes dangle { from { transform: rotate(-3deg) } to { transform: rotate(3deg) } }
+#stage.v-d .spider { display: none; }
+
+/* foco de cursor (spotlight / combo) */
+#spot {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity .35s ease;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  background: radial-gradient(circle 170px at var(--sx, 50%) var(--sy, 50%), rgba(255, 246, 218, .5), rgba(255, 59, 48, .2) 45%, transparent 70%);
+}
+#spot.on { opacity: 1; }
+
+/* ─── controles ─── */
+#controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; align-items: center; }
+#controls button, #controls label, #controls select {
+  font: 11px 'JetBrains Mono', monospace;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #212318;
+  background: #0c0d0a;
+  color: var(--ivory);
+  cursor: pointer;
+}
+#controls button:hover, #controls button.active, #controls select:hover { border-color: var(--yellow); color: var(--yellow); }
+.hint { font-size: 11px; color: #6d6a55; }
+
+/* ─── modo estático (reduced-motion) ─── */
+.static .ltr { opacity: 1 !important; animation: none !important; }
+.static .line, .static .underline, .static .frame, .static .talisman, .static .spider { animation: none !important; }
+.static #spot { display: none; }
+.static #sign { transform: none !important; }
