@@ -12,6 +12,7 @@ interface Props {
   summary: TriviaSummary;
   deck: TriviaQuestion[];
   onPlayAgain: () => void;
+  onContinue: () => void;
   onNewMode: () => void;
 }
 
@@ -24,7 +25,7 @@ function loadBest(): TriviaBestScore | null {
   }
 }
 
-export default function TriviaResults({ summary, deck, onPlayAgain, onNewMode }: Props) {
+export default function TriviaResults({ summary, deck, onPlayAgain, onContinue, onNewMode }: Props) {
   const { correct, total, score, bestStreak, modeLabel, records } = summary;
   const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
   const rank = getRank(accuracy);
@@ -120,22 +121,38 @@ export default function TriviaResults({ summary, deck, onPlayAgain, onNewMode }:
         </p>
       )}
 
-      <div className="flex flex-wrap gap-3 mt-8">
-        <button
-          type="button"
-          onClick={onPlayAgain}
-          className="inline-flex items-center gap-3 min-h-[48px] px-5 bg-yellow text-bg text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:brightness-110 transition-all cursor-pointer"
-        >
-          JUGAR OTRA VEZ <b>→</b>
-        </button>
-        <button
-          type="button"
-          onClick={onNewMode}
-          className="inline-flex items-center gap-3 min-h-[48px] px-5 border border-border text-text text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:border-yellow hover:text-yellow transition-all cursor-pointer"
-        >
-          CAMBIAR DE PRUEBA
-        </button>
-        <TriviaShare summary={summary} rank={rank.name} />
+      <div className="mt-8 border-t border-border pt-6">
+        <p className="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono">
+          ¿QUÉ HACE EL PUEBLO CONTIGO?
+        </p>
+        <div className="flex flex-wrap gap-3 mt-4">
+          <button
+            type="button"
+            onClick={onContinue}
+            className="inline-flex items-center gap-3 min-h-[48px] px-5 bg-yellow text-bg text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:brightness-110 transition-all cursor-pointer"
+          >
+            CONTINUAR LA RACHA <b>→</b>
+          </button>
+          <button
+            type="button"
+            onClick={onPlayAgain}
+            className="inline-flex items-center gap-3 min-h-[48px] px-5 border border-border text-text text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:border-yellow hover:text-yellow transition-all cursor-pointer"
+          >
+            REINTENTAR PRUEBA
+          </button>
+          <button
+            type="button"
+            onClick={onNewMode}
+            className="inline-flex items-center gap-3 min-h-[48px] px-5 border border-border text-text text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:border-yellow hover:text-yellow transition-all cursor-pointer"
+          >
+            CAMBIAR DE PRUEBA
+          </button>
+          <TriviaShare summary={summary} rank={rank.name} />
+        </div>
+        <p className="mt-4 text-[10px] text-text-muted/60 font-mono leading-relaxed">
+          «Continuar la racha» añade preguntas nuevas sin repetir las ya jugadas y suma tu marcador; «Reintentar» vuelve
+          a empezar desde cero.
+        </p>
       </div>
     </div>
   );

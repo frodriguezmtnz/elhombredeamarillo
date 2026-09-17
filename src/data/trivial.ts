@@ -146,6 +146,8 @@ export interface DeckConfig {
   safeOnly?: boolean;
   /** Si es true, pondera el muestreo hacia preguntas fáciles/medias (modo Rápido) */
   balance?: boolean;
+  /** Ids ya jugados en la sesión; se excluyen para «continuar racha» */
+  excludeIds?: string[];
 }
 
 // Peso de muestreo por dificultad: favorece fácil(1)/media(2) sobre difícil(3).
@@ -184,6 +186,10 @@ export function buildDeck(config: DeckConfig): TriviaQuestion[] {
   const minDifficulty = config.minDifficulty;
   if (minDifficulty !== undefined) {
     pool = pool.filter((q) => q.difficulty >= minDifficulty);
+  }
+  if (config.excludeIds && config.excludeIds.length > 0) {
+    const played = new Set(config.excludeIds);
+    pool = pool.filter((q) => !played.has(q.id));
   }
 
   const picked = config.balance ? weightedSample(pool, config.count) : shuffle(pool).slice(0, config.count);

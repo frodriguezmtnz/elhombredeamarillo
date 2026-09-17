@@ -10,6 +10,7 @@ interface Props {
 const INTRO_MS = 7000;
 const COUNT_MS = 600;
 const GO_MS = 700;
+const BELL_SRC = '/assets/audio/campana-boyd-trivial.mp3';
 
 /**
  * Cuenta atrás de toque de queda: la campana de Boyd suena y el pueblo
@@ -18,6 +19,21 @@ const GO_MS = 700;
 export default function TriviaCountdown({ modeLabel, alias, onDone }: Props) {
   // step: 'intro' → 5..1 → 'go'
   const [step, setStep] = useState<'intro' | 'go' | number>('intro');
+
+  // Campana de Boyd al iniciar (solo aquí, no en cada pregunta). El clic en el
+  // modo que abrió esta pantalla actúa como gesto de usuario para el autoplay.
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const bell = new Audio(BELL_SRC);
+    bell.volume = 0.7;
+    bell.play().catch(() => {
+      // Autoplay bloqueado o archivo no disponible: se juega igual sin sonido
+    });
+    return () => {
+      bell.pause();
+      bell.currentTime = 0;
+    };
+  }, []);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

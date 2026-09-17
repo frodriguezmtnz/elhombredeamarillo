@@ -1,8 +1,9 @@
+import { type DeckConfig, buildDeck } from '@data/trivial';
 import type { TriviaQuestion } from '@lib/types';
 import { useCallback, useEffect, useState } from 'react';
 import AuthProvider, { useAuth } from '../community/AuthProvider';
 import TriviaCountdown from './TriviaCountdown';
-import TriviaGame, { type TriviaSummary } from './TriviaGame';
+import TriviaGame, { type TriviaSessionState, type TriviaSummary } from './TriviaGame';
 import TriviaLeaderboard from './TriviaLeaderboard';
 import TriviaResults from './TriviaResults';
 import TriviaSetup from './TriviaSetup';
@@ -25,6 +26,8 @@ function TriviaBoardInner() {
   const [phase, setPhase] = useState<Phase>('setup');
   const [deck, setDeck] = useState<TriviaQuestion[]>([]);
   const [modeLabel, setModeLabel] = useState('');
+  const [config, setConfig] = useState<DeckConfig | null>(null);
+  const [session, setSession] = useState<TriviaSessionState | undefined>(undefined);
   const [summary, setSummary] = useState<TriviaSummary | null>(null);
   const [round, setRound] = useState(0);
   const [leaderboardKey, setLeaderboardKey] = useState(0);
@@ -51,9 +54,11 @@ function TriviaBoardInner() {
     setRecordedId(null);
   }
 
-  function handleStart(nextDeck: TriviaQuestion[], label: string) {
+  function handleStart(nextDeck: TriviaQuestion[], label: string, nextConfig: DeckConfig) {
     setDeck(nextDeck);
     setModeLabel(label);
+    setConfig(nextConfig);
+    setSession(undefined);
     setSummary(null);
     resetRecord();
     setRound((r) => r + 1);
@@ -70,9 +75,34 @@ function TriviaBoardInner() {
     setPhase('results');
   }
 
+  /** «Reintentar»: mismo modo, mazo nuevo (re-baraja preguntas y opciones) y marcador a cero. */
   function handlePlayAgain() {
-    const shuffled = [...deck].sort(() => Math.random() - 0.5);
-    setDeck(shuffled);
+    if (!config) return;
+    const fresh = buildDeck(config);
+    if (fresh.length === 0) return;
+    setDeck(fresh);
+    setSession(undefined);
+    setSummary(null);
+    resetRecord();
+    setRound((r) => r + 1);
+    setPhase('countdown');
+  }
+
+  /** «Continuar racha»: preguntas nuevas sin repetir, sumando puntos y racha. */
+  function handleContinueStreak() {
+    if (!config || !summary) return;
+    const played = summary.records.map((r) => r.questionId);
+    let next = buildDeck({ ...config, excludeIds: played });
+    // Si ya se agotó el banco con esos filtros, se permite repetir preguntas
+    if (next.length === 0) next = buildDeck(config);
+    if (next.length === 0) return;
+    setDeck(next);
+    setSession({
+      records: summary.records,
+      score: summary.score,
+      streak: summary.streak,
+      bestStreak: summary.bestStreak,
+    });
     setSummary(null);
     resetRecord();
     setRound((r) => r + 1);
@@ -108,6 +138,7 @@ function TriviaBoardInner() {
           key={round}
           deck={deck}
           modeLabel={modeLabel}
+          initial={session}
           onFinish={handleFinish}
           onQuit={() => setPhase('setup')}
         />
@@ -118,6 +149,7 @@ function TriviaBoardInner() {
             summary={summary}
             deck={deck}
             onPlayAgain={handlePlayAgain}
+            onContinue={handleContinueStreak}
             onNewMode={() => setPhase('setup')}
           />
           <TriviaSubmit summary={summary} alias={alias} onAliasChange={handleAliasChange} onRecorded={handleRecorded} />

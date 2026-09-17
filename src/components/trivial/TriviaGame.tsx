@@ -3,7 +3,19 @@ import type { TriviaAnswerRecord, TriviaQuestion } from '@lib/types';
 import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export const TIME_LIMIT_SECONDS = 20;
+/** Segundos por pregunta según dificultad (1 = fácil, 2 = media, 3 = difícil) */
+export const TIME_LIMIT_BY_DIFFICULTY: Record<1 | 2 | 3, number> = { 1: 15, 2: 20, 3: 30 };
+
+export function getTimeLimit(difficulty: 1 | 2 | 3): number {
+  return TIME_LIMIT_BY_DIFFICULTY[difficulty] ?? 20;
+}
+
+export interface TriviaSessionState {
+  records: TriviaAnswerRecord[];
+  score: number;
+  streak: number;
+  bestStreak: number;
+}
 
 export interface TriviaSummary {
   modeLabel: string;
@@ -12,36 +24,45 @@ export interface TriviaSummary {
   total: number;
   score: number;
   bestStreak: number;
+  /** Racha en curso al cerrar la partida (se conserva al «continuar racha») */
+  streak: number;
 }
 
 interface Props {
   deck: TriviaQuestion[];
   modeLabel: string;
+  /** Estado acumulado de la sesión (modo «continuar racha») */
+  initial?: TriviaSessionState;
   onFinish: (summary: TriviaSummary) => void;
   onQuit: () => void;
 }
 
-function computePoints(difficulty: number, timeLeft: number, streakAfter: number): number {
+function computePoints(difficulty: number, timeLeft: number, timeLimit: number, streakAfter: number): number {
   const base = difficulty * 100;
-  const speed = Math.round(Math.max(0, timeLeft) * 5);
+  // El bonus de velocidad se normaliza por fracción restante: así una difícil
+  // (más segundos) no puntúa más que una fácil solo por tener más margen.
+  const ratio = timeLimit > 0 ? Math.max(0, Math.min(1, timeLeft / timeLimit)) : 0;
+  const speed = Math.round(ratio * 100);
   const streakBonus = Math.min(streakAfter, 5) * 20;
   return base + speed + streakBonus;
 }
 
-export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props) {
+export default function TriviaGame({ deck, modeLabel, initial, onFinish, onQuit }: Props) {
+  const firstLimit = getTimeLimit(deck[0]?.difficulty ?? 1);
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [timedOut, setTimedOut] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(TIME_LIMIT_SECONDS);
-  const [records, setRecords] = useState<TriviaAnswerRecord[]>([]);
-  const [streak, setStreak] = useState(0);
-  const [bestStreak, setBestStreak] = useState(0);
-  const [score, setScore] = useState(0);
-  const timeRef = useRef(TIME_LIMIT_SECONDS);
+  const [timeLeft, setTimeLeft] = useState(firstLimit);
+  const [records, setRecords] = useState<TriviaAnswerRecord[]>(initial?.records ?? []);
+  const [streak, setStreak] = useState(initial?.streak ?? 0);
+  const [bestStreak, setBestStreak] = useState(initial?.bestStreak ?? 0);
+  const [score, setScore] = useState(initial?.score ?? 0);
+  const timeRef = useRef(firstLimit);
   const lockRef = useRef(false);
   const intervalRef = useRef<number | null>(null);
 
   const question = deck[index];
+  const limit = getTimeLimit(question.difficulty);
   const answered = selected !== null || timedOut;
 
   const answer = useCallback(
@@ -57,7 +78,7 @@ export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props)
       const correct = choice !== null && choice === question.answer;
       const left = timeRef.current;
       const nextStreak = correct ? streak + 1 : 0;
-      const points = correct ? computePoints(question.difficulty, left, nextStreak) : 0;
+      const points = correct ? computePoints(question.difficulty, left, limit, nextStreak) : 0;
 
       const record: TriviaAnswerRecord = {
         questionId: question.id,
@@ -74,17 +95,17 @@ export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props)
       setBestStreak((prev) => Math.max(prev, nextStreak));
       setScore((prev) => prev + points);
     },
-    [question, streak],
+    [question, streak, limit],
   );
 
   // Temporizador por pregunta. El `lockRef` hace que, una vez respondida,
   // el efecto se re-ejecute sin reiniciar la cuenta (el tiempo queda congelado
   // en el momento de la respuesta hasta pulsar «siguiente»).
-  // biome-ignore lint/correctness/useExhaustiveDependencies: se relanza solo por pregunta (index); answer se recrea al responder pero lockRef corta el reinicio
   useEffect(() => {
     if (lockRef.current) return;
-    timeRef.current = TIME_LIMIT_SECONDS;
-    setTimeLeft(TIME_LIMIT_SECONDS);
+    const questionLimit = getTimeLimit(deck[index]?.difficulty ?? 1);
+    timeRef.current = questionLimit;
+    setTimeLeft(questionLimit);
 
     const interval = window.setInterval(() => {
       timeRef.current = Math.max(0, timeRef.current - 0.1);
@@ -101,7 +122,7 @@ export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props)
       window.clearInterval(interval);
       if (intervalRef.current === interval) intervalRef.current = null;
     };
-  }, [index, answer]);
+  }, [index, answer, deck]);
 
   function next() {
     lockRef.current = false;
@@ -111,9 +132,10 @@ export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props)
         modeLabel,
         records,
         correct,
-        total: deck.length,
+        total: records.length,
         score,
         bestStreak,
+        streak,
       });
     } else {
       setSelected(null);
@@ -122,7 +144,9 @@ export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props)
     }
   }
 
-  const progress = timeLeft / TIME_LIMIT_SECONDS;
+  const progress = limit > 0 ? timeLeft / limit : 0;
+  const secondsLeft = Math.ceil(timeLeft);
+  const urgency: 'yellow' | 'orange' | 'red' = secondsLeft <= 5 ? 'red' : secondsLeft <= 10 ? 'orange' : 'yellow';
   const isLast = index + 1 === deck.length;
   const streakActive = streak >= 3;
 
@@ -162,22 +186,41 @@ export default function TriviaGame({ deck, modeLabel, onFinish, onQuit }: Props)
       </div>
 
       {/* Temporizador */}
-      <div
-        className="mt-4 h-1 rounded-full bg-border overflow-hidden"
-        role="timer"
-        aria-label={`Tiempo restante: ${Math.ceil(timeLeft)} segundos`}
-      >
+      <div className="mt-6 flex items-center gap-4">
         <div
+          className="flex-1 h-2 rounded-full bg-border overflow-hidden"
+          role="timer"
+          aria-label={`Tiempo restante: ${secondsLeft} segundos`}
+        >
+          <div
+            className={clsx(
+              'h-full rounded-full transition-[width,background-color] duration-100',
+              urgency === 'yellow' && 'bg-yellow',
+              urgency === 'orange' && 'bg-amber-hot',
+              urgency === 'red' && 'bg-rust-hot',
+            )}
+            style={{ width: `${progress * 100}%` }}
+          />
+        </div>
+        <span
+          aria-hidden="true"
           className={clsx(
-            'h-full rounded-full transition-[width] duration-100',
-            progress > 0.5 ? 'bg-yellow' : progress > 0.25 ? 'bg-amber-hot' : 'bg-rust-hot',
+            'font-pixel leading-none tabular-nums transition-colors',
+            urgency === 'yellow' && 'text-yellow',
+            urgency === 'orange' && 'text-amber-hot',
+            urgency === 'red' && 'text-rust-hot animate-pulse',
           )}
-          style={{ width: `${progress * 100}%` }}
-        />
+          style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)' }}
+        >
+          {secondsLeft}
+          <span className="align-top text-[0.45em]">s</span>
+        </span>
       </div>
-      <div className="mt-1 text-right text-[9px] font-bold tracking-[.1em] text-text-muted/60 font-mono">
-        {Math.ceil(timeLeft)}s
-      </div>
+      {urgency === 'red' && (
+        <p className="mt-1 text-right text-[10px] font-bold tracking-[.16em] text-rust-hot uppercase font-mono animate-pulse">
+          ¡Se hace de noche!
+        </p>
+      )}
 
       {/* Pregunta */}
       <h2 className="mt-4 font-pixel text-[clamp(1.5rem,3.4vw,2.25rem)] leading-snug uppercase">{question.question}</h2>
