@@ -9,9 +9,11 @@ interface Props {
 
 const INTRO_MS = 10000;
 const COUNT_MS = 1000;
+const COUNTDOWN_MS = 5 * COUNT_MS;
 const GO_MS = 700;
 const BELL_FADE_MS = 1200;
-const BELL_SRC = '/assets/audio/campana-boyd-trivial.mp3';
+const SKIP_FADE_MS = 250;
+const BELL_SRC = '/assets/audio/campana-boyd-trivial-v2.mp3';
 
 /**
  * Cuenta atrás de toque de queda: la campana de Boyd suena y el pueblo
@@ -21,8 +23,9 @@ export default function TriviaCountdown({ modeLabel, alias, onDone }: Props) {
   // step: 'intro' → 5..1 → 'go'
   const [step, setStep] = useState<'intro' | 'go' | number>('intro');
 
-  // Campana de Boyd en bucle durante el intro, con fundido a silencio al final.
-  // El clic en el modo que abrió esta pantalla actúa como gesto de usuario.
+  // Campana de Boyd en bucle durante el intro Y la cuenta atrás, con fundido a
+  // silencio al final (justo cuando sale «¡A JUGAR!»). El clic en el modo que
+  // abrió esta pantalla actúa como gesto de usuario para el autoplay.
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const bell = new Audio(BELL_SRC);
@@ -33,12 +36,12 @@ export default function TriviaCountdown({ modeLabel, alias, onDone }: Props) {
     });
 
     let fadeId: number | null = null;
-    const fadeOut = () => {
+    const fadeTo = (duration: number) => {
       if (fadeId !== null) return;
       const startVolume = bell.volume;
       const startedAt = performance.now();
       fadeId = window.setInterval(() => {
-        const t = Math.min(1, (performance.now() - startedAt) / BELL_FADE_MS);
+        const t = Math.min(1, (performance.now() - startedAt) / duration);
         bell.volume = Math.max(0, startVolume * (1 - t));
         if (t >= 1 && fadeId !== null) {
           window.clearInterval(fadeId);
@@ -47,15 +50,36 @@ export default function TriviaCountdown({ modeLabel, alias, onDone }: Props) {
         }
       }, 50);
     };
-    const fadeTimer = window.setTimeout(fadeOut, Math.max(0, INTRO_MS - BELL_FADE_MS));
+
+    // La campana suena durante todo el intro + los 5 segundos de cuenta atrás
+    const fadeTimer = window.setTimeout(
+      () => fadeTo(BELL_FADE_MS),
+      Math.max(0, INTRO_MS + COUNTDOWN_MS - BELL_FADE_MS),
+    );
 
     return () => {
       window.clearTimeout(fadeTimer);
-      if (fadeId !== null) window.clearInterval(fadeId);
-      bell.pause();
-      bell.currentTime = 0;
+      if (fadeId !== null) {
+        window.clearInterval(fadeId);
+        fadeId = null;
+      }
+      // Al saltar la cuenta, fundido corto en vez de corte seco
+      if (!bell.paused) fadeTo(SKIP_FADE_MS);
+      else bell.currentTime = 0;
     };
   }, []);
+
+  // La cuenta atrás se puede saltar con clic o teclado (Enter / Espacio / Esc)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+        e.preventDefault();
+        onDone();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onDone]);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

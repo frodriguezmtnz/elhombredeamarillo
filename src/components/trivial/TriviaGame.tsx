@@ -124,6 +124,36 @@ export default function TriviaGame({ deck, modeLabel, initial, onFinish, onQuit 
     };
   }, [index, answer, deck]);
 
+  // Atajos de teclado: 1-4 / A-D responden y Enter (o Espacio) pasa a la siguiente
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+      if (target?.closest('input, textarea, select')) return;
+
+      if (!answered) {
+        const key = e.key.toLowerCase();
+        let choice = -1;
+        if (key >= '1' && key <= '4') choice = Number(key) - 1;
+        else if (key >= 'a' && key <= 'd') choice = key.charCodeAt(0) - 97;
+        if (choice >= 0 && choice < question.options.length) {
+          e.preventDefault();
+          answer(choice);
+        }
+        return;
+      }
+
+      if (e.key === 'Enter' || e.key === ' ') {
+        // Si hay un botón activo con foco, deja que su propio click avance
+        if (target?.closest('button:not([disabled]), a[href]')) return;
+        e.preventDefault();
+        next();
+      }
+    }
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [answered, answer, question]);
+
   function next() {
     lockRef.current = false;
     if (index + 1 >= deck.length) {

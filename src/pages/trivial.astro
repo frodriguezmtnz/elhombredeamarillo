@@ -10,6 +10,28 @@ const SITE = Astro.site?.origin ?? 'https://elhombredeamarillo.vercel.app';
 const totalPreguntas = TRIVIA_QUESTIONS.length;
 const categorias = new Set(TRIVIA_QUESTIONS.map((q) => q.category)).size;
 const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
+
+// Muestra sin spoilers para el schema.org Quiz (no volcamos las 131 preguntas)
+const quizSample = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo === 0)
+  .slice(0, 10)
+  .map((q) => ({
+    '@type': 'Question',
+    name: q.question,
+    acceptedAnswer: { '@type': 'Answer', text: q.options[q.answer] },
+    suggestedAnswer: q.options.filter((_, i) => i !== q.answer).map((option) => ({ '@type': 'Answer', text: option })),
+  }));
+
+const quizSchema = {
+  '@type': 'Quiz',
+  '@id': `${SITE}/trivial/#quiz`,
+  url: `${SITE}/trivial/`,
+  name: 'Trivial del Pueblo — El Hombre de Amarillo',
+  description: 'Juego de preguntas sobre FROM: reglas del pueblo, criaturas, personajes, tramas y producción.',
+  inLanguage: 'es',
+  isPartOf: { '@id': `${SITE}/#website` },
+  about: { '@type': 'TVSeries', name: 'FROM' },
+  hasPart: quizSample,
+};
 ---
 
 <BaseLayout
@@ -39,6 +61,7 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
           isPartOf: { '@id': `${SITE}/#website` },
           breadcrumb: { '@id': `${SITE}/trivial/#breadcrumb` },
         },
+        quizSchema,
       ],
     })} />
   </Fragment>

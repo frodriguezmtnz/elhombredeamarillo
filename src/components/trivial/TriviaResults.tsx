@@ -104,6 +104,14 @@ export default function TriviaResults({ summary, deck, onPlayAgain, onContinue, 
                 >
                   {record.correct ? '✓' : '✗'}
                 </span>
+                {original?.image && (
+                  <img
+                    src={original.image}
+                    alt=""
+                    loading="lazy"
+                    className="mt-0.5 h-10 w-10 shrink-0 rounded border border-border object-cover"
+                  />
+                )}
                 <span className="text-text-muted line-clamp-2">
                   {label}
                   {record.timedOut && <b className="text-rust-hot"> — se hizo de noche (sin responder)</b>}

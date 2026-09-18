@@ -698,13 +698,13 @@
     ],
     "question": "¿Qué monstruo le dice a Victor que, si sigue bajando a las cuevas, tendrá que quedarse?",
     "options": [
-      "La mujer rubia del abrigo",
+      "El Hombre de Amarillo",
       "Smiley",
       "El mecánico",
       "La enfermera"
     ],
     "answer": 0,
-    "explanation": "La advertencia la hace la mujer rubia del abrigo."
+    "explanation": "La advertencia la hace el Hombre de Amarillo."
   },
   {
     "id": "Q036",
@@ -2091,22 +2091,22 @@
     "category": "criaturas",
     "difficulty": 1,
     "spoilersUpTo": 0,
-    "question": "¿Cómo se llama la entidad con vestido amarillo que atrae a la gente al bosque?",
+    "question": "¿Cómo se llama la entidad con traje amarillo que atrae a la gente al bosque?",
     "options": [
-      "La Mujer de Amarillo",
+      "El Hombre de Amarillo",
       "La Dama Blanca",
       "La Madre del Bosque",
       "La Vecina"
     ],
     "answer": 0,
-    "explanation": "La Mujer de Amarillo es una de las entidades más antiguas y inquietantes del pueblo."
+    "explanation": "El Hombre de Amarillo es una de las entidades más antiguas y inquietantes del pueblo."
   },
   {
     "id": "Q105",
     "category": "criaturas",
     "difficulty": 2,
     "spoilersUpTo": 0,
-    "question": "¿Qué rasgo facial hace especialmente perturbadora a la Mujer de Amarillo?",
+    "question": "¿Qué rasgo facial hace especialmente perturbador al Hombre de Amarillo?",
     "options": [
       "No tiene ojos",
       "Su sonrisa demasiado amplia",
