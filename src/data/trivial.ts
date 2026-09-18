@@ -119,6 +119,20 @@ function validateQuestions(questions: unknown): TriviaQuestion[] {
       throw new Error(`${at} (${item.id}): question vacía`);
     if (typeof item.explanation !== 'string' || item.explanation.trim().length === 0)
       throw new Error(`${at} (${item.id}): explanation vacía`);
+    if (item.image !== undefined && (typeof item.image !== 'string' || item.image.trim().length === 0))
+      throw new Error(`${at} (${item.id}): image debe ser una ruta no vacía`);
+    if (item.imageAlt !== undefined && typeof item.imageAlt !== 'string')
+      throw new Error(`${at} (${item.id}): imageAlt debe ser texto`);
+    if (item.links !== undefined) {
+      if (!Array.isArray(item.links) || item.links.length === 0)
+        throw new Error(`${at} (${item.id}): links debe ser un array no vacío`);
+      item.links.forEach((link, j) => {
+        if (typeof link?.label !== 'string' || link.label.trim().length === 0)
+          throw new Error(`${at} (${item.id}): links[${j}].label vacío`);
+        if (typeof link?.href !== 'string' || !/^https?:\/\//.test(link.href))
+          throw new Error(`${at} (${item.id}): links[${j}].href debe ser una URL http(s)`);
+      });
+    }
   });
   return questions as TriviaQuestion[];
 }

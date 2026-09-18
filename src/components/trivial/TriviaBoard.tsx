@@ -2,6 +2,7 @@ import { type DeckConfig, buildDeck } from '@data/trivial';
 import type { TriviaQuestion } from '@lib/types';
 import { useCallback, useEffect, useState } from 'react';
 import AuthProvider, { useAuth } from '../community/AuthProvider';
+import LoginForm from '../community/LoginForm';
 import TriviaCountdown from './TriviaCountdown';
 import TriviaGame, { type TriviaSessionState, type TriviaSummary } from './TriviaGame';
 import TriviaLeaderboard from './TriviaLeaderboard';
@@ -22,7 +23,7 @@ function loadStoredAlias(): string {
 }
 
 function TriviaBoardInner() {
-  const { user } = useAuth();
+  const { user, loginOpen, closeLogin } = useAuth();
   const [phase, setPhase] = useState<Phase>('setup');
   const [deck, setDeck] = useState<TriviaQuestion[]>([]);
   const [modeLabel, setModeLabel] = useState('');
@@ -156,7 +157,11 @@ function TriviaBoardInner() {
         </>
       )}
 
-      <TriviaLeaderboard refreshKey={leaderboardKey} highlightId={recordedId} alias={alias} />
+      {(phase === 'setup' || phase === 'results') && (
+        <TriviaLeaderboard refreshKey={leaderboardKey} highlightId={recordedId} alias={alias} />
+      )}
+
+      <LoginForm isOpen={loginOpen} onClose={closeLogin} />
     </div>
   );
 }

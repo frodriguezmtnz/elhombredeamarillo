@@ -7,9 +7,10 @@ interface Props {
   onDone: () => void;
 }
 
-const INTRO_MS = 7000;
-const COUNT_MS = 600;
+const INTRO_MS = 10000;
+const COUNT_MS = 1000;
 const GO_MS = 700;
+const BELL_FADE_MS = 1200;
 const BELL_SRC = '/assets/audio/campana-boyd-trivial.mp3';
 
 /**
@@ -20,16 +21,37 @@ export default function TriviaCountdown({ modeLabel, alias, onDone }: Props) {
   // step: 'intro' → 5..1 → 'go'
   const [step, setStep] = useState<'intro' | 'go' | number>('intro');
 
-  // Campana de Boyd al iniciar (solo aquí, no en cada pregunta). El clic en el
-  // modo que abrió esta pantalla actúa como gesto de usuario para el autoplay.
+  // Campana de Boyd en bucle durante el intro, con fundido a silencio al final.
+  // El clic en el modo que abrió esta pantalla actúa como gesto de usuario.
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const bell = new Audio(BELL_SRC);
+    bell.loop = true;
     bell.volume = 0.7;
     bell.play().catch(() => {
       // Autoplay bloqueado o archivo no disponible: se juega igual sin sonido
     });
+
+    let fadeId: number | null = null;
+    const fadeOut = () => {
+      if (fadeId !== null) return;
+      const startVolume = bell.volume;
+      const startedAt = performance.now();
+      fadeId = window.setInterval(() => {
+        const t = Math.min(1, (performance.now() - startedAt) / BELL_FADE_MS);
+        bell.volume = Math.max(0, startVolume * (1 - t));
+        if (t >= 1 && fadeId !== null) {
+          window.clearInterval(fadeId);
+          fadeId = null;
+          bell.pause();
+        }
+      }, 50);
+    };
+    const fadeTimer = window.setTimeout(fadeOut, Math.max(0, INTRO_MS - BELL_FADE_MS));
+
     return () => {
+      window.clearTimeout(fadeTimer);
+      if (fadeId !== null) window.clearInterval(fadeId);
       bell.pause();
       bell.currentTime = 0;
     };
@@ -61,44 +83,45 @@ export default function TriviaCountdown({ modeLabel, alias, onDone }: Props) {
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') onDone();
       }}
-      className="fixed inset-0 z-[80] flex cursor-pointer flex-col items-center justify-center bg-bg/92 backdrop-blur-md"
+      className="fixed inset-0 z-[80] flex cursor-pointer flex-col items-center justify-center bg-bg"
     >
       <p className="text-[10px] font-bold tracking-[.18em] text-yellow/80 uppercase font-mono">
         MODO {modeLabel.toUpperCase()} · JUGANDO COMO «{alias || 'Anónimo'}»
       </p>
 
-      {step === 'intro' ? (
-        <div className="mt-8 flex flex-col items-center gap-5">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-16 w-16 text-yellow animate-[swing_0.9s_ease-in-out_infinite]"
-            aria-hidden="true"
-          >
-            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-          </svg>
-          <p className="font-pixel text-[clamp(1.6rem,4vw,2.6rem)] uppercase text-text">La campana de Boyd suena...</p>
-        </div>
-      ) : step === 'go' ? (
-        <p className="mt-6 font-pixel text-[clamp(3.5rem,12vw,9rem)] uppercase text-yellow-bright drop-shadow-[0_0_30px_rgba(244,201,67,0.5)]">
-          ¡A JUGAR!
-        </p>
-      ) : (
-        <p
-          key={step}
-          className={clsx(
-            'mt-6 font-pixel text-[clamp(5rem,16vw,12rem)] leading-none',
-            step <= 2 ? 'text-rust-hot' : 'text-yellow',
-          )}
+      <div className="mt-8 flex flex-col items-center gap-4">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-16 w-16 text-yellow animate-[swing_0.9s_ease-in-out_infinite]"
+          aria-hidden="true"
         >
-          {step}
-        </p>
-      )}
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+
+        {step === 'intro' ? (
+          <p className="font-pixel text-[clamp(1.6rem,4vw,2.6rem)] uppercase text-text">La campana de Boyd suena...</p>
+        ) : step === 'go' ? (
+          <p className="mt-2 font-pixel text-[clamp(3.5rem,12vw,9rem)] uppercase text-yellow-bright drop-shadow-[0_0_30px_rgba(244,201,67,0.5)]">
+            ¡A JUGAR!
+          </p>
+        ) : (
+          <p
+            key={step}
+            className={clsx(
+              'mt-2 font-pixel text-[clamp(5rem,16vw,12rem)] leading-none',
+              step <= 2 ? 'text-rust-hot' : 'text-yellow',
+            )}
+          >
+            {step}
+          </p>
+        )}
+      </div>
 
       <p className="mt-10 text-[9px] font-bold tracking-[.14em] text-text-muted/50 uppercase font-mono">
         clic en cualquier parte para saltar la campana

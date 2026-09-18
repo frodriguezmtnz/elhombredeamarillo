@@ -273,7 +273,35 @@ export default function TriviaGame({ deck, modeLabel, initial, onFinish, onQuit 
                 ? 'Se hizo de noche · sin puntos'
                 : 'Incorrecto · sin puntos'}
           </p>
-          <p className="mt-2 text-sm text-text leading-relaxed">{question.explanation}</p>
+          <div className="mt-2 flex flex-col sm:flex-row gap-4 sm:items-start">
+            {question.image && (
+              <img
+                src={question.image}
+                alt={question.imageAlt ?? ''}
+                loading="lazy"
+                className="w-full sm:w-48 sm:shrink-0 rounded-lg border border-border bg-bg object-cover"
+              />
+            )}
+            <div className="min-w-0">
+              <p className="text-sm text-text leading-relaxed">{question.explanation}</p>
+              {question.links && question.links.length > 0 && (
+                <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+                  {question.links.map((link) => (
+                    <li key={link.href}>
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] font-bold tracking-[.06em] text-yellow underline decoration-yellow/40 hover:text-yellow-bright hover:decoration-yellow transition-colors"
+                      >
+                        {link.label} ↗
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
           <div className="flex items-center justify-between gap-4 mt-4">
             <button
               type="button"

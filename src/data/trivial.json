@@ -1219,15 +1219,17 @@
       "Ellis",
       "colgante"
     ],
-    "question": "¿Qué figura geométrica lleva Ellis como colgante?",
+    "question": "¿Cuál de estas figuras es la más parecida al colgante de Ellis?",
     "options": [
-      "Triángulo",
-      "Cuadrado",
-      "Círculo",
-      "Pentágono"
+      "Árbol",
+      "Anillo",
+      "Caja de música",
+      "Nunca lleva colgante"
     ],
     "answer": 0,
-    "explanation": "El colgante de Ellis tiene forma de triángulo."
+    "explanation": "El colgante de Ellis es una pieza con un motivo que recuerda a un árbol (una punta triangular con ramas).",
+    "image": "/assets/trivial/ellis-colgante.webp",
+    "imageAlt": "Colgante de Ellis con un motivo que recuerda a un árbol"
   },
   {
     "id": "Q061",
@@ -1975,7 +1977,9 @@
       "Un mapa del pueblo"
     ],
     "answer": 1,
-    "explanation": "El pequeño talismán protege a quien lo lleva de las criaturas mientras dura la noche."
+    "explanation": "El pequeño talismán protege a quien lo lleva de las criaturas mientras dura la noche.",
+    "image": "/assets/references/talisman-404.webp",
+    "imageAlt": "Talismán de FROM con símbolos tallados"
   },
   {
     "id": "Q097",
@@ -2491,7 +2495,13 @@
       "Michael Giacchino"
     ],
     "answer": 2,
-    "explanation": "Chris Tilton firma la banda sonora de la serie."
+    "explanation": "Chris Tilton firma la banda sonora de la serie.",
+    "links": [
+      {
+        "label": "Escuchar su música en christilton.com",
+        "href": "https://www.christilton.com/music"
+      }
+    ]
   },
   {
     "id": "Q130",
