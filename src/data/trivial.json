@@ -1350,13 +1350,13 @@
     ],
     "question": "¿En qué hospital despierta Tabitha?",
     "options": [
-      "St. Anthony's Hospital",
+      "Hospital St. Anthony",
       "Hospital de San Francisco",
       "Hospital de San Diego",
       "Hospital de Arizona"
     ],
     "answer": 0,
-    "explanation": "Tabitha despierta en St. Anthony's Hospital."
+    "explanation": "Tabitha despierta en el Hospital St. Anthony."
   },
   {
     "id": "Q067",
