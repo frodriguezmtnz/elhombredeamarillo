@@ -10,6 +10,28 @@ const SITE = Astro.site?.origin ?? 'https://elhombredeamarillo.vercel.app';
 const totalPreguntas = TRIVIA_QUESTIONS.length;
 const categorias = new Set(TRIVIA_QUESTIONS.map((q) => q.category)).size;
 const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
+
+// Muestra sin spoilers para el schema.org Quiz (no volcamos las 131 preguntas)
+const quizSample = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo === 0)
+  .slice(0, 10)
+  .map((q) => ({
+    '@type': 'Question',
+    name: q.question,
+    acceptedAnswer: { '@type': 'Answer', text: q.options[q.answer] },
+    suggestedAnswer: q.options.filter((_, i) => i !== q.answer).map((option) => ({ '@type': 'Answer', text: option })),
+  }));
+
+const quizSchema = {
+  '@type': 'Quiz',
+  '@id': `${SITE}/trivial/#quiz`,
+  url: `${SITE}/trivial/`,
+  name: 'Trivial del Pueblo — El Hombre de Amarillo',
+  description: 'Juego de preguntas sobre FROM: reglas del pueblo, criaturas, personajes, tramas y producción.',
+  inLanguage: 'es',
+  isPartOf: { '@id': `${SITE}/#website` },
+  about: { '@type': 'TVSeries', name: 'FROM' },
+  hasPart: quizSample,
+};
 ---
 
 <BaseLayout
@@ -39,6 +61,7 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
           isPartOf: { '@id': `${SITE}/#website` },
           breadcrumb: { '@id': `${SITE}/trivial/#breadcrumb` },
         },
+        quizSchema,
       ],
     })} />
   </Fragment>
@@ -103,10 +126,11 @@ const conSpoilers = TRIVIA_QUESTIONS.filter((q) => q.spoilersUpTo > 0).length;
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div class="rounded-2xl border border-border bg-surface p-5 reveal-item stagger">
           <span class="text-[9px] font-bold tracking-[.12em] text-yellow/60 uppercase font-mono">01 // TOQUE DE QUEDA</span>
-          <h3 class="mt-2 font-pixel text-xl uppercase">20 segundos por pregunta</h3>
+          <h3 class="mt-2 font-pixel text-xl uppercase">15 a 30 segundos por pregunta</h3>
           <p class="mt-2 text-text-muted text-xs leading-relaxed">
-            La campana de Boyd suena al empezar cada pregunta. Responder rápido da bonus: dudar
-            demasiado solo garantiza que te encuentren fuera.
+            La campana de Boyd suena al empezar la partida. Cuanto más difícil es la pregunta, más margen tienes
+            (15 s fácil, 20 s media, 30 s difícil). Responder rápido da bonus: dudar demasiado solo garantiza que
+            te encuentren fuera.
           </p>
         </div>
         <div class="rounded-2xl border border-border bg-surface p-5 reveal-item stagger">

@@ -90,6 +90,8 @@ export default function TriviaLeaderboard({ refreshKey, highlightId, alias }: Pr
     };
   }, [load]);
 
+  const isConfigError = /PUBLIC_SUPABASE|Faltan/i.test(error);
+
   return (
     <div className="rounded-2xl border border-border bg-surface p-5 lg:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -126,16 +128,24 @@ export default function TriviaLeaderboard({ refreshKey, highlightId, alias }: Pr
           </span>
         </div>
       ) : error ? (
-        <div className="py-6 text-center">
-          <p className="text-rust-hot text-xs font-mono">Tablón no disponible: {error}</p>
-          <button
-            type="button"
-            onClick={load}
-            className="mt-3 text-[9px] font-bold tracking-[.12em] uppercase font-mono text-text-muted hover:text-yellow transition-colors cursor-pointer"
-          >
-            REINTENTAR
-          </button>
-        </div>
+        isConfigError ? (
+          <p className="py-8 text-center text-text-muted text-xs font-mono leading-relaxed">
+            El tablón del pueblo se activa con las credenciales de la comunidad.
+            <br />
+            Tu marca local sigue guardada en este dispositivo.
+          </p>
+        ) : (
+          <div className="py-6 text-center">
+            <p className="text-rust-hot text-xs font-mono">Tablón no disponible: {error}</p>
+            <button
+              type="button"
+              onClick={load}
+              className="mt-3 text-[9px] font-bold tracking-[.12em] uppercase font-mono text-text-muted hover:text-yellow transition-colors cursor-pointer"
+            >
+              REINTENTAR
+            </button>
+          </div>
+        )
       ) : entries.length === 0 ? (
         <p className="py-8 text-center text-text-muted text-xs font-mono">
           Nadie ha publicado una marca todavía. El pueblo espera a su primer sheriff.

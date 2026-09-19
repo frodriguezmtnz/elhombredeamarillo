@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '../community/AuthProvider';
 import type { TriviaSummary } from './TriviaGame';
 
-const MAX_POINTS_HINT = 30000;
+const MAX_POINTS_HINT = 100000;
 
 interface Props {
   summary: TriviaSummary;
