@@ -1,10 +1,17 @@
-import { TRIVIA_CATEGORY_LABELS, TRIVIA_QUESTIONS, buildDeck, countByCategory, countUpTo } from '@data/trivial';
+import {
+  type DeckConfig,
+  TRIVIA_CATEGORY_LABELS,
+  TRIVIA_QUESTIONS,
+  buildDeck,
+  countByCategory,
+  countUpTo,
+} from '@data/trivial';
 import type { TriviaCategory, TriviaQuestion } from '@lib/types';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useReveal } from './useReveal';
 
 interface Props {
-  onStart: (deck: TriviaQuestion[], modeLabel: string) => void;
+  onStart: (deck: TriviaQuestion[], modeLabel: string, config: DeckConfig) => void;
   alias: string;
   onAliasChange: (value: string) => void;
 }
@@ -82,137 +89,199 @@ function Divider() {
 
 export default function TriviaSetup({ onStart, alias, onAliasChange }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const [aliasReady, setAliasReady] = useState(false);
   useReveal(rootRef);
 
-  function start(modeKey: string) {
-    let deck: TriviaQuestion[];
-    let modeLabel: string;
-
+  function configFor(modeKey: string): { config: DeckConfig; label: string } {
     if (modeKey === 'rapido') {
-      deck = buildDeck({ count: 10, balance: true });
-      modeLabel = 'Rápido';
-    } else if (modeKey === 'experto') {
-      deck = buildDeck({ count: 15, minDifficulty: 2 });
-      modeLabel = 'Experto';
-    } else if (modeKey === 'sanspoilers') {
-      deck = buildDeck({ count: 10, safeOnly: true });
-      modeLabel = 'Sin spoilers';
-    } else if (modeKey.startsWith('temporada-')) {
-      const s = Number(modeKey.split('-')[1]) as 1 | 2 | 3 | 4;
-      deck = buildDeck({ count: 8, upTo: s });
-      modeLabel = `Hasta T${s}`;
-    } else {
-      const cat = modeKey.replace('categoria-', '') as TriviaCategory;
-      deck = buildDeck({ count: 10, categories: [cat] });
-      modeLabel = TRIVIA_CATEGORY_LABELS[cat];
+      return { config: { count: 10, balance: true }, label: 'Rápido' };
     }
+    if (modeKey === 'experto') {
+      return { config: { count: 15, minDifficulty: 2 }, label: 'Experto' };
+    }
+    if (modeKey === 'sanspoilers') {
+      return { config: { count: 10, safeOnly: true }, label: 'Sin spoilers' };
+    }
+    if (modeKey.startsWith('temporada-')) {
+      const s = Number(modeKey.split('-')[1]) as 1 | 2 | 3 | 4;
+      return { config: { count: 8, upTo: s }, label: `Hasta T${s}` };
+    }
+    const cat = modeKey.replace('categoria-', '') as TriviaCategory;
+    return { config: { count: 10, categories: [cat] }, label: TRIVIA_CATEGORY_LABELS[cat] };
+  }
 
-    if (deck.length > 0) onStart(deck, modeLabel);
+  function start(modeKey: string) {
+    const { config, label } = configFor(modeKey);
+    const deck = buildDeck(config);
+    if (deck.length > 0) onStart(deck, label, config);
+  }
+
+  function confirmAlias() {
+    onAliasChange(alias.trim());
+    setAliasReady(true);
+  }
+
+  function playAnonymous() {
+    // Alias no vacío para que el pueblo no lo suplante por el email de la cuenta
+    onAliasChange('Anónimo');
+    setAliasReady(true);
   }
 
   return (
     <div ref={rootRef} className="rounded-2xl border border-border bg-surface p-6 lg:p-10">
-      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6 reveal-item">
-        <div>
+      {/* Paso previo: el nombre va antes de elegir modo para que nadie se lo salte */}
+      {!aliasReady ? (
+        <section
+          aria-labelledby="alias-title"
+          className="rounded-xl border-2 border-yellow/40 bg-surface-raised p-6 lg:p-8"
+        >
+          <p className="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">
+            PASO 00 · IDENTIFÍCATE ANTE EL PUEBLO
+          </p>
+          <h2 className="font-pixel text-[clamp(1.6rem,3.5vw,2.5rem)] uppercase" id="alias-title">
+            ¿Con qué nombre firmas?
+          </h2>
+          <p className="mt-3 max-w-[60ch] text-text-muted text-sm leading-relaxed">
+            Este nombre aparecerá en el <b className="text-yellow">Tablón del Pueblo</b> cuando publiques tu marca.
+            Puedes empezar sin nombre si prefieres pasar desapercibido.
+          </p>
+          <form
+            className="mt-6 flex flex-col sm:flex-row gap-3"
+            onSubmit={(e) => {
+              e.preventDefault();
+              confirmAlias();
+            }}
+          >
+            <label className="flex-1">
+              <span className="sr-only">Tu nombre en el tablón</span>
+              <input
+                type="text"
+                value={alias}
+                onChange={(e) => onAliasChange(e.target.value.slice(0, 24))}
+                maxLength={24}
+                placeholder="Anónimo"
+                className="w-full min-h-[48px] px-4 rounded-xl bg-bg border border-border text-sm text-text placeholder:text-text-muted/40 focus:outline-2 focus:outline-yellow"
+              />
+            </label>
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center gap-3 min-h-[48px] px-6 bg-yellow text-bg text-[11px] font-bold tracking-[.12em] uppercase font-mono rounded-xl hover:brightness-110 transition-all cursor-pointer"
+            >
+              CONTINUAR <b>→</b>
+            </button>
+          </form>
+          <button
+            type="button"
+            onClick={playAnonymous}
+            className="mt-4 text-[10px] font-bold tracking-[.12em] uppercase font-mono text-text-muted hover:text-yellow transition-colors cursor-pointer"
+          >
+            JUGAR COMO ANÓNIMO
+          </button>
+        </section>
+      ) : (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface-raised px-4 py-3">
+          <p className="text-[10px] font-bold tracking-[.12em] text-text-muted uppercase font-mono">
+            JUGANDO COMO <b className="ml-1 text-yellow">{alias || 'Anónimo'}</b>
+          </p>
+          <button
+            type="button"
+            onClick={() => setAliasReady(false)}
+            className="text-[10px] font-bold tracking-[.12em] uppercase font-mono text-text-muted hover:text-yellow transition-colors cursor-pointer"
+          >
+            CAMBIAR NOMBRE
+          </button>
+        </div>
+      )}
+
+      <div
+        className={aliasReady ? 'mt-10' : 'mt-10 pointer-events-none select-none opacity-40'}
+        inert={!aliasReady}
+        aria-hidden={!aliasReady}
+      >
+        <div className="reveal-item">
           <p className="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">
             EXPEDIENTE TRIVIAL · SELECCIÓN DE PRUEBA
           </p>
           <h2 className="font-pixel text-[clamp(1.6rem,3.5vw,2.5rem)] uppercase">Elige cómo quieres jugar</h2>
         </div>
 
-        {/* Alias visible desde el principio: se usa al publicar en el tablón */}
-        <label className="lg:text-right">
-          <span className="block text-[9px] font-bold tracking-[.14em] text-text-muted uppercase font-mono mb-2">
-            TU NOMBRE EN EL TABLÓN
-          </span>
-          <input
-            type="text"
-            value={alias}
-            onChange={(e) => onAliasChange(e.target.value.slice(0, 24))}
-            maxLength={24}
-            placeholder="Anónimo"
-            className="w-full lg:w-64 min-h-[44px] px-4 rounded-xl bg-bg border border-border text-sm text-text placeholder:text-text-muted/40 focus:outline-2 focus:outline-yellow"
+        {/* 01 · Modos principales: el camino rápido, destacado */}
+        <div className="mt-12">
+          <div className="reveal-item">
+            <SectionHeader index="01" title="Modos del pueblo" sub="elige uno y la campana empezará a sonar" primary />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-6">
+            {MODES.map((mode, i) => (
+              <button
+                key={mode.key}
+                type="button"
+                onClick={() => start(mode.key)}
+                className="group flex flex-col text-left rounded-xl border-2 border-yellow/30 bg-surface-raised p-6 hover:border-yellow hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(228,183,34,0.15)] transition-all cursor-pointer reveal-item stagger"
+              >
+                <span className="font-pixel text-4xl text-yellow/50 group-hover:text-yellow transition-colors leading-none">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className="mt-3 font-pixel text-3xl uppercase text-text group-hover:text-yellow transition-colors leading-none">
+                  {mode.label}
+                </span>
+                <span className="mt-3 text-text-muted text-sm leading-relaxed">{mode.hint}</span>
+                <span className="mt-2 text-[11px] italic text-yellow/70 font-body">{mode.tagline}</span>
+                <span className="mt-4 inline-block self-start px-2 py-1 rounded bg-yellow/10 border border-yellow/20 text-[8px] font-bold tracking-[.12em] text-yellow/70 uppercase font-mono">
+                  {mode.note}
+                </span>
+                <span className="mt-auto pt-5 inline-flex items-center gap-2 text-[10px] font-bold tracking-[.14em] uppercase font-mono text-yellow opacity-0 group-hover:opacity-100 transition-opacity">
+                  EMPEZAR <b>→</b>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <Divider />
+
+        {/* 02 · Temporadas: píldoras con aviso de spoilers */}
+        <div>
+          <SectionHeader index="02" title="Por temporada" sub="spoilers hasta la temporada elegida" />
+          <div className="flex flex-wrap gap-3 mt-5">
+            {SEASONS.map((s) => (
+              <button
+                key={s.key}
+                type="button"
+                onClick={() => start(`temporada-${s.key}`)}
+                className="group inline-flex items-center gap-3 min-h-[44px] px-4 rounded-full border border-border text-[11px] font-bold tracking-[.12em] uppercase font-mono text-text-muted hover:text-yellow hover:border-yellow/50 transition-all cursor-pointer"
+              >
+                <span className="font-pixel text-lg text-yellow/60 group-hover:text-yellow">T{s.key}</span>· hasta T
+                {s.key}
+                <span className="px-1.5 py-0.5 rounded bg-rust/15 border border-rust/30 text-[8px] text-rust-hot tracking-[.08em]">
+                  {countUpTo(s.key)} disp.
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <Divider />
+
+        {/* 03 · Categorías: fichas informativas con su tamaño de banco */}
+        <div>
+          <SectionHeader
+            index="03"
+            title="Por categoría"
+            sub={`archivo completo: ${TRIVIA_QUESTIONS.length} preguntas catalogadas`}
           />
-          <span className="mt-1 block text-[9px] text-text-muted/50 font-mono">así firmará el pueblo tus marcas</span>
-        </label>
-      </div>
-
-      {/* 01 · Modos principales: el camino rápido, destacado */}
-      <div className="mt-12">
-        <div className="reveal-item">
-          <SectionHeader index="01" title="Modos del pueblo" sub="elige uno y la campana empezará a sonar" primary />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-6">
-          {MODES.map((mode, i) => (
-            <button
-              key={mode.key}
-              type="button"
-              onClick={() => start(mode.key)}
-              className="group flex flex-col text-left rounded-xl border-2 border-yellow/30 bg-surface-raised p-6 hover:border-yellow hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(228,183,34,0.15)] transition-all cursor-pointer reveal-item stagger"
-            >
-              <span className="font-pixel text-4xl text-yellow/50 group-hover:text-yellow transition-colors leading-none">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <span className="mt-3 font-pixel text-3xl uppercase text-text group-hover:text-yellow transition-colors leading-none">
-                {mode.label}
-              </span>
-              <span className="mt-3 text-text-muted text-sm leading-relaxed">{mode.hint}</span>
-              <span className="mt-2 text-[11px] italic text-yellow/70 font-body">{mode.tagline}</span>
-              <span className="mt-4 inline-block self-start px-2 py-1 rounded bg-yellow/10 border border-yellow/20 text-[8px] font-bold tracking-[.12em] text-yellow/70 uppercase font-mono">
-                {mode.note}
-              </span>
-              <span className="mt-auto pt-5 inline-flex items-center gap-2 text-[10px] font-bold tracking-[.14em] uppercase font-mono text-yellow opacity-0 group-hover:opacity-100 transition-opacity">
-                EMPEZAR <b>→</b>
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <Divider />
-
-      {/* 02 · Temporadas: píldoras con aviso de spoilers */}
-      <div>
-        <SectionHeader index="02" title="Por temporada" sub="spoilers hasta la temporada elegida" />
-        <div className="flex flex-wrap gap-3 mt-5">
-          {SEASONS.map((s) => (
-            <button
-              key={s.key}
-              type="button"
-              onClick={() => start(`temporada-${s.key}`)}
-              className="group inline-flex items-center gap-3 min-h-[44px] px-4 rounded-full border border-border text-[11px] font-bold tracking-[.12em] uppercase font-mono text-text-muted hover:text-yellow hover:border-yellow/50 transition-all cursor-pointer"
-            >
-              <span className="font-pixel text-lg text-yellow/60 group-hover:text-yellow">T{s.key}</span>· hasta T
-              {s.key}
-              <span className="px-1.5 py-0.5 rounded bg-rust/15 border border-rust/30 text-[8px] text-rust-hot tracking-[.08em]">
-                {countUpTo(s.key)} disp.
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <Divider />
-
-      {/* 03 · Categorías: fichas informativas con su tamaño de banco */}
-      <div>
-        <SectionHeader
-          index="03"
-          title="Por categoría"
-          sub={`archivo completo: ${TRIVIA_QUESTIONS.length} preguntas catalogadas`}
-        />
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-5">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => start(`categoria-${cat}`)}
-              className="flex items-center justify-between gap-2 min-h-[44px] px-4 rounded-xl border border-border-light bg-bg/40 text-[10px] font-bold tracking-[.1em] uppercase font-mono text-text-muted hover:text-yellow hover:border-yellow/50 transition-all cursor-pointer"
-            >
-              <span className="truncate">{TRIVIA_CATEGORY_LABELS[cat]}</span>
-              <span className="shrink-0 font-pixel text-base text-yellow/50">{countByCategory(cat)}</span>
-            </button>
-          ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-5">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => start(`categoria-${cat}`)}
+                className="flex items-center justify-between gap-2 min-h-[44px] px-4 rounded-xl border border-border-light bg-bg/40 text-[10px] font-bold tracking-[.1em] uppercase font-mono text-text-muted hover:text-yellow hover:border-yellow/50 transition-all cursor-pointer"
+              >
+                <span className="truncate">{TRIVIA_CATEGORY_LABELS[cat]}</span>
+                <span className="shrink-0 font-pixel text-base text-yellow/50">{countByCategory(cat)}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

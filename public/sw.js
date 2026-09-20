@@ -1,18 +1,14 @@
-const CACHE_NAME = 'hda-v4';
+const CACHE_NAME = 'hda-v5';
 const STATIC_ASSETS = ['/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)),
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)));
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))),
-    ),
+    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))),
   );
   self.clients.claim();
 });
@@ -37,7 +33,7 @@ self.addEventListener('fetch', (event) => {
             }
             return response;
           })
-          .catch(() => caches.match(request)),
+          .catch(() => caches.match(request).then((cached) => cached || Response.error())),
       );
       return;
     }
@@ -45,18 +41,21 @@ self.addEventListener('fetch', (event) => {
     // Stale-while-revalidate for images and other static assets
     event.respondWith(
       caches.match(request).then((cached) => {
-        const fetched = fetch(request).then((response) => {
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        });
-        return cached || fetched;
+        const fetched = fetch(request)
+          .then((response) => {
+            if (response.ok) {
+              const clone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+            }
+            return response;
+          })
+          .catch(() => undefined);
+        if (cached) return cached;
+        return fetched.then((response) => response || Response.error());
       }),
     );
     return;
   }
 
-  event.respondWith(fetch(request));
+  event.respondWith(fetch(request).catch(() => Response.error()));
 });

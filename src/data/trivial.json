@@ -698,13 +698,13 @@
     ],
     "question": "¿Qué monstruo le dice a Victor que, si sigue bajando a las cuevas, tendrá que quedarse?",
     "options": [
-      "La mujer rubia del abrigo",
+      "El Hombre de Amarillo",
       "Smiley",
       "El mecánico",
       "La enfermera"
     ],
     "answer": 0,
-    "explanation": "La advertencia la hace la mujer rubia del abrigo."
+    "explanation": "La advertencia la hace el Hombre de Amarillo."
   },
   {
     "id": "Q036",
@@ -1219,15 +1219,17 @@
       "Ellis",
       "colgante"
     ],
-    "question": "¿Qué figura geométrica lleva Ellis como colgante?",
+    "question": "¿Cuál de estas figuras es la más parecida al colgante de Ellis?",
     "options": [
-      "Triángulo",
-      "Cuadrado",
-      "Círculo",
-      "Pentágono"
+      "Árbol",
+      "Anillo",
+      "Caja de música",
+      "Nunca lleva colgante"
     ],
     "answer": 0,
-    "explanation": "El colgante de Ellis tiene forma de triángulo."
+    "explanation": "El colgante de Ellis es una pieza con un motivo que recuerda a un árbol (una punta triangular con ramas).",
+    "image": "/assets/trivial/ellis-colgante.webp",
+    "imageAlt": "Colgante de Ellis con un motivo que recuerda a un árbol"
   },
   {
     "id": "Q061",
@@ -1348,13 +1350,13 @@
     ],
     "question": "¿En qué hospital despierta Tabitha?",
     "options": [
-      "St. Anthony's Hospital",
+      "Hospital St. Anthony",
       "Hospital de San Francisco",
       "Hospital de San Diego",
       "Hospital de Arizona"
     ],
     "answer": 0,
-    "explanation": "Tabitha despierta en St. Anthony's Hospital."
+    "explanation": "Tabitha despierta en el Hospital St. Anthony."
   },
   {
     "id": "Q067",
@@ -1975,7 +1977,9 @@
       "Un mapa del pueblo"
     ],
     "answer": 1,
-    "explanation": "El pequeño talismán protege a quien lo lleva de las criaturas mientras dura la noche."
+    "explanation": "El pequeño talismán protege a quien lo lleva de las criaturas mientras dura la noche.",
+    "image": "/assets/references/talisman-404.webp",
+    "imageAlt": "Talismán de FROM con símbolos tallados"
   },
   {
     "id": "Q097",
@@ -2087,22 +2091,22 @@
     "category": "criaturas",
     "difficulty": 1,
     "spoilersUpTo": 0,
-    "question": "¿Cómo se llama la entidad con vestido amarillo que atrae a la gente al bosque?",
+    "question": "¿Cómo se llama la entidad con traje amarillo que atrae a la gente al bosque?",
     "options": [
-      "La Mujer de Amarillo",
+      "El Hombre de Amarillo",
       "La Dama Blanca",
       "La Madre del Bosque",
       "La Vecina"
     ],
     "answer": 0,
-    "explanation": "La Mujer de Amarillo es una de las entidades más antiguas y inquietantes del pueblo."
+    "explanation": "El Hombre de Amarillo es una de las entidades más antiguas y inquietantes del pueblo."
   },
   {
     "id": "Q105",
     "category": "criaturas",
     "difficulty": 2,
     "spoilersUpTo": 0,
-    "question": "¿Qué rasgo facial hace especialmente perturbadora a la Mujer de Amarillo?",
+    "question": "¿Qué rasgo facial hace especialmente perturbador al Hombre de Amarillo?",
     "options": [
       "No tiene ojos",
       "Su sonrisa demasiado amplia",
@@ -2491,7 +2495,13 @@
       "Michael Giacchino"
     ],
     "answer": 2,
-    "explanation": "Chris Tilton firma la banda sonora de la serie."
+    "explanation": "Chris Tilton firma la banda sonora de la serie.",
+    "links": [
+      {
+        "label": "Escuchar su música en christilton.com",
+        "href": "https://www.christilton.com/music"
+      }
+    ]
   },
   {
     "id": "Q130",

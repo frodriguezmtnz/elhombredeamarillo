@@ -127,6 +127,12 @@ export type TriviaSpoilerLevel = 0 | 1 | 2 | 3 | 4;
 
 export type TriviaReach = 'T1' | 'T2' | 'T3' | 'T4' | 'Global' | 'Pre-serie' | 'Producción' | 'Promoción';
 
+/** Enlace externo que refuerza la explicación de una pregunta */
+export interface TriviaLink {
+  label: string;
+  href: string;
+}
+
 export interface TriviaQuestion {
   id: string;
   category: TriviaCategory;
@@ -146,6 +152,12 @@ export interface TriviaQuestion {
   /** Índice de la opción correcta sobre `options` (se baraja en cliente) */
   answer: number;
   explanation: string;
+  /** Imagen que refuerza la explicación (ruta pública); opcional */
+  image?: string;
+  /** Texto alternativo de `image` */
+  imageAlt?: string;
+  /** Enlaces externos que amplían la explicación; opcional */
+  links?: TriviaLink[];
 }
 
 export interface TriviaAnswerRecord {
