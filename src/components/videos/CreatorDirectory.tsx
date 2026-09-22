@@ -1,5 +1,5 @@
+import { CREATORS, VIDEOS } from '@data/videos';
 import clsx from 'clsx';
-import { VIDEOS, CREATORS } from '@data/videos';
 
 interface CreatorEntry {
   slug: string;
@@ -14,11 +14,11 @@ interface CreatorEntry {
 function getCreatorDirectory(): CreatorEntry[] {
   const counts = new Map<string, number>();
 
-  VIDEOS.filter((v) => v.category === 'debate').forEach((v) => {
-    (v.guests ?? []).forEach((slug) => {
+  for (const video of VIDEOS.filter((v) => v.category === 'debate')) {
+    for (const slug of video.guests ?? []) {
       if (slug !== 'host') counts.set(slug, (counts.get(slug) ?? 0) + 1);
-    });
-  });
+    }
+  }
 
   return Object.entries(CREATORS)
     .filter(([slug]) => slug !== 'host' && counts.has(slug))
@@ -45,12 +45,9 @@ export default function CreatorDirectory({ layout = 'grid' }: Props) {
   if (creators.length === 0) return null;
 
   return (
-    <div className={clsx(
-      'gap-4',
-      layout === 'grid'
-        ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-        : 'flex flex-col',
-    )}>
+    <div
+      className={clsx('gap-4', layout === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'flex flex-col')}
+    >
       {creators.map((creator) => (
         <a
           key={creator.slug}
@@ -79,9 +76,7 @@ export default function CreatorDirectory({ layout = 'grid' }: Props) {
             <span className="text-[9px] font-bold tracking-[.11em] text-yellow uppercase font-mono">
               CREADOR INVITADO
             </span>
-            <strong className="font-pixel text-lg leading-tight text-text">
-              {creator.name}
-            </strong>
+            <strong className="font-pixel text-lg leading-tight text-text">{creator.name}</strong>
             <span className="text-[10px] text-text-muted/60 font-mono">
               {creator.appearances} PARTICIPACIÓN{creator.appearances === 1 ? '' : 'ES'}
             </span>

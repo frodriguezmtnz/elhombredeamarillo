@@ -1,11 +1,11 @@
-import clsx from 'clsx';
-import { useState, useCallback, useRef, useEffect } from 'react';
-import type { VideoData } from '@lib/types';
 import { VIDEOS } from '@data/videos';
-import { normalizeText, episodeScore } from '@lib/utils';
-import VideoCard from './VideoCard';
-import CreatorDirectory from './CreatorDirectory';
+import type { VideoData } from '@lib/types';
+import { episodeScore, normalizeText } from '@lib/utils';
+import clsx from 'clsx';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Pagination from '../ui/Pagination';
+import CreatorDirectory from './CreatorDirectory';
+import VideoCard from './VideoCard';
 
 interface Props {
   videos: VideoData[];
@@ -44,7 +44,8 @@ function sortVideos(items: VideoData[], sort: Sort): VideoData[] {
 }
 
 function readStateFromUrl(): { filter: Filter; sort: Sort; layout: Layout; view: View; query: string; page: number } {
-  if (typeof window === 'undefined') return { filter: 'all', sort: 'recent', layout: 'grid', view: 'videos', query: '', page: 1 };
+  if (typeof window === 'undefined')
+    return { filter: 'all', sort: 'recent', layout: 'grid', view: 'videos', query: '', page: 1 };
   const params = new URLSearchParams(window.location.search);
   return {
     filter: (params.get('filter') as Filter) || 'all',
@@ -56,7 +57,14 @@ function readStateFromUrl(): { filter: Filter; sort: Sort; layout: Layout; view:
   };
 }
 
-function writeStateToUrl(state: { filter: Filter; sort: Sort; layout: Layout; view: View; query: string; page: number }) {
+function writeStateToUrl(state: {
+  filter: Filter;
+  sort: Sort;
+  layout: Layout;
+  view: View;
+  query: string;
+  page: number;
+}) {
   const params = new URLSearchParams();
   if (state.filter !== 'all') params.set('filter', state.filter);
   if (state.sort !== 'recent') params.set('sort', state.sort);
@@ -93,7 +101,9 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
   const visible = sorted.slice(start, start + PAGE_SIZE);
 
   const syncUrl = useCallback(
-    (overrides: Partial<{ filter: Filter; sort: Sort; layout: Layout; view: View; query: string; page: number }> = {}) => {
+    (
+      overrides: Partial<{ filter: Filter; sort: Sort; layout: Layout; view: View; query: string; page: number }> = {},
+    ) => {
       writeStateToUrl({ filter, sort, layout, view, query, page: safePage, ...overrides });
     },
     [filter, sort, layout, view, query, safePage],
@@ -101,7 +111,7 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
 
   useEffect(() => {
     syncUrl();
-  }, [filter, sort, layout, view, query, safePage, syncUrl]);
+  }, [syncUrl]);
 
   useEffect(() => {
     const onPopState = () => {
@@ -153,7 +163,10 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
           <select
             aria-label="Ordenar vídeos"
             value={sort}
-            onChange={(e) => { setSort(e.currentTarget.value as Sort); setPage(1); }}
+            onChange={(e) => {
+              setSort(e.currentTarget.value as Sort);
+              setPage(1);
+            }}
             className="min-h-[42px] px-3 border border-border bg-surface text-text text-[10px] font-bold tracking-[.06em] uppercase font-mono rounded-lg outline-none focus:border-yellow transition-colors cursor-pointer"
           >
             <option value="recent">MÁS RECIENTES</option>
@@ -190,11 +203,13 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
 
         {/* Row 2: Filter chips */}
         <div className="flex flex-wrap gap-2">
-          {([
-            { value: 'all', label: 'TODOS' },
-            { value: 'analysis', label: 'ANÁLISIS' },
-            { value: 'debate', label: 'DEBATE' },
-          ] as const).map((f) => (
+          {(
+            [
+              { value: 'all', label: 'TODOS' },
+              { value: 'analysis', label: 'ANÁLISIS' },
+              { value: 'debate', label: 'DEBATE' },
+            ] as const
+          ).map((f) => (
             <button
               key={f.value}
               type="button"
@@ -210,7 +225,9 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
             </button>
           ))}
           <span className="ml-auto text-[10px] font-bold tracking-[.12em] text-yellow uppercase font-mono self-center">
-            {view === 'creators' ? `${VIDEOS.filter((v) => v.category === 'debate').length} VÍDEOS DEBATE` : `${sorted.length} RESULTADO${sorted.length === 1 ? '' : 'S'}`}
+            {view === 'creators'
+              ? `${VIDEOS.filter((v) => v.category === 'debate').length} VÍDEOS DEBATE`
+              : `${sorted.length} RESULTADO${sorted.length === 1 ? '' : 'S'}`}
           </span>
         </div>
 
@@ -219,7 +236,10 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => { setView('videos'); setPage(1); }}
+              onClick={() => {
+                setView('videos');
+                setPage(1);
+              }}
               className={clsx(
                 'px-3 py-1.5 text-[9px] font-bold tracking-[.1em] uppercase font-mono rounded-lg transition-colors',
                 view === 'videos'
@@ -254,9 +274,7 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
         <div
           className={clsx(
             'gap-4',
-            layout === 'grid'
-              ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-              : 'flex flex-col',
+            layout === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'flex flex-col',
           )}
         >
           {visible.map((video, i) => (

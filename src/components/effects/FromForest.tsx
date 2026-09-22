@@ -227,57 +227,55 @@ export default function FromForest() {
     timer = new Timer();
     timer.connect(document);
 
-      const animate = (timestamp?: number) => {
-        animationId = requestAnimationFrame(animate);
-        timer?.update(timestamp);
+    const animate = (timestamp?: number) => {
+      animationId = requestAnimationFrame(animate);
+      timer?.update(timestamp);
 
-        if (!hasFadedIn) {
-          hasFadedIn = true;
-          renderer!.domElement.style.opacity = '1';
+      if (!hasFadedIn) {
+        hasFadedIn = true;
+        renderer!.domElement.style.opacity = '1';
+      }
+
+      if (!reduceMotion) {
+        const dt = timer!.getDelta();
+        const t = timer!.getElapsed();
+        const { camera: cam, forest, wind } = SETTINGS;
+
+        mouseSmooth.x += (mouseTarget.x - mouseSmooth.x) * Math.min(1, dt * 2.5);
+        mouseSmooth.y += (mouseTarget.y - mouseSmooth.y) * Math.min(1, dt * 2.5);
+
+        const dolly = 0.5 + 0.5 * Math.sin(t * cam.dollySpeed);
+        const camX = mouseSmooth.x * cam.mouseParallax + Math.sin(t * cam.swaySpeed * 0.8) * cam.swayAmp;
+        const camY =
+          cam.height + Math.cos(t * cam.swaySpeed * 0.6) * cam.swayAmp * 0.4 - mouseSmooth.y * cam.mouseParallax * 0.35;
+        camera?.position.set(camX, camY, cam.startZ + cam.dollyRange * dolly);
+        camera?.lookAt(cam.lookAtX, cam.lookAtY, cam.lookAtZ);
+
+        for (const { obj, sway, ampScale } of swayables) {
+          obj.rotation.x =
+            Math.sin(t * sway.speed * forest.swaySpeed * wind.speed + sway.phase) * sway.amp * ampScale * wind.amp;
+          obj.rotation.z =
+            Math.cos(t * sway.speed * 0.85 * forest.swaySpeed * wind.speed + sway.phase * 1.3) *
+            sway.amp *
+            ampScale *
+            wind.amp *
+            0.7;
         }
+      }
 
-        if (!reduceMotion) {
-          const dt = timer!.getDelta();
-          const t = timer!.getElapsed();
-          const { camera: cam, forest, wind } = SETTINGS;
+      if (renderer && scene && camera) renderer.render(scene, camera);
+    };
+    animate();
 
-          mouseSmooth.x += (mouseTarget.x - mouseSmooth.x) * Math.min(1, dt * 2.5);
-          mouseSmooth.y += (mouseTarget.y - mouseSmooth.y) * Math.min(1, dt * 2.5);
-
-          const dolly = 0.5 + 0.5 * Math.sin(t * cam.dollySpeed);
-          const camX = mouseSmooth.x * cam.mouseParallax + Math.sin(t * cam.swaySpeed * 0.8) * cam.swayAmp;
-          const camY =
-            cam.height +
-            Math.cos(t * cam.swaySpeed * 0.6) * cam.swayAmp * 0.4 -
-            mouseSmooth.y * cam.mouseParallax * 0.35;
-          camera?.position.set(camX, camY, cam.startZ + cam.dollyRange * dolly);
-          camera?.lookAt(cam.lookAtX, cam.lookAtY, cam.lookAtZ);
-
-          for (const { obj, sway, ampScale } of swayables) {
-            obj.rotation.x =
-              Math.sin(t * sway.speed * forest.swaySpeed * wind.speed + sway.phase) * sway.amp * ampScale * wind.amp;
-            obj.rotation.z =
-              Math.cos(t * sway.speed * 0.85 * forest.swaySpeed * wind.speed + sway.phase * 1.3) *
-              sway.amp *
-              ampScale *
-              wind.amp *
-              0.7;
-          }
-        }
-
-        if (renderer && scene && camera) renderer.render(scene, camera);
-      };
-      animate();
-
-      resizeObserver = new ResizeObserver(() => {
-        if (!renderer || !camera) return;
-        const cw = Math.max(container.clientWidth, 1);
-        const ch = Math.max(container.clientHeight, 1);
-        camera.aspect = cw / ch;
-        camera.updateProjectionMatrix();
-        renderer.setSize(cw, ch);
-      });
-      resizeObserver.observe(container);
+    resizeObserver = new ResizeObserver(() => {
+      if (!renderer || !camera) return;
+      const cw = Math.max(container.clientWidth, 1);
+      const ch = Math.max(container.clientHeight, 1);
+      camera.aspect = cw / ch;
+      camera.updateProjectionMatrix();
+      renderer.setSize(cw, ch);
+    });
+    resizeObserver.observe(container);
 
     return () => {
       disposed = true;
@@ -309,8 +307,7 @@ export default function FromForest() {
       aria-hidden="true"
       className="absolute inset-0 z-0 pointer-events-none bg-bg"
       style={{
-        background:
-          'radial-gradient(ellipse at 50% 20%, rgba(136,153,187,0.14) 0%, rgba(7,8,5,0) 60%)',
+        background: 'radial-gradient(ellipse at 50% 20%, rgba(136,153,187,0.14) 0%, rgba(7,8,5,0) 60%)',
       }}
     />
   );
@@ -323,10 +320,7 @@ function buildScene(rng: () => number): {
   const world = new Group();
   const outSwayables: Swayable[] = [];
 
-  const ground = new Mesh(
-    new CircleGeometry(30, 48),
-    new MeshStandardMaterial({ color: 0x0b0c09, roughness: 1 }),
-  );
+  const ground = new Mesh(new CircleGeometry(30, 48), new MeshStandardMaterial({ color: 0x0b0c09, roughness: 1 }));
   ground.rotation.x = -Math.PI / 2;
   ground.position.y = -0.02;
   world.add(ground);
@@ -362,17 +356,11 @@ function buildScene(rng: () => number): {
         world.add(pine);
 
         if (rng() < 0.35) {
-          const shrub = buildShrub(
-            x + (rng() - 0.5) * 1.6,
-            z + (rng() - 0.5) * 1.4,
-            0.4 + rng() * 0.4,
-            canopyMat,
-            {
-              phase: rng() * Math.PI * 2,
-              amp: SETTINGS.forest.swayAmp,
-              speed: 0.8 + rng() * 0.8,
-            },
-          );
+          const shrub = buildShrub(x + (rng() - 0.5) * 1.6, z + (rng() - 0.5) * 1.4, 0.4 + rng() * 0.4, canopyMat, {
+            phase: rng() * Math.PI * 2,
+            amp: SETTINGS.forest.swayAmp,
+            speed: 0.8 + rng() * 0.8,
+          });
           outSwayables.push({ obj: shrub, sway: shrub.userData.sway as Sway, ampScale: style.swayScale });
           world.add(shrub);
         }
@@ -425,13 +413,7 @@ function buildPine(
   return group;
 }
 
-function buildShrub(
-  x: number,
-  z: number,
-  s: number,
-  material: THREE.Material,
-  sway: Sway,
-): Group {
+function buildShrub(x: number, z: number, s: number, material: THREE.Material, sway: Sway): Group {
   const group = new Group();
   group.position.set(x, 0, z);
   const shrub = new Mesh(new IcosahedronGeometry(0.28 * s, 0), material);
@@ -479,11 +461,7 @@ function buildFallenTree(rng: () => number): Group {
   return group;
 }
 
-function buildFigure(
-  rng: () => number,
-  index: number,
-  pose: 'stand' | 'crouch',
-): Group {
+function buildFigure(rng: () => number, index: number, pose: 'stand' | 'crouch'): Group {
   const group = new Group();
   const mat = new MeshStandardMaterial({ color: 0x0c0d0a, roughness: 1 });
 
@@ -524,12 +502,7 @@ function buildFigure(
   return group;
 }
 
-function cylinderBetween(
-  a: Vector3,
-  b: Vector3,
-  radius: number,
-  material: THREE.Material,
-): Mesh {
+function cylinderBetween(a: Vector3, b: Vector3, radius: number, material: THREE.Material): Mesh {
   const dir = b.clone().sub(a);
   const len = dir.length();
   const mesh = new Mesh(new CylinderGeometry(radius, radius, len, 8), material);
