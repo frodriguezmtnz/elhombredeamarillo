@@ -75,7 +75,7 @@ export const TRIVIA_RANKS: TriviaRank[] = [
 
 const KNOWN_CATEGORIES = Object.keys(TRIVIA_CATEGORY_LABELS);
 
-function validateQuestions(questions: unknown): TriviaQuestion[] {
+export function validateQuestions(questions: unknown): TriviaQuestion[] {
   if (!Array.isArray(questions)) {
     throw new Error('trivial.json: la raíz debe ser un array de preguntas');
   }
