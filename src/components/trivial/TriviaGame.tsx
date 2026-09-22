@@ -1,14 +1,8 @@
 import { TRIVIA_CATEGORY_LABELS } from '@data/trivial';
+import { computePoints, getTimeLimit } from '@lib/trivial-scoring';
 import type { TriviaAnswerRecord, TriviaQuestion } from '@lib/types';
 import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-/** Segundos por pregunta según dificultad (1 = fácil, 2 = media, 3 = difícil) */
-export const TIME_LIMIT_BY_DIFFICULTY: Record<1 | 2 | 3, number> = { 1: 15, 2: 20, 3: 30 };
-
-export function getTimeLimit(difficulty: 1 | 2 | 3): number {
-  return TIME_LIMIT_BY_DIFFICULTY[difficulty] ?? 20;
-}
 
 export interface TriviaSessionState {
   records: TriviaAnswerRecord[];
@@ -35,16 +29,6 @@ interface Props {
   initial?: TriviaSessionState;
   onFinish: (summary: TriviaSummary) => void;
   onQuit: () => void;
-}
-
-function computePoints(difficulty: number, timeLeft: number, timeLimit: number, streakAfter: number): number {
-  const base = difficulty * 100;
-  // El bonus de velocidad se normaliza por fracción restante: así una difícil
-  // (más segundos) no puntúa más que una fácil solo por tener más margen.
-  const ratio = timeLimit > 0 ? Math.max(0, Math.min(1, timeLeft / timeLimit)) : 0;
-  const speed = Math.round(ratio * 100);
-  const streakBonus = Math.min(streakAfter, 5) * 20;
-  return base + speed + streakBonus;
 }
 
 export default function TriviaGame({ deck, modeLabel, initial, onFinish, onQuit }: Props) {
