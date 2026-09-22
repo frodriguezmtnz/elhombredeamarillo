@@ -12,14 +12,12 @@ export default function Pagination({ currentPage, totalPages, totalResults, onPa
 
   const visiblePages = new Set([1, totalPages, currentPage - 1, currentPage, currentPage + 1]);
   let previous = 0;
-  const pages = [...visiblePages]
-    .filter((v) => v >= 1 && v <= totalPages)
-    .sort((a, b) => a - b);
+  const pages = [...visiblePages].filter((v) => v >= 1 && v <= totalPages).sort((a, b) => a - b);
 
-  const items: Array<{ type: 'page' | 'ellipsis'; value?: number }> = [];
+  const items: Array<{ type: 'page' | 'ellipsis'; key: string; value?: number }> = [];
   for (const p of pages) {
-    if (p - previous > 1) items.push({ type: 'ellipsis' });
-    items.push({ type: 'page', value: p });
+    if (p - previous > 1) items.push({ type: 'ellipsis', key: `gap-${p}` });
+    items.push({ type: 'page', key: `page-${p}`, value: p });
     previous = p;
   }
 
@@ -35,14 +33,14 @@ export default function Pagination({ currentPage, totalPages, totalResults, onPa
           ← ANTERIOR
         </button>
 
-        {items.map((item, i) =>
+        {items.map((item) =>
           item.type === 'ellipsis' ? (
-            <span key={`e${i}`} className="text-text-muted/40 text-xs">
+            <span key={item.key} className="text-text-muted/40 text-xs">
               …
             </span>
           ) : (
             <button
-              key={item.value}
+              key={item.key}
               type="button"
               onClick={() => onPageChange(item.value!)}
               aria-current={item.value === currentPage ? 'page' : undefined}

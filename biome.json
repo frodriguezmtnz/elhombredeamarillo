@@ -26,5 +26,22 @@
       "quoteStyle": "single",
       "trailingCommas": "all"
     }
-  }
+  },
+  "overrides": [
+    {
+      "include": ["src/data/trivial.json", "public/assets/lottie/*.json"],
+      "formatter": { "enabled": false }
+    },
+    {
+      "include": ["**/*.astro"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    }
+  ]
 }
