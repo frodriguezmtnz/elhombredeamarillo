@@ -577,7 +577,7 @@ export class Game {
       const lines =
         variant === 'lighthouse'
           ? `Sorry.<br/>This is the only way...<br/><br/><span style="letter-spacing:0.5em;font-size:1.6rem;color:#d7dbdf">THE END</span>`
-          : `You never learned who developed the film.<br/>The tally under the sign has twelve marks now.<br/><br/>TO BE CONTINUED`;
+          : 'You never learned who developed the film.<br/>The tally under the sign has twelve marks now.<br/><br/>TO BE CONTINUED';
       ending.innerHTML = `
         <div class="title">THE ROAD</div>
         <div class="lines">${lines}</div>

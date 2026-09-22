@@ -1,8 +1,8 @@
-import clsx from 'clsx';
-import { thumbnailUrl, youtubeUrl } from '@lib/youtube';
-import { relativeTime } from '@lib/utils';
 import { CREATORS } from '@data/videos';
 import type { VideoData } from '@lib/types';
+import { relativeTime } from '@lib/utils';
+import { thumbnailUrl, youtubeUrl } from '@lib/youtube';
+import clsx from 'clsx';
 
 interface Props {
   video: VideoData;
@@ -42,10 +42,7 @@ export default function VideoCard({ video, layout = 'grid', index = 0 }: Props) 
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Abrir ${video.title} en YouTube`}
-        className={clsx(
-          'relative block overflow-hidden',
-          layout === 'list' && 'w-48 flex-shrink-0',
-        )}
+        className={clsx('relative block overflow-hidden', layout === 'list' && 'w-48 flex-shrink-0')}
       >
         <img
           src={thumbnailUrl(video.videoId, isWide ? 'maxresdefault' : 'hqdefault')}
@@ -78,7 +75,12 @@ export default function VideoCard({ video, layout = 'grid', index = 0 }: Props) 
 
         {/* Title */}
         <h3 className="font-pixel text-sm uppercase leading-tight min-h-[2.6em]">
-          <a href={url} target="_blank" rel="noopener noreferrer" className="no-underline hover:text-yellow-bright transition-colors">
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="no-underline hover:text-yellow-bright transition-colors"
+          >
             {video.title}
           </a>
         </h3>
@@ -96,7 +98,10 @@ export default function VideoCard({ video, layout = 'grid', index = 0 }: Props) 
         {/* Footer */}
         <footer className="flex items-center justify-between gap-3 pt-2.5 mt-auto border-t border-border min-h-[36px]">
           {time ? (
-            <time dateTime={video.publishedAt ?? ''} className="text-[9px] text-text-muted/60 font-mono tracking-[.09em]">
+            <time
+              dateTime={video.publishedAt ?? ''}
+              className="text-[9px] text-text-muted/60 font-mono tracking-[.09em]"
+            >
               {time}
             </time>
           ) : (

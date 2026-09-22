@@ -1,12 +1,12 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/ui/Header.astro';
-import Footer from '../components/ui/Footer.astro';
-import VideoGrid from '../components/videos/VideoGrid';
 import FromForest from '../components/effects/FromForest';
+import Footer from '../components/ui/Footer.astro';
+import Header from '../components/ui/Header.astro';
+import VideoGrid from '../components/videos/VideoGrid';
 import { CHANNEL, VIDEOS, getFeaturedVideo } from '../data/videos';
-import { thumbnailUrl, channelUrl } from '../lib/youtube';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import { formatChannelNumber, relativeTime } from '../lib/utils';
+import { channelUrl, thumbnailUrl } from '../lib/youtube';
 
 const featured = getFeaturedVideo();
 const category = Astro.url.searchParams.get('category');

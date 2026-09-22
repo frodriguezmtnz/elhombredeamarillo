@@ -134,10 +134,7 @@ export default function BottleTree() {
     root.position.x = SETTINGS.offsetX;
     scene.add(root);
 
-    const ground = new Mesh(
-      new CircleGeometry(20, 48),
-      new MeshStandardMaterial({ color: 0x0b0c09, roughness: 1 }),
-    );
+    const ground = new Mesh(new CircleGeometry(20, 48), new MeshStandardMaterial({ color: 0x0b0c09, roughness: 1 }));
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = -0.01;
     root.add(ground);
@@ -151,46 +148,45 @@ export default function BottleTree() {
     timer = new Timer();
     timer.connect(document);
 
-      const animate = (timestamp?: number) => {
-        animationId = requestAnimationFrame(animate);
-        timer?.update(timestamp);
-        if (!reduceMotion) {
-          const dt = timer!.getDelta();
-          const t = timer!.getElapsed();
+    const animate = (timestamp?: number) => {
+      animationId = requestAnimationFrame(animate);
+      timer?.update(timestamp);
+      if (!reduceMotion) {
+        const dt = timer!.getDelta();
+        const t = timer!.getElapsed();
 
-          for (const bottle of bottles) {
-            const sway = bottle.userData.sway as Sway;
-            bottle.rotation.x =
-              Math.sin(t * sway.speed * SETTINGS.swaySpeed + sway.phase) * sway.amp * SETTINGS.swayAmp;
-            bottle.rotation.z =
-              Math.cos(t * sway.speed * 0.85 * SETTINGS.swaySpeed + sway.phase * 1.4) * sway.amp * SETTINGS.swayAmp;
-          }
-
-          cameraAngle += dt * SETTINGS.orbitSpeed;
-          camera?.position.set(
-            Math.sin(cameraAngle) * SETTINGS.cameraDistance + SETTINGS.offsetX,
-            SETTINGS.cameraHeight,
-            Math.cos(cameraAngle) * SETTINGS.cameraDistance,
-          );
-          camera?.lookAt(SETTINGS.offsetX, SETTINGS.lookAtY, 0);
-
-          if (warmLight) warmLight.intensity = SETTINGS.warmIntensity + Math.sin(t * 0.5) * 8;
-          if (holeLight) holeLight.intensity = SETTINGS.holeIntensity + Math.sin(t * 0.8) * 3;
+        for (const bottle of bottles) {
+          const sway = bottle.userData.sway as Sway;
+          bottle.rotation.x = Math.sin(t * sway.speed * SETTINGS.swaySpeed + sway.phase) * sway.amp * SETTINGS.swayAmp;
+          bottle.rotation.z =
+            Math.cos(t * sway.speed * 0.85 * SETTINGS.swaySpeed + sway.phase * 1.4) * sway.amp * SETTINGS.swayAmp;
         }
-        if (renderer && scene && camera) renderer.render(scene, camera);
-      };
-      animate();
 
-      resizeObserver = new ResizeObserver(() => {
-        if (!renderer || !camera) return;
-        const w = container.clientWidth;
-        const h = container.clientHeight;
-        if (w === 0 || h === 0) return;
-        camera.aspect = w / h;
-        camera.updateProjectionMatrix();
-        renderer.setSize(w, h);
-      });
-      resizeObserver.observe(container);
+        cameraAngle += dt * SETTINGS.orbitSpeed;
+        camera?.position.set(
+          Math.sin(cameraAngle) * SETTINGS.cameraDistance + SETTINGS.offsetX,
+          SETTINGS.cameraHeight,
+          Math.cos(cameraAngle) * SETTINGS.cameraDistance,
+        );
+        camera?.lookAt(SETTINGS.offsetX, SETTINGS.lookAtY, 0);
+
+        if (warmLight) warmLight.intensity = SETTINGS.warmIntensity + Math.sin(t * 0.5) * 8;
+        if (holeLight) holeLight.intensity = SETTINGS.holeIntensity + Math.sin(t * 0.8) * 3;
+      }
+      if (renderer && scene && camera) renderer.render(scene, camera);
+    };
+    animate();
+
+    resizeObserver = new ResizeObserver(() => {
+      if (!renderer || !camera) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      if (w === 0 || h === 0) return;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    });
+    resizeObserver.observe(container);
 
     return () => {
       disposed = true;
@@ -218,10 +214,7 @@ export default function BottleTree() {
   return <div ref={containerRef} aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none" />;
 }
 
-function buildTree(
-  bottles: Group[],
-  rng: () => number,
-): { group: Group; holeLight: PointLight } {
+function buildTree(bottles: Group[], rng: () => number): { group: Group; holeLight: PointLight } {
   const group = new Group();
 
   const barkMat = new MeshStandardMaterial({ color: 0x2b2015, roughness: 0.95, metalness: 0.05 });
@@ -337,12 +330,7 @@ function createBottle(attach: Vector3, rng: () => number): Group {
   return group;
 }
 
-function cylinderBetween(
-  a: Vector3,
-  b: Vector3,
-  radius: number,
-  material: THREE.Material,
-): Mesh {
+function cylinderBetween(a: Vector3, b: Vector3, radius: number, material: THREE.Material): Mesh {
   const dir = b.clone().sub(a);
   const len = dir.length();
   const mesh = new Mesh(new CylinderGeometry(radius, radius, len, 8), material);

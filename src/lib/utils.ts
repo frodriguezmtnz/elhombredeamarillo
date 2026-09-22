@@ -2,8 +2,9 @@
  * Escapa caracteres HTML peligrosos para prevenir XSS.
  */
 export function escapeHtml(value: unknown): string {
-  return String(value ?? '').replace(/[&<>'"]/g, (char) =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char] ?? char,
+  return String(value ?? '').replace(
+    /[&<>'"]/g,
+    (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char] ?? char,
   );
 }
 
@@ -13,7 +14,7 @@ export function escapeHtml(value: unknown): string {
 export function normalizeText(value: unknown): string {
   return String(value ?? '')
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\p{M}/gu, '')
     .toLocaleLowerCase('es')
     .trim();
 }
