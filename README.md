@@ -79,6 +79,24 @@ src/
 
 El contenido editorial (vídeos y expedientes) se gestiona como datos estáticos en `src/data/*.ts`; la comunidad es dinámica y vive en Supabase.
 
+## OpenSpec
+
+El comportamiento del proyecto se documenta como **specs** ([OpenSpec](https://github.com/Fission-AI/OpenSpec)) antes de tocar código, para que equipo e IA acuerden qué cambia:
+
+- `openspec/specs/` — fuente de verdad de lo que hace el sistema (trivial-game, comunidad, expedientes, videos, pwa-offline, autenticacion).
+- `openspec/changes/` — cambios propuestos o en curso (`proposal.md`, `specs/`, `tasks.md`); los completados pasan a `changes/archive/`.
+
+Flujo de trabajo:
+
+```bash
+/opsx-explore            # pensar una idea sin comprometerla
+/opsx-propose <nombre>   # crear el cambio (proposal + specs + tasks)
+/opsx-apply <nombre>     # implementar marcando las tasks
+/opsx-archive <nombre>   # archivar y actualizar las specs
+```
+
+Regla: el feedback nuevo entra por `propose` (no directamente a código) y cada merge archiva su cambio.
+
 ## Deploy
 
 El proyecto está pensado para Vercel (build: `pnpm build`, output: `dist`). También incluye `Dockerfile` + `nginx.conf` para autoalojamiento.
