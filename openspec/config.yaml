@@ -1,0 +1,44 @@
+schema: spec-driven
+
+context: |
+  Language: es
+  All artifacts must be written in es.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  Proyecto: "El Hombre de Amarillo" (elhombredeamarillo.vercel.app), web de contenido y
+  comunidad sobre la serie FROM. Contenido editorial estático + islas React.
+  Stack: Astro 7 (output static) + @astrojs/react + Tailwind CSS v4 (CSS-first, @theme) +
+  Supabase (@supabase/supabase-js) + Vercel. PWA con manifest y service worker.
+  Estructura: src/pages (index, videos, expedientes, trivial, 404, sitemap), src/components
+  (trivial, community, cases, videos, ui, effects), src/data (contenido estático:
+  videos.ts, cases.ts, trivial.json, trivial.ts), src/lib (supabase, trivial-service,
+  youtube, utils, types), src/styles/global.css.
+  Comandos: pnpm dev (astro dev), pnpm build (astro build), pnpm preview,
+  pnpm lint (biome check .), pnpm lint:fix, pnpm format. No hay suite de tests.
+  Convenciones: Biome (comillas simples, ancho 120, indent 2, trailing commas);
+  alias @data/@lib en tsconfig; cabeceras/CSP definidas en vercel.json.
+  Deudas conocidas: pnpm lint falla por avisos/errores preexistentes (videos.astro,
+  formato de trivial.json, organizeImports), no hay CI ni tests.
+  Despliegue: Vercel con CSP estricta (default-src 'self'); el audio se sirve en local.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
