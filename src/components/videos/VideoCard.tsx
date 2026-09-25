@@ -1,7 +1,7 @@
 import { CREATORS } from '@data/videos';
 import type { VideoData } from '@lib/types';
 import { relativeTime } from '@lib/utils';
-import { thumbnailUrl, youtubeUrl } from '@lib/youtube';
+import { thumbnailRemoteUrl, thumbnailUrl, youtubeUrl } from '@lib/youtube';
 import clsx from 'clsx';
 
 interface Props {
@@ -42,10 +42,10 @@ export default function VideoCard({ video, layout = 'grid', index = 0 }: Props) 
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Abrir ${video.title} en YouTube`}
-        className={clsx('relative block overflow-hidden', layout === 'list' && 'w-48 flex-shrink-0')}
+        className={clsx('relative block overflow-hidden bg-black/40', layout === 'list' && 'w-48 flex-shrink-0')}
       >
         <img
-          src={thumbnailUrl(video.videoId, isWide ? 'maxresdefault' : 'hqdefault')}
+          src={thumbnailUrl(video.videoId)}
           alt={`Miniatura de ${video.title}`}
           width="1280"
           height="720"
@@ -54,8 +54,10 @@ export default function VideoCard({ video, layout = 'grid', index = 0 }: Props) 
           className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => {
             const img = e.currentTarget;
-            img.onerror = null;
-            img.src = thumbnailUrl(video.videoId, 'mqdefault');
+            img.onerror = () => {
+              img.style.visibility = 'hidden';
+            };
+            img.src = thumbnailRemoteUrl(video.videoId, 'mqdefault');
           }}
         />
         <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">

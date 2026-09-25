@@ -1,5 +1,5 @@
 import type { DossierData, SourceData } from '@lib/types';
-import { thumbnailUrl, youtubeUrl } from '@lib/youtube';
+import { thumbnailRemoteUrl, thumbnailUrl, youtubeUrl } from '@lib/youtube';
 
 interface Props {
   dossiers: DossierData[];
@@ -48,7 +48,7 @@ export default function CaseTimeline({ dossiers, sources, onOpenCase }: Props) {
                     href={youtubeUrl(source.videoId)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-shrink-0 hidden sm:block w-24 rounded-lg overflow-hidden group/img"
+                    className="flex-shrink-0 hidden sm:block w-24 rounded-lg overflow-hidden bg-black/40 group/img"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <img
@@ -61,8 +61,10 @@ export default function CaseTimeline({ dossiers, sources, onOpenCase }: Props) {
                       className="w-full aspect-video object-cover group-hover/img:scale-105 transition-transform"
                       onError={(e) => {
                         const img = e.currentTarget;
-                        img.onerror = null;
-                        img.src = thumbnailUrl(source.videoId!, 'mqdefault');
+                        img.onerror = () => {
+                          img.style.visibility = 'hidden';
+                        };
+                        img.src = thumbnailRemoteUrl(source.videoId!, 'mqdefault');
                       }}
                     />
                   </a>
