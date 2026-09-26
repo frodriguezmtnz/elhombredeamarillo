@@ -46,19 +46,27 @@ El sistema SHALL servir las miniaturas desde `/assets/thumbs/` (generadas con `p
 - **THEN** se intenta la miniatura remota de YouTube y, si también falla, la imagen se oculta sobre un fondo neutro
 
 ### Requirement: Portada con últimas publicaciones
-La portada SHALL mostrar las últimas seis publicaciones en un carrusel que avanza una tarjeta cada cinco segundos, con navegación por puntos. El avance SHALL pausarse al pasar el ratón o con la pestaña oculta, y SHALL desactivarse si el usuario prefiere movimiento reducido.
+La portada SHALL mostrar las últimas seis publicaciones en un carrusel que avanza una posición cada cinco segundos, con navegación por puntos y flechas (desde tablet). La tarjeta siguiente SHALL quedar parcialmente visible para indicar que hay más contenido. Los puntos SHALL rellenarse durante el intervalo de cinco segundos, marcando los ya vistos. El avance SHALL pausarse al pasar el ratón o con la pestaña oculta, y SHALL desactivarse si el usuario prefiere movimiento reducido.
 
 #### Scenario: Avance automático
 - **WHEN** la portada permanece visible y sin interacción
-- **THEN** el carrusel avanza una tarjeta cada cinco segundos y hace bucle
+- **THEN** el carrusel avanza una posición cada cinco segundos, rellenando el punto activo, y hace bucle
+
+#### Scenario: Navegación manual
+- **WHEN** el usuario pulsa una flecha, un punto o desplaza el carrusel
+- **THEN** el carrusel se mueve a la posición elegida y reinicia el ciclo de cinco segundos
+
+#### Scenario: Contenido adicional visible
+- **WHEN** el carrusel se muestra en pantallas con varias tarjetas por vista
+- **THEN** la siguiente tarjeta aparece parcialmente cortada
 
 #### Scenario: Pausa e interacción
 - **WHEN** el usuario pasa el ratón por el carrusel o la pestaña queda oculta
-- **THEN** el avance automático se detiene hasta reanudarse
+- **THEN** el avance automático y el relleno del punto se detienen, y al reanudar continúan donde iban
 
 #### Scenario: Movimiento reducido
 - **WHEN** el usuario tiene activado `prefers-reduced-motion`
-- **THEN** el carrusel no avanza solo, aunque los puntos permiten navegar
+- **THEN** el carrusel no avanza solo, aunque los puntos y las flechas permiten navegar
 
 ### Requirement: Directorio de creadores
 El sistema SHALL mostrar un directorio de creadores invitados con su nombre, handle e imagen, enlazando a su perfil externo.
