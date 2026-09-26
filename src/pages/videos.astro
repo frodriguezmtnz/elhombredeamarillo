@@ -6,13 +6,17 @@ import VideoGrid from '../components/videos/VideoGrid';
 import { CHANNEL, VIDEOS, getFeaturedVideo } from '../data/videos';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { formatChannelNumber, relativeTime } from '../lib/utils';
+import { fetchVideosAtBuild } from '../lib/videos-catalog';
+import { pickVideos } from '../lib/videos-service';
 import { channelUrl, thumbnailRemoteUrl, thumbnailUrl } from '../lib/youtube';
 
-const featured = getFeaturedVideo();
+const remote = await fetchVideosAtBuild();
+const catalog = pickVideos(VIDEOS, remote);
+const featured = getFeaturedVideo(catalog);
 const category = Astro.url.searchParams.get('category');
 
 const SITE = Astro.site?.origin ?? 'https://elhombredeamarillo.vercel.app';
-const lastVideoDate = VIDEOS.reduce((max, v) => {
+const lastVideoDate = catalog.reduce((max, v) => {
   if (!v.publishedAt) return max;
   const t = new Date(v.publishedAt).getTime();
   return Number.isNaN(t) || t < max ? max : t;
@@ -49,7 +53,7 @@ const dateModified = new Date(lastVideoDate).toISOString().slice(0, 10);
           breadcrumb: { '@id': `${SITE}/videos/#breadcrumb` },
           mainEntity: {
             '@type': 'ItemList',
-            itemListElement: VIDEOS.map((v, i) => ({
+            itemListElement: catalog.map((v, i) => ({
               '@type': 'ListItem',
               position: i + 1,
               name: v.title,
@@ -191,7 +195,7 @@ const dateModified = new Date(lastVideoDate).toISOString().slice(0, 10);
         </div>
       </header>
       <div class="reveal-item">
-        <VideoGrid client:visible videos={VIDEOS} initialCategory={category ?? undefined} />
+        <VideoGrid client:visible videos={catalog} initialCategory={category ?? undefined} />
       </div>
     </section>
 

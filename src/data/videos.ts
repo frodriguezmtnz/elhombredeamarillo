@@ -351,16 +351,16 @@ export const VIDEOS: VideoData[] = [
   },
 ];
 
-export function getFeaturedVideo(): VideoData | undefined {
-  return VIDEOS.find((v) => v.publishedAt);
+export function getFeaturedVideo(list: VideoData[] = VIDEOS): VideoData | undefined {
+  return list.find((v) => v.publishedAt);
 }
 
 export function getVideosByCategory(category: VideoData['category']): VideoData[] {
   return VIDEOS.filter((v) => v.category === category);
 }
 
-export function getRecentVideos(count: number): VideoData[] {
-  return [...VIDEOS].sort((a, b) => b.order - a.order).slice(0, count);
+export function getRecentVideos(count: number, list: VideoData[] = VIDEOS): VideoData[] {
+  return [...list].sort((a, b) => b.order - a.order).slice(0, count);
 }
 
 export function getVideoById(id: string): VideoData | undefined {
