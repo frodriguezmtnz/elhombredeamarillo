@@ -1,5 +1,5 @@
 import type { DossierData, SourceData } from '@lib/types';
-import { thumbnailUrl } from '@lib/youtube';
+import { thumbnailRemoteUrl, thumbnailUrl } from '@lib/youtube';
 import clsx from 'clsx';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function CaseCard({ dossier, sources, index = 0, onOpen }: Props) {
-  const firstSource = sources.find((s) => dossier.sourceIds.includes(s.id));
+  const firstSource = sources.find((s) => dossier.sourceIds.includes(s.id) && s.videoId);
   const imageId = firstSource?.videoId || '63yacyj-o-A';
   const rotation = ((index % 5) - 2) * 0.3;
 
@@ -29,7 +29,7 @@ export default function CaseCard({ dossier, sources, index = 0, onOpen }: Props)
       aria-label={`Abrir expediente ${dossier.number}: ${dossier.title}`}
     >
       {/* Image */}
-      <div className="relative mb-4 rounded-xl overflow-hidden">
+      <div className="relative mb-4 rounded-xl overflow-hidden bg-black/40">
         <img
           src={thumbnailUrl(imageId)}
           alt={dossier.title}
@@ -40,8 +40,10 @@ export default function CaseCard({ dossier, sources, index = 0, onOpen }: Props)
           className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => {
             const img = e.currentTarget;
-            img.onerror = null;
-            img.src = thumbnailUrl(imageId, 'mqdefault');
+            img.onerror = () => {
+              img.style.visibility = 'hidden';
+            };
+            img.src = thumbnailRemoteUrl(imageId, 'mqdefault');
           }}
         />
       </div>

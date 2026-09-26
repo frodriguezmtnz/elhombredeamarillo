@@ -77,7 +77,7 @@ src/
 └── styles/           # global.css (Tailwind + variables)
 ```
 
-El contenido editorial (vídeos y expedientes) se gestiona como datos estáticos en `src/data/*.ts`; la comunidad es dinámica y vive en Supabase.
+El contenido editorial (vídeos y expedientes) se gestiona como datos estáticos en `src/data/*.ts`; la comunidad es dinámica y vive en Supabase. Las miniaturas de los vídeos se auto-hospedan en `public/assets/thumbs/`; al añadir un vídeo nuevo, ejecuta `pnpm thumbs` para descargarlas.
 
 ## OpenSpec
 

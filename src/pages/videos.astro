@@ -6,7 +6,7 @@ import VideoGrid from '../components/videos/VideoGrid';
 import { CHANNEL, VIDEOS, getFeaturedVideo } from '../data/videos';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { formatChannelNumber, relativeTime } from '../lib/utils';
-import { channelUrl, thumbnailUrl } from '../lib/youtube';
+import { channelUrl, thumbnailRemoteUrl, thumbnailUrl } from '../lib/youtube';
 
 const featured = getFeaturedVideo();
 const category = Astro.url.searchParams.get('category');
@@ -54,14 +54,14 @@ const dateModified = new Date(lastVideoDate).toISOString().slice(0, 10);
               position: i + 1,
               name: v.title,
               url: `https://www.youtube.com/watch?v=${v.videoId}`,
-              image: thumbnailUrl(v.videoId, 'hqdefault'),
+              image: `${SITE}${thumbnailUrl(v.videoId)}`,
             })),
           },
         },
       ],
     })} />
     {featured && (
-      <link rel="preload" as="image" href={thumbnailUrl(featured.videoId, 'maxresdefault')} />
+      <link rel="preload" as="image" href={thumbnailUrl(featured.videoId)} />
     )}
   </Fragment>
   <Header />
@@ -118,17 +118,17 @@ const dateModified = new Date(lastVideoDate).toISOString().slice(0, 10);
             href={`https://www.youtube.com/watch?v=${featured.videoId}`}
             target="_blank"
             rel="noopener noreferrer"
-            class="group relative rounded-2xl overflow-hidden border border-border"
+            class="group relative rounded-2xl overflow-hidden border border-border bg-black/40"
           >
             <img
-              src={thumbnailUrl(featured.videoId, 'maxresdefault')}
+              src={thumbnailUrl(featured.videoId)}
               alt={featured.title}
               width="1280"
               height="720"
               fetchpriority="high"
               class="w-full aspect-video object-cover group-hover:scale-[1.02] transition-transform duration-700"
               decoding="async"
-              onerror={`this.src='${thumbnailUrl(featured.videoId, 'hqdefault')}'`}
+              onerror={`this.onerror=null;this.src='${thumbnailRemoteUrl(featured.videoId, 'hqdefault')}'`}
             />
             <div class="absolute inset-0 bg-gradient-to-t from-bg/80 via-transparent to-transparent"></div>
             <div class="absolute bottom-0 left-0 right-0 p-6">

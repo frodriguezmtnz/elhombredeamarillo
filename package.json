@@ -12,6 +12,7 @@
     "format": "biome format --write .",
     "test": "vitest run",
     "icons": "node scripts/generate-icons.mjs",
+    "thumbs": "node scripts/fetch-thumbnails.mjs",
     "neon:lottie": "node scripts/build-neon-lottie.mjs",
     "neon:sandbox": "node scripts/build-neon-sandbox.mjs",
     "sandbox": "node scripts/serve-sandbox.mjs",

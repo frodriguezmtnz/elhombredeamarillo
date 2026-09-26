@@ -67,6 +67,16 @@ export const CREATORS: Record<string, CreatorData> = {
 
 export const VIDEOS: VideoData[] = [
   {
+    id: 'theory-ghosts',
+    code: 'T5 // TEORÍA',
+    category: 'analysis',
+    title: 'Esta teoría demuestra que hay FANTASMAS en fromville | FROM Serie Teoría',
+    description:
+      'Reúne los indicios sobre apariciones de fallecidos en Fromville y plantea que la entidad las utiliza como formas fantasmales para manipular a los habitantes.',
+    videoId: '0rnszazr2NI',
+    order: 240,
+  },
+  {
     id: 'analysis-t5-known',
     code: 'T5 // ACTUALIDAD',
     category: 'analysis',
@@ -98,8 +108,8 @@ export const VIDEOS: VideoData[] = [
         handle: '@Piroxeno',
         url: 'https://www.youtube.com/watch?v=cTl2rqw5v7E',
         profileUrl: 'https://www.youtube.com/@Piroxeno',
-        image: 'https://i.ytimg.com/vi/cTl2rqw5v7E/maxresdefault.jpg',
-        imageFallback: 'https://i.ytimg.com/vi/cTl2rqw5v7E/hqdefault.jpg',
+        image: '/assets/thumbs/cTl2rqw5v7E.jpg',
+        imageFallback: '/assets/thumbs/cTl2rqw5v7E.jpg',
         imageAlt: 'Miniatura de la entrevista de Piroxeno a Elizabeth Saunders',
         action: 'VER ENTREVISTA',
         description:

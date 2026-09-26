@@ -7,7 +7,7 @@ import Header from '../components/ui/Header.astro';
 import { getRecentVideos } from '../data/videos';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { relativeTime } from '../lib/utils';
-import { thumbnailUrl } from '../lib/youtube';
+import { thumbnailRemoteUrl, thumbnailUrl } from '../lib/youtube';
 
 const heroImg = await getImage({ src: heroLandscape, width: 1268, height: 622 });
 const recentVideos = getRecentVideos(3);
@@ -120,7 +120,7 @@ const recentVideos = getRecentVideos(3);
         <!-- Análisis -->
         <a href="/videos?category=analysis" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all reveal-item stagger">
           <img
-            src={thumbnailUrl('n89wAW_gT3Q', 'hqdefault')}
+            src={thumbnailUrl('n89wAW_gT3Q')}
             alt="Miniatura de un análisis"
             width="1280"
             height="720"
@@ -139,7 +139,7 @@ const recentVideos = getRecentVideos(3);
         <!-- Debates -->
         <a href="/videos?category=debate" class="group relative overflow-hidden rounded-2xl border border-border bg-surface hover:border-yellow/40 transition-all reveal-item stagger">
           <img
-            src={thumbnailUrl('Kc0SnZH6KPY', 'hqdefault')}
+            src={thumbnailUrl('Kc0SnZH6KPY')}
             alt="Miniatura de un debate con creadores"
             width="1280"
             height="720"
@@ -253,7 +253,7 @@ const recentVideos = getRecentVideos(3);
                 loading="lazy"
                 decoding="async"
                 class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
-                onerror="this.src='https://i.ytimg.com/vi/${video.videoId}/mqdefault.jpg'"
+                onerror={`this.onerror=null;this.src='${thumbnailRemoteUrl(video.videoId, 'mqdefault')}'`}
               />
               <span class="absolute top-3 left-3 px-2 py-1 bg-bg/80 backdrop-blur text-[9px] font-bold tracking-[.1em] text-yellow uppercase font-mono rounded">
                 {video.code}

@@ -57,10 +57,6 @@ const BASE_URL = Astro.site?.href ?? 'https://elhombredeamarillo.vercel.app';
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <!-- DNS prefetch + preconnect para thumbnails de YouTube -->
-    <link rel="dns-prefetch" href="https://i.ytimg.com" />
-    <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
-
     <title>{title}</title>
 
     <ClientRouter />

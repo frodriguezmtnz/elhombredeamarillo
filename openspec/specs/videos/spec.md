@@ -16,12 +16,12 @@ El sistema SHALL listar los vídeos del canal con título, categoría, miniatura
 - **WHEN** el usuario abre la página de vídeos
 - **THEN** el vídeo más reciente o destacado se presenta en un bloque principal
 
-### Requirement: Miniatura con respaldo
-El sistema SHALL obtener las miniaturas de YouTube y SHALL usar una imagen de respaldo si la principal no está disponible.
+### Requirement: Miniaturas auto-hospedadas con respaldo
+El sistema SHALL servir las miniaturas desde `/assets/thumbs/` (generadas con `pnpm thumbs`) y SHALL usar la miniatura remota de YouTube como respaldo si la local no está disponible.
 
-#### Scenario: Miniatura no disponible
-- **WHEN** la miniatura en alta calidad no carga
-- **THEN** se usa la imagen de calidad inferior o el respaldo local
+#### Scenario: Miniatura local no disponible
+- **WHEN** la miniatura auto-hospedada no carga
+- **THEN** se intenta la miniatura remota de YouTube y, si también falla, la imagen se oculta sobre un fondo neutro
 
 ### Requirement: Directorio de creadores
 El sistema SHALL mostrar un directorio de creadores invitados con su nombre, handle e imagen, enlazando a su perfil externo.

@@ -2,8 +2,8 @@ import type { CasesMeta, DossierData, SourceData } from '@lib/types';
 
 export const CASES_META: CasesMeta = {
   title: 'Archivo de teorías de FROM',
-  baseTheories: 6,
-  transcribedVideos: 14,
+  baseTheories: 7,
+  transcribedVideos: 15,
   note: 'Las fichas distinguen entre pistas de la serie, interpretaciones del canal y posibilidades alternativas. No presentan las teorías como hechos confirmados.',
 };
 
@@ -285,7 +285,7 @@ export const DOSSIERS: DossierData[] = [
       'La teoría necesita reglas claras: qué objetos, recuerdos o cuerpos permiten adoptar una forma.',
     ],
     tags: ['Hombre de Amarillo', 'Sofía', 'Abby', 'Martin', 'formas', 'visiones'],
-    sourceIds: ['src-shapeshifter', 'src-e4', 'src-e6', 'src-e9', 'src-t5'],
+    sourceIds: ['src-shapeshifter', 'src-e4', 'src-e6', 'src-e9', 'src-t5', 'src-ghosts'],
     related: ['objects-memory', 'living-nightmares', 'life-energy-cycle'],
   },
   {
@@ -578,6 +578,19 @@ export const SOURCES: SourceData[] = [
       'Traslada el archivo al futuro de la serie: Endgame, la primera noche sin talismanes, el regreso de Elgin y nuevas posibilidades para las formas de la entidad.',
     dossiers: ['shapeshifter', 'ritual-weapons', 'jade-caves'],
     videoId: '63yacyj-o-A',
+  },
+  {
+    id: 'src-ghosts',
+    order: 15,
+    phase: 'TEMPORADA 5',
+    code: 'TEORÍA',
+    kind: 'theory',
+    title: 'Esta teoría demuestra que hay FANTASMAS en fromville | FROM Serie Teoría',
+    summary:
+      'Distingue apariciones espectrales de formas físicas y plantea que los fallecidos que se manifiestan en Fromville podrían ser parte del repertorio de formas de la entidad.',
+    dossiers: ['shapeshifter'],
+    videoId: '0rnszazr2NI',
+    searchTitle: 'Esta teoría demuestra que hay FANTASMAS en fromville FROM Serie Teoría',
   },
 ];
 
