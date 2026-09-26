@@ -46,11 +46,15 @@ El sistema SHALL servir las miniaturas desde `/assets/thumbs/` (generadas con `p
 - **THEN** se intenta la miniatura remota de YouTube y, si también falla, la imagen se oculta sobre un fondo neutro
 
 ### Requirement: Portada con últimas publicaciones
-La portada SHALL mostrar las últimas seis publicaciones en un carrusel que avanza una posición cada cinco segundos, con navegación por puntos y flechas (desde tablet). La tarjeta siguiente SHALL quedar parcialmente visible para indicar que hay más contenido. Los puntos SHALL rellenarse durante el intervalo de cinco segundos, marcando los ya vistos. El avance SHALL pausarse al pasar el ratón o con la pestaña oculta, y SHALL desactivarse si el usuario prefiere movimiento reducido.
+La portada SHALL mostrar las últimas seis publicaciones en un carrusel en bucle infinito que avanza una posición cada cinco segundos, con navegación por puntos y flechas (desde tablet). La tarjeta siguiente SHALL quedar parcialmente visible para indicar que hay más contenido. Los puntos SHALL rellenarse durante el intervalo de cinco segundos, marcando los ya vistos. El avance SHALL pausarse al pasar el ratón o con la pestaña oculta, y SHALL desactivarse si el usuario prefiere movimiento reducido.
 
 #### Scenario: Avance automático
 - **WHEN** la portada permanece visible y sin interacción
 - **THEN** el carrusel avanza una posición cada cinco segundos, rellenando el punto activo, y hace bucle
+
+#### Scenario: Bucle infinito
+- **WHEN** el carrusel supera la última publicación (o retrocede desde la primera)
+- **THEN** la primera (o la última) vuelve a entrar sin salto visible, de forma continua
 
 #### Scenario: Navegación manual
 - **WHEN** el usuario pulsa una flecha, un punto o desplaza el carrusel

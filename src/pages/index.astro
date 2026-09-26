@@ -402,7 +402,9 @@ const recentVideos = getRecentVideos(6, catalog);
 </style>
 
 <script>
-  // Carrusel de "AHORA EN EL CANAL": avanza una posición cada 5 s.
+  // Carrusel de "AHORA EN EL CANAL": bucle infinito, avanza una posición cada 5 s.
+  // - Las tarjetas se clonan al final del track (inertes para accesibilidad) para
+  //   que la primera entre de nuevo por la derecha sin salto perceptible.
   // - Las flechas (sm+) y los dots navegan y reinician el ciclo.
   // - Los dots se rellenan durante los 5 s (CSS); la pausa los congela y al
   //   reanudar continúan por donde iban.
@@ -419,33 +421,43 @@ const recentVideos = getRecentVideos(6, catalog);
     const INTERVAL = 5000;
 
     if (track && cards.length > 1) {
+      const realCount = cards.length;
+
+      // Clones al final: contenido idéntico para el bucle sin salto. Se ocultan
+      // a lectores de pantalla y salen del tab-order, pero siguen siendo clicables
+      // (en la última posición la tarjeta vecina visible es un clon). Sin
+      // `reveal-item`: el reveal no los observa y quedarían con opacity 0.
+      for (const card of cards) {
+        const clone = card.cloneNode(true) as HTMLElement;
+        clone.setAttribute('aria-hidden', 'true');
+        clone.classList.remove('reveal-item', 'stagger', 'in-view');
+        for (const link of clone.querySelectorAll('a')) {
+          link.setAttribute('tabindex', '-1');
+        }
+        track.appendChild(clone);
+      }
+
       let index = 0;
       let timer: ReturnType<typeof setTimeout> | undefined;
       let remaining = INTERVAL;
       let segmentStart = 0;
       let paused = false;
-      let programmatic = false;
+      let programmaticCount = 0;
       let scrollIdle: ReturnType<typeof setTimeout> | undefined;
 
       const gap = () => Number.parseFloat(getComputedStyle(track).columnGap || '0') || 0;
       const step = () => cards[0].getBoundingClientRect().width + gap();
-      const maxScroll = () => Math.max(0, track.scrollWidth - track.clientWidth);
-      const positionCount = () => Math.max(1, Math.min(cards.length, Math.round(maxScroll() / step()) + 1));
-      const maxIndex = () => positionCount() - 1;
-      const clamp = (i: number) => Math.min(maxIndex(), Math.max(0, i));
+      const wrap = (i: number) => ((i % realCount) + realCount) % realCount;
 
       const renderDots = () => {
-        const total = positionCount();
         dots.forEach((dot, i) => {
-          dot.hidden = i >= total;
           dot.dataset.state = i < index ? 'done' : i === index ? 'active' : 'pending';
           if (i === index) dot.setAttribute('aria-current', 'true');
           else dot.removeAttribute('aria-current');
         });
       };
 
-      // Reinicia la animación de relleno del dot activo. `elapsed` > 0 reanuda
-      // a media animación (animation-delay negativo).
+      // Reinicia el relleno del dot activo; `elapsed` > 0 reanuda a media animación.
       const startFill = (elapsed: number) => {
         const fill = dots[index]?.querySelector<HTMLElement>('.recent-dot-fill');
         if (!fill) return;
@@ -455,14 +467,31 @@ const recentVideos = getRecentVideos(6, catalog);
         fill.style.animationDelay = elapsed > 0 ? `-${elapsed}ms` : '';
       };
 
-      const goTo = (i: number, smooth = true) => {
-        index = clamp(i);
-        programmatic = true;
-        track.scrollTo({ left: index * step(), behavior: smooth && !reduceMotion.matches ? 'smooth' : 'auto' });
+      // Ejecuta `fn` cuando el scroll se asienta (scrollend o, si no existe, timeout).
+      const settle = (fn: () => void, fallbackMs = 700) => {
+        let done = false;
+        const run = () => {
+          if (done) return;
+          done = true;
+          clearTimeout(fallback);
+          track.removeEventListener('scrollend', run);
+          fn();
+        };
+        const fallback = setTimeout(run, fallbackMs);
+        track.addEventListener('scrollend', run, { once: true });
+      };
+
+      const scrollToAbs = (abs: number, smooth: boolean) => {
+        programmaticCount += 1;
+        track.scrollTo({ left: abs * step(), behavior: smooth && !reduceMotion.matches ? 'smooth' : 'auto' });
+        settle(() => {
+          programmaticCount = Math.max(0, programmaticCount - 1);
+        });
+      };
+
+      const setIndex = (i: number) => {
+        index = wrap(i);
         renderDots();
-        window.setTimeout(() => {
-          programmatic = false;
-        }, 600);
       };
 
       const runTimer = () => {
@@ -474,8 +503,7 @@ const recentVideos = getRecentVideos(6, catalog);
         startFill(INTERVAL - remaining);
         timer = setTimeout(() => {
           remaining = INTERVAL;
-          goTo(index >= maxIndex() ? 0 : index + 1);
-          runTimer();
+          advance();
         }, Math.max(0, remaining));
       };
 
@@ -483,6 +511,34 @@ const recentVideos = getRecentVideos(6, catalog);
         remaining = INTERVAL;
         paused = false;
         runTimer();
+      };
+
+      // Avance de una posición con bucle infinito.
+      const advance = () => {
+        if (index < realCount - 1) {
+          setIndex(index + 1);
+          scrollToAbs(index, true);
+        } else {
+          // Desliza hacia el clon de la primera y, al asentarse, salta en silencio al inicio.
+          scrollToAbs(realCount, true);
+          setIndex(0);
+          settle(() => scrollToAbs(0, false));
+        }
+        resetCycle();
+      };
+
+      // Retroceso de una posición con bucle infinito.
+      const retreat = () => {
+        if (index > 0) {
+          setIndex(index - 1);
+          scrollToAbs(index, true);
+        } else {
+          // Salto invisible al clon de la primera, luego desliza hacia la última.
+          scrollToAbs(realCount, false);
+          setIndex(realCount - 1);
+          requestAnimationFrame(() => scrollToAbs(realCount - 1, true));
+        }
+        resetCycle();
       };
 
       const pauseTimer = () => {
@@ -493,18 +549,13 @@ const recentVideos = getRecentVideos(6, catalog);
         slider.dataset.paused = 'true';
       };
 
-      prevBtn?.addEventListener('click', () => {
-        goTo(index <= 0 ? maxIndex() : index - 1);
-        resetCycle();
-      });
-      nextBtn?.addEventListener('click', () => {
-        goTo(index >= maxIndex() ? 0 : index + 1);
-        resetCycle();
-      });
+      prevBtn?.addEventListener('click', retreat);
+      nextBtn?.addEventListener('click', advance);
 
       dots.forEach((dot, i) => {
         dot.addEventListener('click', () => {
-          goTo(i);
+          setIndex(i);
+          scrollToAbs(index, true);
           resetCycle();
         });
       });
@@ -515,18 +566,19 @@ const recentVideos = getRecentVideos(6, catalog);
         runTimer();
       });
 
-      // Scroll manual (swipe): sincroniza el índice y reinicia el ciclo.
+      // Scroll manual (swipe): sincroniza índice y, si acaba en zona de clones,
+      // salta en silencio a la posición real equivalente.
       track.addEventListener(
         'scroll',
         () => {
-          if (programmatic) return;
-          const p = clamp(Math.round(track.scrollLeft / step()));
-          if (p !== index) {
-            index = p;
-            renderDots();
-          }
+          if (programmaticCount > 0) return;
+          const abs = Math.round(track.scrollLeft / step());
+          setIndex(abs);
           if (scrollIdle) clearTimeout(scrollIdle);
-          scrollIdle = setTimeout(resetCycle, 160);
+          scrollIdle = setTimeout(() => {
+            if (abs >= realCount) scrollToAbs(index, false);
+            resetCycle();
+          }, 160);
         },
         { passive: true },
       );
@@ -550,8 +602,7 @@ const recentVideos = getRecentVideos(6, catalog);
       window.addEventListener('resize', () => {
         if (resizeIdle) clearTimeout(resizeIdle);
         resizeIdle = setTimeout(() => {
-          index = clamp(index);
-          track.scrollTo({ left: index * step(), behavior: 'auto' });
+          scrollToAbs(index, false);
           renderDots();
           resetCycle();
         }, 150);
