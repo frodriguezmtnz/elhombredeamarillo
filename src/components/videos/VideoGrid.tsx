@@ -1,6 +1,6 @@
-import { VIDEOS } from '@data/videos';
 import type { VideoData } from '@lib/types';
 import { episodeScore, normalizeText } from '@lib/utils';
+import { fetchVideos, pickVideos } from '@lib/videos-service';
 import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Pagination from '../ui/Pagination';
@@ -79,6 +79,7 @@ function writeStateToUrl(state: {
 
 export default function VideoGrid({ videos, initialCategory }: Props) {
   const urlState = readStateFromUrl();
+  const [items, setItems] = useState<VideoData[]>(videos);
   const [filter, setFilter] = useState<Filter>(initialCategory === 'debate' ? 'debate' : urlState.filter);
   const [sort, setSort] = useState<Sort>(urlState.sort);
   const [layout, setLayout] = useState<Layout>(urlState.layout);
@@ -87,7 +88,7 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
   const [page, setPage] = useState(urlState.page);
   const searchTimer = useRef<ReturnType<typeof setTimeout>>(null);
 
-  const filtered = videos.filter((item) => {
+  const filtered = items.filter((item) => {
     const catMatch = filter === 'all' || item.category === filter;
     const q = normalizeText(query);
     const queryMatch = !q || searchHaystack(item).includes(q);
@@ -126,6 +127,18 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, [initialCategory]);
+
+  // Refresca el catálogo con lo que haya en Supabase; si falla o está
+  // vacío, se sigue mostrando el contenido estático de `src/data/videos.ts`.
+  useEffect(() => {
+    let cancelled = false;
+    fetchVideos().then(({ data }) => {
+      if (!cancelled) setItems((current) => pickVideos(current, data));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleSearch = (value: string) => {
     if (searchTimer.current) clearTimeout(searchTimer.current);
@@ -226,7 +239,7 @@ export default function VideoGrid({ videos, initialCategory }: Props) {
           ))}
           <span className="ml-auto text-[10px] font-bold tracking-[.12em] text-yellow uppercase font-mono self-center">
             {view === 'creators'
-              ? `${VIDEOS.filter((v) => v.category === 'debate').length} VÍDEOS DEBATE`
+              ? `${items.filter((v) => v.category === 'debate').length} VÍDEOS DEBATE`
               : `${sorted.length} RESULTADO${sorted.length === 1 ? '' : 'S'}`}
           </span>
         </div>

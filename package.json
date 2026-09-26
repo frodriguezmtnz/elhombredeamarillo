@@ -13,6 +13,8 @@
     "test": "vitest run",
     "icons": "node scripts/generate-icons.mjs",
     "thumbs": "node scripts/fetch-thumbnails.mjs",
+    "video:sync": "node scripts/sync-videos-to-supabase.mjs",
+    "video:add": "node scripts/add-video.mjs",
     "neon:lottie": "node scripts/build-neon-lottie.mjs",
     "neon:sandbox": "node scripts/build-neon-sandbox.mjs",
     "sandbox": "node scripts/serve-sandbox.mjs",
