@@ -19,7 +19,8 @@ CREATE TABLE videos (
   featured BOOLEAN NOT NULL DEFAULT FALSE,
   label TEXT,
   guests JSONB NOT NULL DEFAULT '[]'::jsonb,
-  references JSONB NOT NULL DEFAULT '[]'::jsonb,
+  -- `references` es palabra reservada de SQL: debe ir entre comillas dobles
+  "references" JSONB NOT NULL DEFAULT '[]'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
