@@ -4,13 +4,17 @@ import heroLandscape from '../assets/profile-landscape-hd.jpg';
 import Crows from '../components/effects/Crows';
 import Footer from '../components/ui/Footer.astro';
 import Header from '../components/ui/Header.astro';
-import { getRecentVideos } from '../data/videos';
+import { VIDEOS, getRecentVideos } from '../data/videos';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { relativeTime } from '../lib/utils';
+import { fetchVideosAtBuild } from '../lib/videos-catalog';
+import { pickVideos } from '../lib/videos-service';
 import { thumbnailRemoteUrl, thumbnailUrl } from '../lib/youtube';
 
 const heroImg = await getImage({ src: heroLandscape, width: 1268, height: 622 });
-const recentVideos = getRecentVideos(3);
+const remote = await fetchVideosAtBuild();
+const catalog = pickVideos(VIDEOS, remote);
+const recentVideos = getRecentVideos(6, catalog);
 ---
 
 <BaseLayout
@@ -224,7 +228,7 @@ const recentVideos = getRecentVideos(3);
       </a>
     </section>
 
-    <!-- Recent videos (estático por ahora, será React island en Fase 2) -->
+    <!-- Últimas publicaciones: carrusel auto-avanzado (script vanilla, sin hidratación) -->
     <section class="mx-auto max-w-[var(--shell)] px-5 lg:px-8 py-20 border-t border-border" aria-labelledby="recent-title">
       <header class="flex items-end justify-between gap-6 mb-10 reveal-item">
         <div>
@@ -236,43 +240,64 @@ const recentVideos = getRecentVideos(3);
         </a>
       </header>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {recentVideos.map((video) => (
-          <a
-            href={`https://www.youtube.com/watch?v=${video.videoId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group block rounded-xl border border-border bg-surface overflow-hidden hover:border-yellow/30 transition-all reveal-item stagger"
-          >
-            <div class="relative">
-              <img
-                src={thumbnailUrl(video.videoId)}
-                alt={video.title}
-                width="480"
-                height="270"
-                loading="lazy"
-                decoding="async"
-                class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
-                onerror={`this.onerror=null;this.src='${thumbnailRemoteUrl(video.videoId, 'mqdefault')}'`}
+      <div class="relative" data-recent-slider>
+        <ul
+          class="flex gap-5 overflow-x-auto snap-x snap-mandatory pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          data-recent-track
+        >
+          {recentVideos.map((video) => (
+            <li class="shrink-0 snap-start w-[85%] sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]">
+              <a
+                href={`https://www.youtube.com/watch?v=${video.videoId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group block h-full rounded-xl border border-border bg-surface overflow-hidden hover:border-yellow/30 transition-all reveal-item stagger"
+              >
+                <div class="relative">
+                  <img
+                    src={thumbnailUrl(video.videoId)}
+                    alt={video.title}
+                    width="480"
+                    height="270"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
+                    onerror={`this.onerror=null;this.src='${thumbnailRemoteUrl(video.videoId, 'mqdefault')}'`}
+                  />
+                  <span class="absolute top-3 left-3 px-2 py-1 bg-bg/80 backdrop-blur text-[9px] font-bold tracking-[.1em] text-yellow uppercase font-mono rounded">
+                    {video.code}
+                  </span>
+                </div>
+                <div class="p-4">
+                  <h3 class="font-pixel text-lg uppercase leading-tight line-clamp-2">{video.title}</h3>
+                  <p class="mt-2 text-text-muted text-xs line-clamp-2">{video.description}</p>
+                  <div class="mt-3 flex items-center justify-between">
+                    <span class="text-[9px] font-bold tracking-[.1em] text-yellow/60 uppercase font-mono">
+                      {video.category === 'analysis' ? 'ANÁLISIS' : 'DEBATE'}
+                    </span>
+                    {video.publishedAt && (
+                      <span class="text-[9px] text-text-muted/60 font-mono">{relativeTime(video.publishedAt)}</span>
+                    )}
+                  </div>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        {recentVideos.length > 1 && (
+          <div class="mt-6 flex justify-center gap-2" data-recent-dots>
+            {recentVideos.map((video, i) => (
+              <button
+                type="button"
+                class="h-1.5 w-6 rounded-full bg-border transition-all duration-300 hover:bg-yellow/60 data-[active=true]:w-10 data-[active=true]:bg-yellow"
+                data-recent-dot={i}
+                data-active={i === 0 ? 'true' : 'false'}
+                aria-label={`Ir al vídeo ${i + 1}: ${video.title}`}
               />
-              <span class="absolute top-3 left-3 px-2 py-1 bg-bg/80 backdrop-blur text-[9px] font-bold tracking-[.1em] text-yellow uppercase font-mono rounded">
-                {video.code}
-              </span>
-            </div>
-            <div class="p-4">
-              <h3 class="font-pixel text-lg uppercase leading-tight line-clamp-2">{video.title}</h3>
-              <p class="mt-2 text-text-muted text-xs line-clamp-2">{video.description}</p>
-              <div class="mt-3 flex items-center justify-between">
-                <span class="text-[9px] font-bold tracking-[.1em] text-yellow/60 uppercase font-mono">
-                  {video.category === 'analysis' ? 'ANÁLISIS' : 'DEBATE'}
-                </span>
-                {video.publishedAt && (
-                  <span class="text-[9px] text-text-muted/60 font-mono">{relativeTime(video.publishedAt)}</span>
-                )}
-              </div>
-            </div>
-          </a>
-        ))}
+            ))}
+          </div>
+        )}
       </div>
     </section>
 
@@ -299,3 +324,80 @@ const recentVideos = getRecentVideos(3);
     <Footer />
   </main>
 </BaseLayout>
+
+<script>
+  // Carrusel de "AHORA EN EL CANAL": avanza una tarjeta cada 5 s.
+  // Pausa en hover y con la pestaña oculta; sin auto-avance si el usuario
+  // prefiere movimiento reducido. Los dots permiten ir a una tarjeta concreta.
+  const slider = document.querySelector<HTMLElement>('[data-recent-slider]');
+  if (slider) {
+    const track = slider.querySelector<HTMLElement>('[data-recent-track]');
+    const dots = [...slider.querySelectorAll<HTMLButtonElement>('[data-recent-dot]')];
+    const cards = track ? ([...track.children] as HTMLElement[]) : [];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const INTERVAL = 5000;
+
+    if (track && cards.length > 1) {
+      let timer: ReturnType<typeof setInterval> | undefined;
+
+      const gap = () => Number.parseFloat(getComputedStyle(track).columnGap || '0') || 0;
+      const step = () => cards[0].getBoundingClientRect().width + gap();
+      const currentIndex = () => Math.round(track.scrollLeft / step());
+      const isPaused = () => slider.matches(':hover');
+
+      const syncDots = () => {
+        const active = currentIndex();
+        dots.forEach((dot, i) => {
+          dot.dataset.active = i === active ? 'true' : 'false';
+        });
+      };
+
+      const goTo = (index: number) => {
+        const total = cards.length;
+        const target = ((index % total) + total) % total;
+        track.scrollTo({ left: target * step(), behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+      };
+
+      const stop = () => {
+        if (timer) clearInterval(timer);
+        timer = undefined;
+      };
+
+      const start = () => {
+        stop();
+        if (!reduceMotion.matches && !document.hidden && !isPaused()) {
+          timer = setInterval(() => goTo(currentIndex() + 1), INTERVAL);
+        }
+      };
+
+      slider.addEventListener('mouseenter', stop);
+      slider.addEventListener('mouseleave', start);
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+          goTo(i);
+          start();
+        });
+      });
+
+      let scrollIdle: ReturnType<typeof setTimeout> | undefined;
+      track.addEventListener(
+        'scroll',
+        () => {
+          syncDots();
+          if (scrollIdle) clearTimeout(scrollIdle);
+          scrollIdle = setTimeout(start, 160);
+        },
+        { passive: true },
+      );
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stop();
+        else start();
+      });
+
+      syncDots();
+      start();
+    }
+  }
+</script>

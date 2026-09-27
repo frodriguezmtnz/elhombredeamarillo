@@ -47,7 +47,7 @@ pnpm lint:fix  # biome check --write
 pnpm icons     # regenera los iconos PWA desde favicon.svg
 pnpm thumbs    # descarga las miniaturas de vídeos a public/assets/thumbs/
 pnpm video:add <videoId> --code="..." --description="..."  # añade un vídeo a Supabase
-pnpm video:sync # sube a Supabase los vídeos de src/data/videos.ts
+pnpm video:sync # siembra la tabla desde src/data/videos.ts (solo inicial)
 ```
 
 ## Variables de entorno
@@ -76,20 +76,22 @@ src/
 │   ├── effects/      # Efectos visuales y escenas Three.js
 │   ├── ui/           # Header, Footer, Icon, Pagination
 │   └── videos/       # Biblioteca de vídeos (React islands)
-├── data/             # Contenido editorial estático (vídeos, expedientes, trivial.json)
+├── data/             # Respaldo estático (vídeos) y contenido editorial (expedientes, trivial.json)
 ├── layouts/          # BaseLayout
-├── lib/              # Helpers y clientes (youtube, supabase, utils)
+├── lib/              # Helpers y clientes (youtube, supabase, videos, utils)
 ├── pages/            # index, videos, expedientes, trivial, sitemap.xml
 └── styles/           # global.css (Tailwind + variables)
 ```
 
-El contenido editorial de expedientes se gestiona como datos estáticos en `src/data/*.ts`; la comunidad es dinámica y vive en Supabase. El catálogo de **vídeos** se pinta primero desde `src/data/videos.ts` (SEO y respaldo) y se refresca en runtime con la tabla `videos` de Supabase, de modo que añadir un vídeo no requiere redeploy:
+El contenido editorial de expedientes sigue siendo estático en `src/data/*.ts`; la comunidad y el **catálogo de vídeos** viven en Supabase. La tabla `videos` es la fuente de verdad: el build (JSON-LD, vídeo destacado y portada) y la página de vídeos la leen, con `src/data/videos.ts` como respaldo si Supabase no está disponible. Añadir un vídeo no requiere redeploy:
 
 ```bash
 pnpm video:add <videoId> --code="T5 // TEORÍA" --description="..." --category=analysis
 ```
 
-`pnpm video:add` trae el título real desde YouTube (oEmbed) y hace upsert en Supabase; el vídeo aparece en `/videos` en segundos. La fecha de publicación se puede fijar con `--published-at=2026-07-14` y el orden con `--order=250` (por defecto, el último + 10). Las miniaturas siguen auto-hospedándose en `public/assets/thumbs/` con `pnpm thumbs` (o el respaldo remoto de YouTube si no existe la local).
+`pnpm video:add` trae el título real desde YouTube (oEmbed) y hace upsert; el vídeo aparece en `/videos` en segundos. La fecha se fija con `--published-at=2026-07-14` y el orden con `--order=250` (por defecto, el último + 10). Después, `pnpm thumbs` descarga su miniatura (detecta IDs tanto en `src/` como en la tabla) y una PR con la imagen hace que el siguiente build refresque el destacado, la portada y el SEO. El flujo completo está descrito en `.opencode/skills/publish-video/`.
+
+> `pnpm video:sync` es solo para sembrar la tabla desde el estático: **sobrescribe** los cambios hechos en Supabase Studio, así que no lo ejecutes tras editar desde Supabase.
 
 ## OpenSpec
 

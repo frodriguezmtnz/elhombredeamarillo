@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { extname, join, resolve } from 'node:path';
 
@@ -21,6 +22,7 @@ async function walk(dir) {
     entries.map((entry) => {
       const full = join(dir, entry.name);
       if (entry.isDirectory()) return walk(full);
+      if (entry.name.endsWith('.test.ts')) return [];
       return SCAN_EXTENSIONS.has(extname(entry.name)) ? [full] : [];
     }),
   );
@@ -41,6 +43,35 @@ async function collectVideoIds() {
   }
 
   return [...ids].sort();
+}
+
+/**
+ * IDs de la tabla `videos` de Supabase (los vídeos nuevos viven ahí, no en src/).
+ * Si no hay credenciales en .env, degrada a [] sin romper el comando.
+ */
+async function collectSupabaseVideoIds() {
+  if (existsSync(resolve('.env'))) {
+    process.loadEnvFile(resolve('.env'));
+  }
+
+  const url = process.env.PUBLIC_SUPABASE_URL;
+  const key = process.env.PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return [];
+
+  try {
+    const response = await fetch(`${url}/rest/v1/videos?select=video_id`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: AbortSignal.timeout(8_000),
+    });
+    if (!response.ok) return [];
+
+    const rows = await response.json();
+    if (!Array.isArray(rows)) return [];
+
+    return rows.map((row) => row.video_id).filter((id) => typeof id === 'string' && id.length > 0);
+  } catch {
+    return [];
+  }
 }
 
 async function fileExists(path) {
@@ -82,10 +113,14 @@ async function downloadBest(videoId) {
   return { videoId, status: 'failed' };
 }
 
-const videoIds = await collectVideoIds();
+const srcIds = await collectVideoIds();
+const tableIds = await collectSupabaseVideoIds();
+const videoIds = [...new Set([...srcIds, ...tableIds])].sort();
 await mkdir(OUT_DIR, { recursive: true });
 
-console.log(`Found ${videoIds.length} video ids. Output: ${OUT_DIR}`);
+console.log(
+  `Found ${videoIds.length} video ids (${srcIds.length} de src/, ${tableIds.length} de Supabase). Output: ${OUT_DIR}`,
+);
 
 const results = [];
 for (const videoId of videoIds) {
