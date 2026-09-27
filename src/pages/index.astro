@@ -4,6 +4,7 @@ import heroLandscape from '../assets/profile-landscape-hd.jpg';
 import Crows from '../components/effects/Crows';
 import Footer from '../components/ui/Footer.astro';
 import Header from '../components/ui/Header.astro';
+import Icon from '../components/ui/Icon.astro';
 import { VIDEOS, getRecentVideos } from '../data/videos';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { relativeTime } from '../lib/utils';
@@ -235,9 +236,29 @@ const recentVideos = getRecentVideos(6, catalog);
           <p class="text-[10px] font-bold tracking-[.14em] text-yellow/80 uppercase font-mono mb-2">ÚLTIMAS PUBLICACIONES</p>
           <h2 class="font-pixel text-[clamp(2rem,4.5vw,3.5rem)] uppercase" id="recent-title">AHORA EN EL CANAL</h2>
         </div>
-        <a href="/videos" class="text-[10px] font-bold tracking-[.12em] text-text-muted hover:text-yellow uppercase font-mono transition-colors hidden sm:block">
-          EXPLORAR TODA LA BIBLIOTECA →
-        </a>
+        <div class="hidden sm:flex items-center gap-4">
+          <a href="/videos" class="text-[10px] font-bold tracking-[.12em] text-text-muted hover:text-yellow uppercase font-mono transition-colors">
+            EXPLORAR TODA LA BIBLIOTECA →
+          </a>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              data-recent-prev
+              aria-label="Publicación anterior"
+              class="w-10 h-10 grid place-items-center rounded-lg border border-border bg-surface text-text-muted hover:border-yellow hover:text-yellow transition-colors"
+            >
+              <Icon name="ChevronLeft" size={18} />
+            </button>
+            <button
+              type="button"
+              data-recent-next
+              aria-label="Publicación siguiente"
+              class="w-10 h-10 grid place-items-center rounded-lg border border-border bg-surface text-text-muted hover:border-yellow hover:text-yellow transition-colors"
+            >
+              <Icon name="ChevronRight" size={18} />
+            </button>
+          </div>
+        </div>
       </header>
 
       <div class="relative" data-recent-slider>
@@ -246,7 +267,7 @@ const recentVideos = getRecentVideos(6, catalog);
           data-recent-track
         >
           {recentVideos.map((video) => (
-            <li class="shrink-0 snap-start w-[85%] sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]">
+            <li class="shrink-0 snap-start w-[85%] sm:w-[calc((100%-1.25rem-2rem)/2)] lg:w-[calc((100%-2.5rem-2.5rem)/3)]">
               <a
                 href={`https://www.youtube.com/watch?v=${video.videoId}`}
                 target="_blank"
@@ -290,11 +311,13 @@ const recentVideos = getRecentVideos(6, catalog);
             {recentVideos.map((video, i) => (
               <button
                 type="button"
-                class="h-1.5 w-6 rounded-full bg-border transition-all duration-300 hover:bg-yellow/60 data-[active=true]:w-10 data-[active=true]:bg-yellow"
+                class="recent-dot"
                 data-recent-dot={i}
-                data-active={i === 0 ? 'true' : 'false'}
-                aria-label={`Ir al vídeo ${i + 1}: ${video.title}`}
-              />
+                data-state={i === 0 ? 'active' : 'pending'}
+                aria-label={`Ir a la publicación ${i + 1}: ${video.title}`}
+              >
+                <span class="recent-dot-fill" aria-hidden="true"></span>
+              </button>
             ))}
           </div>
         )}
@@ -325,79 +348,268 @@ const recentVideos = getRecentVideos(6, catalog);
   </main>
 </BaseLayout>
 
+<style>
+  .recent-dot {
+    position: relative;
+    height: 0.375rem;
+    width: 1.5rem;
+    border-radius: 9999px;
+    background-color: var(--color-border);
+    overflow: hidden;
+    transition:
+      width 0.3s ease,
+      background-color 0.3s ease;
+  }
+
+  .recent-dot[data-state='active'] {
+    width: 2.5rem;
+  }
+
+  .recent-dot-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0;
+    background-color: var(--color-yellow);
+  }
+
+  .recent-dot[data-state='done'] .recent-dot-fill {
+    width: 100%;
+  }
+
+  .recent-dot[data-state='active'] .recent-dot-fill {
+    animation: recent-dot-fill 5s linear forwards;
+  }
+
+  [data-recent-slider][data-paused='true'] .recent-dot-fill {
+    animation-play-state: paused;
+  }
+
+  @keyframes recent-dot-fill {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .recent-dot[data-state='active'] .recent-dot-fill {
+      animation: none;
+      width: 100%;
+    }
+  }
+</style>
+
 <script>
-  // Carrusel de "AHORA EN EL CANAL": avanza una tarjeta cada 5 s.
-  // Pausa en hover y con la pestaña oculta; sin auto-avance si el usuario
-  // prefiere movimiento reducido. Los dots permiten ir a una tarjeta concreta.
+  // Carrusel de "AHORA EN EL CANAL": bucle infinito, avanza una posición cada 5 s.
+  // - Las tarjetas se clonan al final del track (inertes para accesibilidad) para
+  //   que la primera entre de nuevo por la derecha sin salto perceptible.
+  // - Las flechas (sm+) y los dots navegan y reinician el ciclo.
+  // - Los dots se rellenan durante los 5 s (CSS); la pausa los congela y al
+  //   reanudar continúan por donde iban.
+  // - Pausa en hover y con la pestaña oculta; sin auto-avance con
+  //   prefers-reduced-motion.
   const slider = document.querySelector<HTMLElement>('[data-recent-slider]');
   if (slider) {
     const track = slider.querySelector<HTMLElement>('[data-recent-track]');
     const dots = [...slider.querySelectorAll<HTMLButtonElement>('[data-recent-dot]')];
+    const prevBtn = document.querySelector<HTMLButtonElement>('[data-recent-prev]');
+    const nextBtn = document.querySelector<HTMLButtonElement>('[data-recent-next]');
     const cards = track ? ([...track.children] as HTMLElement[]) : [];
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const INTERVAL = 5000;
 
     if (track && cards.length > 1) {
-      let timer: ReturnType<typeof setInterval> | undefined;
+      const realCount = cards.length;
+
+      // Clones al final: contenido idéntico para el bucle sin salto. Se ocultan
+      // a lectores de pantalla y salen del tab-order, pero siguen siendo clicables
+      // (en la última posición la tarjeta vecina visible es un clon). Sin
+      // `reveal-item`: el reveal no los observa y quedarían con opacity 0.
+      for (const card of cards) {
+        const clone = card.cloneNode(true) as HTMLElement;
+        clone.setAttribute('aria-hidden', 'true');
+        clone.classList.remove('reveal-item', 'stagger', 'in-view');
+        for (const link of clone.querySelectorAll('a')) {
+          link.setAttribute('tabindex', '-1');
+        }
+        track.appendChild(clone);
+      }
+
+      let index = 0;
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      let remaining = INTERVAL;
+      let segmentStart = 0;
+      let paused = false;
+      let programmaticCount = 0;
+      let scrollIdle: ReturnType<typeof setTimeout> | undefined;
 
       const gap = () => Number.parseFloat(getComputedStyle(track).columnGap || '0') || 0;
       const step = () => cards[0].getBoundingClientRect().width + gap();
-      const currentIndex = () => Math.round(track.scrollLeft / step());
-      const isPaused = () => slider.matches(':hover');
+      const wrap = (i: number) => ((i % realCount) + realCount) % realCount;
 
-      const syncDots = () => {
-        const active = currentIndex();
+      const renderDots = () => {
         dots.forEach((dot, i) => {
-          dot.dataset.active = i === active ? 'true' : 'false';
+          dot.dataset.state = i < index ? 'done' : i === index ? 'active' : 'pending';
+          if (i === index) dot.setAttribute('aria-current', 'true');
+          else dot.removeAttribute('aria-current');
         });
       };
 
-      const goTo = (index: number) => {
-        const total = cards.length;
-        const target = ((index % total) + total) % total;
-        track.scrollTo({ left: target * step(), behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+      // Reinicia el relleno del dot activo; `elapsed` > 0 reanuda a media animación.
+      const startFill = (elapsed: number) => {
+        const fill = dots[index]?.querySelector<HTMLElement>('.recent-dot-fill');
+        if (!fill) return;
+        fill.style.animation = 'none';
+        void fill.offsetWidth;
+        fill.style.animation = '';
+        fill.style.animationDelay = elapsed > 0 ? `-${elapsed}ms` : '';
       };
 
-      const stop = () => {
-        if (timer) clearInterval(timer);
+      // Ejecuta `fn` cuando el scroll se asienta (scrollend o, si no existe, timeout).
+      const settle = (fn: () => void, fallbackMs = 700) => {
+        let done = false;
+        const run = () => {
+          if (done) return;
+          done = true;
+          clearTimeout(fallback);
+          track.removeEventListener('scrollend', run);
+          fn();
+        };
+        const fallback = setTimeout(run, fallbackMs);
+        track.addEventListener('scrollend', run, { once: true });
+      };
+
+      const scrollToAbs = (abs: number, smooth: boolean) => {
+        programmaticCount += 1;
+        track.scrollTo({ left: abs * step(), behavior: smooth && !reduceMotion.matches ? 'smooth' : 'auto' });
+        settle(() => {
+          programmaticCount = Math.max(0, programmaticCount - 1);
+        });
+      };
+
+      const setIndex = (i: number) => {
+        index = wrap(i);
+        renderDots();
+      };
+
+      const runTimer = () => {
+        if (timer) clearTimeout(timer);
         timer = undefined;
+        if (reduceMotion.matches || document.hidden || paused || slider.matches(':hover')) return;
+        slider.dataset.paused = 'false';
+        segmentStart = performance.now();
+        startFill(INTERVAL - remaining);
+        timer = setTimeout(() => {
+          remaining = INTERVAL;
+          advance();
+        }, Math.max(0, remaining));
       };
 
-      const start = () => {
-        stop();
-        if (!reduceMotion.matches && !document.hidden && !isPaused()) {
-          timer = setInterval(() => goTo(currentIndex() + 1), INTERVAL);
+      const resetCycle = () => {
+        remaining = INTERVAL;
+        paused = false;
+        runTimer();
+      };
+
+      // Avance de una posición con bucle infinito.
+      const advance = () => {
+        if (index < realCount - 1) {
+          setIndex(index + 1);
+          scrollToAbs(index, true);
+        } else {
+          // Desliza hacia el clon de la primera y, al asentarse, salta en silencio al inicio.
+          scrollToAbs(realCount, true);
+          setIndex(0);
+          settle(() => scrollToAbs(0, false));
         }
+        resetCycle();
       };
 
-      slider.addEventListener('mouseenter', stop);
-      slider.addEventListener('mouseleave', start);
+      // Retroceso de una posición con bucle infinito.
+      const retreat = () => {
+        if (index > 0) {
+          setIndex(index - 1);
+          scrollToAbs(index, true);
+        } else {
+          // Salto invisible al clon de la primera, luego desliza hacia la última.
+          scrollToAbs(realCount, false);
+          setIndex(realCount - 1);
+          requestAnimationFrame(() => scrollToAbs(realCount - 1, true));
+        }
+        resetCycle();
+      };
+
+      const pauseTimer = () => {
+        if (timer) clearTimeout(timer);
+        timer = undefined;
+        if (!paused) remaining = Math.max(0, remaining - (performance.now() - segmentStart));
+        paused = true;
+        slider.dataset.paused = 'true';
+      };
+
+      prevBtn?.addEventListener('click', retreat);
+      nextBtn?.addEventListener('click', advance);
 
       dots.forEach((dot, i) => {
         dot.addEventListener('click', () => {
-          goTo(i);
-          start();
+          setIndex(i);
+          scrollToAbs(index, true);
+          resetCycle();
         });
       });
 
-      let scrollIdle: ReturnType<typeof setTimeout> | undefined;
+      slider.addEventListener('mouseenter', pauseTimer);
+      slider.addEventListener('mouseleave', () => {
+        paused = false;
+        runTimer();
+      });
+
+      // Scroll manual (swipe): sincroniza índice y, si acaba en zona de clones,
+      // salta en silencio a la posición real equivalente.
       track.addEventListener(
         'scroll',
         () => {
-          syncDots();
+          if (programmaticCount > 0) return;
+          const abs = Math.round(track.scrollLeft / step());
+          setIndex(abs);
           if (scrollIdle) clearTimeout(scrollIdle);
-          scrollIdle = setTimeout(start, 160);
+          scrollIdle = setTimeout(() => {
+            if (abs >= realCount) scrollToAbs(index, false);
+            resetCycle();
+          }, 160);
         },
         { passive: true },
       );
 
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden) stop();
-        else start();
+        if (document.hidden) pauseTimer();
+        else runTimer();
       });
 
-      syncDots();
-      start();
+      reduceMotion.addEventListener('change', () => {
+        if (reduceMotion.matches) {
+          if (timer) clearTimeout(timer);
+          timer = undefined;
+          renderDots();
+        } else {
+          resetCycle();
+        }
+      });
+
+      let resizeIdle: ReturnType<typeof setTimeout> | undefined;
+      window.addEventListener('resize', () => {
+        if (resizeIdle) clearTimeout(resizeIdle);
+        resizeIdle = setTimeout(() => {
+          scrollToAbs(index, false);
+          renderDots();
+          resetCycle();
+        }, 150);
+      });
+
+      renderDots();
+      runTimer();
     }
   }
 </script>
