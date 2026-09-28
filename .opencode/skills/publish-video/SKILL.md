@@ -47,6 +47,11 @@ Cuando el usuario pasa un ID de YouTube (11 caracteres) para añadirlo a `/video
 - Nunca commitear `.env` ni la service role key.
 - En tests o fixtures de `src/`, no usar IDs de 11 caracteres literales: el escáner
   de miniaturas los descargaría. Generarlos con `repeat()`.
+- **Mergear la PR de la miniatura cuanto antes.** El vídeo aparece en `/videos` en
+  cuanto se inserta en Supabase, pero su miniatura no existe hasta el deploy; en esa
+  ventana se pide `/assets/thumbs/<id>.jpg` y da 404. `/assets/thumbs` usa un TTL
+  corto y las miniaturas van con `?v=` (`THUMBS_CACHE_VERSION`), así que un 404
+  transitorio se autocura; aun así, no dejes la PR abierta sin mergear mucho rato.
 
 ## Verificación
 - `pnpm lint` y `pnpm test` en verde.
