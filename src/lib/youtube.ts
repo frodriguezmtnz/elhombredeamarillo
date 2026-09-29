@@ -1,9 +1,16 @@
 /**
+ * Versión de caché de las miniaturas locales. Súbela para invalidar la copia
+ * ya cacheada en los navegadores (p. ej. tras reemplazar una miniatura o para
+ * recuperar clientes que cachearon un 404 transitorio).
+ */
+export const THUMBS_CACHE_VERSION = '2';
+
+/**
  * Miniatura auto-hospedada del vídeo (evita bloqueos de i.ytimg.com).
  * Se generan con `pnpm thumbs`.
  */
 export function thumbnailUrl(videoId: string): string {
-  return `/assets/thumbs/${encodeURIComponent(videoId)}.jpg`;
+  return `/assets/thumbs/${encodeURIComponent(videoId)}.jpg?v=${THUMBS_CACHE_VERSION}`;
 }
 
 /**
