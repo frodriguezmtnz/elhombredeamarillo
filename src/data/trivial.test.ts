@@ -133,3 +133,24 @@ describe('validateQuestions', () => {
     expect(() => validateQuestions([makeQuestion({ links: [{ label: '', href: 'https://x.com' }] })])).toThrow(/label/);
   });
 });
+
+describe('correcciones de contenido verificadas', () => {
+  const verifiedCorrect: Record<string, string> = {
+    Q004: '30',
+    Q016: 'A ambos lados, pero más veces a la izquierda',
+    Q021: 'Kenny y Jim',
+    Q026: '6',
+    Q074: '8',
+    Q088: '2',
+    Q101: 'No tienen ninguna señal',
+  };
+
+  it('la opción marcada como correcta coincide con la verificada', () => {
+    for (const [id, expected] of Object.entries(verifiedCorrect)) {
+      const question = TRIVIA_QUESTIONS.find((q) => q.id === id);
+      expect(question, `falta ${id}`).toBeDefined();
+      if (!question) continue;
+      expect(question.options[question.answer], id).toBe(expected);
+    }
+  });
+});

@@ -18,7 +18,7 @@
       "15"
     ],
     "answer": 0,
-    "explanation": "Conteo acumulado de reproducciones mostradas en pantalla."
+    "explanation": "We Gotta Get out Of This Place , If It Be Your Will , If i Had a Boat , Everybody Knows This is Nowhere , A Hard Rain's-A-Gonna Fall , Who By Fire, In dreams, Celebration, O-o-h Child, Send In The Clowns, Good Morning Good morning, Blue, Doctor My Eyes."
   },
   {
     "id": "Q002",
@@ -39,7 +39,7 @@
       "38"
     ],
     "answer": 0,
-    "explanation": "Conteo de títulos distintos visibles en las gramolas."
+    "explanation": "2 de cada uno de estos artistas: Gene Pitney, Johnny Cash, Talking Heads, Lyle Lovett, Bob Dylan, Tom Waits, Joni Mitchell, Arlo Guthrie, Deep Purple, Blondie, Jimmy Driftwood, Janis Ian, Genesis, Suzi Quatro, Kinks"
   },
   {
     "id": "Q003",
@@ -60,7 +60,7 @@
       "Satisfaction"
     ],
     "answer": 3,
-    "explanation": "«Satisfaction» no ha sonado en la gramola."
+    "explanation": "«Satisfaction» no ha sonado en la gramola. If It Be Your will suena en el 1x03, Who By Fire en el 2x02 y Blue en el 4x09. "
   },
   {
     "id": "Q004",
@@ -73,15 +73,15 @@
       "personajes",
       "conteo"
     ],
-    "question": "¿Cuántos personajes con nombre han fallecido en total hasta el final de la temporada 4, inclusive?",
+    "question": "¿Cuántos personajes con nombre han fallecido en total hasta el final de la temporada 4, inclusive? (sin contar Eloise, con quien el fandom tiene dudas sobre su paradero)",
     "options": [
-      "42",
-      "47",
-      "46",
-      "43"
+      "30",
+      "36",
+      "37",
+      "47"
     ],
     "answer": 0,
-    "explanation": "Conteo total de personajes con nombre fallecidos hasta el cierre de la T4."
+    "explanation": "En orden cronológico: Miranda, Christopher, Abby, Meagan, Lauren, Tobey, Bing-Qian, Gina, Frank, Nathan, Kevin, Trudy, Stacey, Khatri, Eric, Martin, Tom, Brick, Kelly, Brian, Paula, Matthias, Tian-Chen, Nicky, Dale, Tillie, Jim, Roger, Marielle, Elgin. "
   },
   {
     "id": "Q005",
@@ -102,7 +102,7 @@
       "1485 Scotia Terrace"
     ],
     "answer": 0,
-    "explanation": "La dirección mostrada es 1597 Burrow Street."
+    "explanation": "Según pone en lonchera de Víctor, la dirección es 1597 Burrow Street."
   },
   {
     "id": "Q007",
@@ -123,7 +123,7 @@
       "Una linterna roja"
     ],
     "answer": 3,
-    "explanation": "La linterna roja es el objeto que no aparece entre los que ve Victor."
+    "explanation": "Ve una bicicleta donde encuentra a Jasper, y caminando por las cuevas ve la maleta del Hombre de Amarillo con el vestido blanco en ella."
   },
   {
     "id": "Q008",
@@ -144,7 +144,7 @@
       "Victor"
     ],
     "answer": 1,
-    "explanation": "El violín pertenecía a Miranda."
+    "explanation": "El violín pertenecía a Miranda. En el capítulo 2x03, Jade entra a la habitación de Victor, y en el 2x05 le explica que su madre solía tocar el violín para él"
   },
   {
     "id": "Q009",
@@ -165,7 +165,7 @@
       "Los tres a la vez"
     ],
     "answer": 2,
-    "explanation": "Marielle es la primera afectada."
+    "explanation": "Marielle es la primera afectada, y Kristi confunde su maldición con el síndrome de abstinencia. Esto ocurre a mitad del 2x09, que cierra con Julie y Randall también afectados por la maldición de las cigarras. "
   },
   {
     "id": "Q010",
@@ -185,7 +185,7 @@
       "Elgin"
     ],
     "answer": 0,
-    "explanation": "El dron pertenecía a Randall."
+    "explanation": "Randall iba a regalar un dron a su sobrino, según cuenta a Jim en el episodio 2x07"
   },
   {
     "id": "Q011",
@@ -206,7 +206,7 @@
       "Tom y Khatri"
     ],
     "answer": 0,
-    "explanation": "Elgin y Randall viajaban para visitar a familiares."
+    "explanation": "Randall viajaba para visitar a su sobrino por su cumpleaños y Elgin para visitar a su abuela."
   },
   {
     "id": "Q012",
@@ -227,7 +227,7 @@
       "Tesla"
     ],
     "answer": 0,
-    "explanation": "El coche de Jade era un Audi."
+    "explanation": "El coche de Jade era un Audi Q5."
   },
   {
     "id": "Q013",
@@ -248,7 +248,7 @@
       "2"
     ],
     "answer": 0,
-    "explanation": "Se cuentan cuatro desplazamientos: Boyd, la caravana/RV, la carretera con el Hombre de Amarillo y Jim."
+    "explanation": "Conocemos 4 desplazamientos hasta ahora: a la mazmorra con Boyd en el 3x08, la muerte de Jim en el 3x10, la caravana/RV en el 4x02 y la carretera con el Hombre de Amarillo en el 4x05."
   },
   {
     "id": "Q014",
@@ -260,15 +260,15 @@
       "Nathan",
       "profesión"
     ],
-    "question": "¿A qué se dedicaba Nathan antes de llegar a Fromville?",
+    "question": "¿A qué se dedicaba Nathan en Fromville?",
     "options": [
       "Criar animales",
-      "Profesor de primaria",
-      "Creador de atracciones",
+      "Monaguillo o acólito de Khatri en la iglesia",
+      "Camarero en el diner",
       "Enfermero"
     ],
     "answer": 0,
-    "explanation": "Nathan trabajaba con animales."
+    "explanation": "Sara encuentra a su hermano Nathan en el primer capítulo dirigiéndose al establo a alimentar animales, y él bromea diciendo que ojalá los animales tuvieran que alimentarse solos en lugar de hacerlo él"
   },
   {
     "id": "Q015",
@@ -289,7 +289,7 @@
       "Bebida"
     ],
     "answer": 0,
-    "explanation": "La marca corresponde a chocolate."
+    "explanation": "La marca es Cosmo, de barritas de chocolate."
   },
   {
     "id": "Q016",
@@ -309,8 +309,8 @@
       "A ambos lados, pero más veces a la izquierda",
       "A ambos lados, pero más veces a la derecha"
     ],
-    "answer": 3,
-    "explanation": "Los Stevens la ven a la izquierda; los Matthews y la ambulancia, a la derecha."
+    "answer": 2,
+    "explanation": "Los Matthews la ven a la izquierda en el 1x01 y la ambulancia también a la izquierda en el 3x03; los Stevens, en cambio, la ven a la derecha en el 1x08. En conjunto, más veces a la izquierda."
   },
   {
     "id": "Q017",
@@ -331,7 +331,7 @@
       "Kenny"
     ],
     "answer": 0,
-    "explanation": "Las palabras eran de Donna."
+    "explanation": "En el 4x06, Boyd le dice a Khatri que Donna le preguntó si roncaba nada más verla, recordándolo como algo cómico y carismático por parte de la líder de Colony House"
   },
   {
     "id": "Q018",
@@ -353,7 +353,7 @@
       "Khatri"
     ],
     "answer": 2,
-    "explanation": "Sara afirma llevar solo unos meses en el pueblo; Kristi llevaba seis meses desaparecida cuando llega Marielle."
+    "explanation": "Kenny y su familia desaparecieron el 18 de Marzo de 2021; Kristi, el 6 de Agosto de 2021; Sara y Nathan, el 18 de Septiembre de 2021. Khatri, desde el 12 de Julio de 2019"
   },
   {
     "id": "Q019",
@@ -374,7 +374,7 @@
       "Kristi"
     ],
     "answer": 1,
-    "explanation": "Entre las opciones, Donna es quien llegó primero."
+    "explanation": "Donna llegó en 2018, Khatri en 2019 y Kenny y Kristi, en 2021 ambos"
   },
   {
     "id": "Q020",
@@ -387,7 +387,7 @@
       "pueblo",
       "conteo"
     ],
-    "question": "¿Cuántos edificios comunitarios y residenciales actualmente utilizables hay en el pueblo principal de From, sin contar Colony House?",
+    "question": "¿Cuántos edificios comunitarios y residenciales actualmente utilizables hay en el pueblo principal de From, sin contar Colony House ni el autobús?",
     "options": [
       "14",
       "13",
@@ -395,7 +395,7 @@
       "12"
     ],
     "answer": 2,
-    "explanation": "Se cuentan 11: diner, comisaría, clínica, bar, iglesia, casa Liu, casa de Sara, casa azul, casa gris, casa verde y granero."
+    "explanation": "Se cuentan 11: diner, comisaría, clínica, bar, iglesia, casa de los Liu, casa de Sara, casa azul, casa gris, casa verde y granero."
   },
   {
     "id": "Q021",
@@ -405,8 +405,8 @@
     "reach": "T3",
     "tags": [
       "asentamiento",
-      "Ethan",
-      "Victor"
+      "Kenny",
+      "Jim"
     ],
     "question": "¿Quiénes descubren el asentamiento?",
     "options": [
@@ -415,8 +415,8 @@
       "Sara y Boyd",
       "Elgin y Fatima"
     ],
-    "answer": 1,
-    "explanation": "Ethan y Victor son quienes lo descubren."
+    "answer": 0,
+    "explanation": "En el episodio 3x02, Kenny y Jim deciden alejarse en el bosque para buscar alimentos para el grupo, encontrando el asentamiento en una zona alejada."
   },
   {
     "id": "Q022",
@@ -437,7 +437,7 @@
       "Judy Blume"
     ],
     "answer": 0,
-    "explanation": "La autora acreditada es Kay Dillon."
+    "explanation": "La autora acreditada es Kay Dillon, mientras que Jiff Horning escribió Las Aventuras del Gran Gooligog. Los otros dos son autores reales mencionados por Khatri al explicar que no hay biblias en From, pero sí libros de estos autores."
   },
   {
     "id": "Q023",
@@ -458,7 +458,7 @@
       "Judy Blume"
     ],
     "answer": 1,
-    "explanation": "El autor acreditado es Jiff Horning."
+    "explanation": "El autor acreditado es Jiff Horning. Kay Dillon es el autor/a de El Vuelo del Cromenockle, y los otros dos son autores reales mencionados por Khatri al explicar que no hay biblias en From, pero sí libros de estos autores."
   },
   {
     "id": "Q024",
@@ -478,7 +478,7 @@
       "Recepcionista"
     ],
     "answer": 3,
-    "explanation": "No se ha mostrado un monstruo con arquetipo de recepcionista."
+    "explanation": "No se ha visto hasta ahora un monstruo con arquetipo de recepcionista, mientras que los otros tres han tenido diálogos en la serie."
   },
   {
     "id": "Q025",
@@ -518,8 +518,8 @@
       "7",
       "8"
     ],
-    "answer": 2,
-    "explanation": "El total acumulado es de siete episodios."
+    "answer": 1,
+    "explanation": "El total acumulado es de 6 episodios: 2x04 en la comisaría, 2x07 en la comisaría de nuevo, 3x01 mientras Boyd se venda el hombro, 3x10 al torturar a Elgin, 4x06 en la puerta del invernadero, 4x08 en la comisaría"
   },
   {
     "id": "Q027",
@@ -540,7 +540,7 @@
       "6"
     ],
     "answer": 1,
-    "explanation": "El conteo es de cuatro personajes humanos fallecidos."
+    "explanation": "En total son 4. En orden: Abby a Boyd, Tom a Jade, Khatri a Boyd, Jim a Ethan."
   },
   {
     "id": "Q028",
@@ -561,7 +561,7 @@
       "Kristi y Marielle"
     ],
     "answer": 0,
-    "explanation": "Hasta el cierre de la T4, Sophia no ha dialogado con Victor ni con Jade."
+    "explanation": "Hasta el cierre de la T4, Sophia no ha entablado ninguna conversación con Victor ni con Jade."
   },
   {
     "id": "Q029",
@@ -581,7 +581,7 @@
       "Tabitha"
     ],
     "answer": 2,
-    "explanation": "Donna es la opción que no lo ha visto."
+    "explanation": "Donna. Elgin le vio en sueños y le contó la frase de canción de la caja de música, Ethan le vio nada más llegar a Fromville y Tabitha le ha visto varias veces, la más impactante en el faro. "
   },
   {
     "id": "Q030",
@@ -602,7 +602,7 @@
       "15"
     ],
     "answer": 2,
-    "explanation": "Donna sitúa el total en 14 personas."
+    "explanation": "Donna dice literalmente en el 1x08 que fueron 14 de personas quienes murieron la noche anterior."
   },
   {
     "id": "Q031",
@@ -622,7 +622,7 @@
       "Wei"
     ],
     "answer": 0,
-    "explanation": "El nombre real de Kenny es Fu-Hen."
+    "explanation": "El nombre real de Kenny es Fu-Hen: nos lo cuenta jugando al ajedrez con Gina en el episodio 1x02."
   },
   {
     "id": "Q032",
@@ -642,7 +642,7 @@
       "Houston"
     ],
     "answer": 0,
-    "explanation": "Martin procede de Millbrook."
+    "explanation": "Martin procede de Millbrook, un pequeño pueblo, según sus propias palabras en el episodio 2x02 a Boyd."
   },
   {
     "id": "Q033",
@@ -662,7 +662,7 @@
       "Grand Forks"
     ],
     "answer": 0,
-    "explanation": "El autobús procede de Grand Rapids."
+    "explanation": "El autobús procede de Grand Rapids, ya que su nombre es Grand Rapids Runner Bus, e iba camino a Detroit."
   },
   {
     "id": "Q034",
@@ -683,7 +683,7 @@
       "7"
     ],
     "answer": 0,
-    "explanation": "El conteo es de cuatro versiones/reencarnaciones."
+    "explanation": "4: Christopher, el soldado de la guerra civil que le dispara, el hombre aplastado por la roca y el hombre con el ojo apuñalado que le ofrece beber de la calavera en la alucinación."
   },
   {
     "id": "Q035",
@@ -725,7 +725,7 @@
       "42"
     ],
     "answer": 3,
-    "explanation": "Partiendo del recuento de 47, se descuentan Jim, Elgin, Marielle y Roger; Fatima deja de contar como humana. La llegada y muerte de Dunne no altera el neto final."
+    "explanation": "Partiendo del recuento de Kenny de 47, se descuentan Jim, Elgin, Marielle y Roger; Fatima deja de contar como humana. La casi-muerte de Donna no altera el cómputo final."
   },
   {
     "id": "Q037",
@@ -745,7 +745,7 @@
       "7 hijos y 7 nietos"
     ],
     "answer": 1,
-    "explanation": "Tillie habla de 4 hijos y 7 nietos."
+    "explanation": "Tillie habla de 4 hijos y 7 nietos en el episodio 2x09."
   },
   {
     "id": "Q038",
@@ -766,7 +766,7 @@
       "GE Vscan"
     ],
     "answer": 0,
-    "explanation": "La marca visible es Mabuse."
+    "explanation": "La marca visible es Mabuse; Seeburg es la marca de la gramola."
   },
   {
     "id": "Q039",
@@ -808,7 +808,7 @@
       "Julie"
     ],
     "answer": 3,
-    "explanation": "Julie ayuda a Sara a pintar la habitación."
+    "explanation": "Julie ayuda a Sara a pintar la habitación de color morado."
   },
   {
     "id": "Q041",
@@ -914,7 +914,7 @@
       "7"
     ],
     "answer": 2,
-    "explanation": "Se cuentan Sara, Boyd, Julie, Tabitha, Victor y Dale: seis personas."
+    "explanation": "Hemos visto a Sara, Boyd, Julie, Tabitha, y Dale. Además, Victor cuenta a Ethan que ha viajado múltiples veces por ellos. En total, seis personas."
   },
   {
     "id": "Q046",
@@ -935,7 +935,7 @@
       "Randall"
     ],
     "answer": 2,
-    "explanation": "La idea procede de Jim."
+    "explanation": "La idea procede de Jim, se la comenta a Jade en una conversación en el bar durante el episodio 1x05"
   },
   {
     "id": "Q047",
@@ -948,7 +948,7 @@
       "parentesco",
       "muertes"
     ],
-    "question": "¿Qué relación de parentesco familiar aún no hemos visto fallecer durante los acontecimientos de la serie?",
+    "question": "¿Qué relación de parentesco familiar, solamente contando personajes que llegan en familia, aún no hemos visto fallecer durante los acontecimientos de la serie?",
     "options": [
       "Padre",
       "Madre",
@@ -956,7 +956,7 @@
       "Todos han fallecido"
     ],
     "answer": 2,
-    "explanation": "La relación que queda sin una muerte mostrada durante los acontecimientos de la serie es la de hijo varón."
+    "explanation": "Hijo varón: Ethan, Victor, Ellis y Kenny llegan a Fromville en familia y ninguno de ellos ha fallecido hasta la fecha"
   },
   {
     "id": "Q048",
@@ -1010,7 +1010,7 @@
       "tratamiento",
       "conteo"
     ],
-    "question": "¿Cuántas personas han tenido heridas físicas que duraron varios días y requirieron tratamiento?",
+    "question": "¿Cuántas personas (cuenta cualquier personaje) han tenido heridas físicas que duraron varios días y requirieron tratamiento?",
     "options": [
       "5",
       "6",
@@ -1018,7 +1018,7 @@
       "8 o más"
     ],
     "answer": 3,
-    "explanation": "Al menos ocho: Kristi, Randall, Elgin, Boyd, Ethan, Jim, Ellis y Sophia."
+    "explanation": "Al menos ocho: Kristi (tobillo), Randall (cicatriz en la cara), Elgin (nudillos y ojo), Boyd (corte en el brazo), Ethan (operación en la pierna en la caravana), Jim (se rompe una costilla tras venirse abajo la casa con el dentro), Ellis (apuñalado por Dale) y Sophia (se cae a la piscina a propósito)."
   },
   {
     "id": "Q051",
@@ -1039,7 +1039,7 @@
       "Temporada 4, episodio 3"
     ],
     "answer": 0,
-    "explanation": "La última aparición ante Ethan es en T1E4."
+    "explanation": "La última aparición ante Ethan es en el 1x04, donde Victor e Ethan le siguen a través del bosque."
   },
   {
     "id": "Q052",
@@ -1060,7 +1060,7 @@
       "Temporada 2, episodio 9"
     ],
     "answer": 0,
-    "explanation": "La boda se celebra en T2E10."
+    "explanation": "La boda se celebra en el episodio 2x10."
   },
   {
     "id": "Q053",
@@ -1080,7 +1080,7 @@
       "Jim"
     ],
     "answer": 1,
-    "explanation": "Boyd es la opción que no ha viajado al asentamiento."
+    "explanation": "Boyd es la única persona que no ha viajado al asentamiento: Jim y Kenny lo descubrieron y Jade estuvo allí cuando Kristi tuvo el accidente con la trampa por el que se hizo daño en su tobillo"
   },
   {
     "id": "Q054",
@@ -1186,7 +1186,7 @@
       "1978"
     ],
     "answer": 0,
-    "explanation": "El papel muestra el número 1864."
+    "explanation": "El papel muestra el número 1864, escrito con letra en lugar de con números: eighteen sixty four."
   },
   {
     "id": "Q059",
@@ -1207,7 +1207,7 @@
       "Ellis"
     ],
     "answer": 0,
-    "explanation": "Kenny es quien se lo explica."
+    "explanation": "Kenny es quien se lo explica en el episodio 1x04."
   },
   {
     "id": "Q060",
@@ -1250,7 +1250,7 @@
       "6"
     ],
     "answer": 1,
-    "explanation": "Victor dice que se han movido cuatro pulgadas."
+    "explanation": "Victor dice que se han movido cuatro pulgadas en el episodio 1x04."
   },
   {
     "id": "Q062",
@@ -1272,7 +1272,7 @@
       "Un violín"
     ],
     "answer": 0,
-    "explanation": "Kenny rompe una figura de porcelana vinculada al recuerdo de Nathan."
+    "explanation": "Kenny rompe una figura de porcelana que a Sara le servía para recordar a su hermano en el episodio 2x05, a las puertas del diner."
   },
   {
     "id": "Q063",
@@ -1314,7 +1314,7 @@
       "Kristi y Marielle"
     ],
     "answer": 0,
-    "explanation": "La casa pertenecía a Tian-Chen Liu."
+    "explanation": "La casa pertenecía a Tian-Chen Liu, donde también habían acogido a Jade. Éste después se muda al bar"
   },
   {
     "id": "Q065",
@@ -1377,7 +1377,7 @@
       "No se sabe el número concreto"
     ],
     "answer": 3,
-    "explanation": "La serie establece que hay varios, pero no fija un número total concreto."
+    "explanation": "La serie establece que hay varios, pero no fija un número total concreto. Victor explica a Ethan en el episodio 1x04 que hay muchos"
   },
   {
     "id": "Q068",
@@ -1398,7 +1398,7 @@
       "Dale"
     ],
     "answer": 3,
-    "explanation": "Dale plantea la hipótesis del universo de bolsillo."
+    "explanation": "Dale plantea la hipótesis del universo de bolsillo en el episodio 1x07."
   },
   {
     "id": "Q069",
@@ -1419,7 +1419,7 @@
       "Roger"
     ],
     "answer": 0,
-    "explanation": "Dale apuñala a Ellis."
+    "explanation": "Dale apuñala a Ellis en el episodio 2x06."
   },
   {
     "id": "Q070",
@@ -1483,7 +1483,7 @@
       "Ethan"
     ],
     "answer": 0,
-    "explanation": "Tabitha consuela a Donna."
+    "explanation": "Tabitha consuela a Donna en el episodio 3x06."
   },
   {
     "id": "Q073",
@@ -1504,7 +1504,7 @@
       "La hermana de Donna"
     ],
     "answer": 0,
-    "explanation": "Los pendientes pertenecían a Delores."
+    "explanation": "Los pendientes pertenecían a Delores. En el episodio 3x04, Victor abre una maleta y explica a Sara que el niño de blanco le ordenó enterrar los objetos más preciados de los fallecidos."
   },
   {
     "id": "Q074",
@@ -1522,10 +1522,10 @@
       "12",
       "10",
       "14",
-      "16"
+      "8"
     ],
-    "answer": 0,
-    "explanation": "Cada talismán contiene 12 símbolos de ese tipo."
+    "answer": 3,
+    "explanation": "Cada talismán contiene 8 símbolos de ese tipo."
   },
   {
     "id": "Q075",
@@ -1546,7 +1546,7 @@
       "Anghkoey"
     ],
     "answer": 0,
-    "explanation": "La grafía usada es «Anghkooey»."
+    "explanation": "Se escribe «Anghkooey»."
   },
   {
     "id": "Q076",
@@ -1567,7 +1567,7 @@
       "Donna"
     ],
     "answer": 1,
-    "explanation": "Roger descubre que hay algo oculto en el fondo del lago."
+    "explanation": "Al final del episodio 4x04, Roger descubre que hay algo bajo los cultivos, lo que les lleva a encontrar algo oculto en el fondo del lago."
   },
   {
     "id": "Q077",
@@ -1589,7 +1589,7 @@
       "Kristi y Acosta"
     ],
     "answer": 0,
-    "explanation": "Los conductores son Acosta y Ellis."
+    "explanation": "Los conductores son Acosta y Ellis. Acosta lleva a Patty, Boyd, Bakta y Sara. Ellis lleva a Randall y Kristi. "
   },
   {
     "id": "Q078",
@@ -1611,7 +1611,7 @@
       "7"
     ],
     "answer": 3,
-    "explanation": "Sophia aparece en la séptima foto."
+    "explanation": "Sophia aparece en la séptima foto. Curiosamente, en la foto nº4 descubre una foto con el número 7. "
   },
   {
     "id": "Q079",
@@ -1674,7 +1674,7 @@
       "Catalina Sandino Moreno"
     ],
     "answer": 0,
-    "explanation": "Kristi está interpretada por Chloe Van Landschoot."
+    "explanation": "Kristi es interpretada por Chloe Van Landschoot."
   },
   {
     "id": "Q082",
@@ -1695,7 +1695,7 @@
       "Kaelen Ohm"
     ],
     "answer": 0,
-    "explanation": "Sophia está interpretada por Julia Doyle."
+    "explanation": "Sophia es interpretada por Julia Doyle."
   },
   {
     "id": "Q083",
@@ -1716,7 +1716,7 @@
       "Temporada 4, episodio 3"
     ],
     "answer": 2,
-    "explanation": "La escena aparece en T4E4."
+    "explanation": "En el episodio 4x04, vemos a Julie cortarse el pelo tras haber sido agarrada previamente del pelo por la enfermera monstruo."
   },
   {
     "id": "Q084",
@@ -1737,7 +1737,7 @@
       "Episodio 7"
     ],
     "answer": 1,
-    "explanation": "Kristi se corta el pelo en T2E5."
+    "explanation": "Marielle corta el pelo a Kristi en 2x05."
   },
   {
     "id": "Q085",
@@ -1758,7 +1758,7 @@
       "6"
     ],
     "answer": 2,
-    "explanation": "Se cuentan cinco llegadas de vehículos: la RV de los Matthews, el coche de Jade y Tobey, el autobús, la ambulancia y el coche de Pastor Dunne."
+    "explanation": "Se cuentan 5 llegadas de vehículos hasta la fecha: la caravana de los Matthews (1x01), el coche de Jade y Tobey (Audi, 1x01), el autobús (Grand Rapids, 1x10), la ambulancia (3x03) y el coche del Pastor que recoge a Sophia (4x01)."
   },
   {
     "id": "Q086",
@@ -1779,7 +1779,7 @@
       "Noruega"
     ],
     "answer": 0,
-    "explanation": "Kenny propone viajar a Islandia."
+    "explanation": "Kenny propone viajar a Islandia en el episodio 1x10."
   },
   {
     "id": "Q087",
@@ -1800,7 +1800,7 @@
       "Strange Affair"
     ],
     "answer": 1,
-    "explanation": "«A Hard Rain's A-Gonna Fall» es la opción que no ha aparecido en un tráiler oficial de temporada."
+    "explanation": "«A Hard Rain's A-Gonna Fall» sale en el 2x01, pero no en un tráiler oficial de temporada. We Gotta Get Out of This Place es la canción del tráiler de la temporada 1; Like a Dream en el tráiler de la temporada 2 y Strange Affair, en la temporada 4. "
   },
   {
     "id": "Q088",
@@ -1820,8 +1820,8 @@
       "4",
       "1"
     ],
-    "answer": 1,
-    "explanation": "Se cuentan tres: Fatima, Jasmine y Smiley."
+    "answer": 0,
+    "explanation": "Se cuentan dos: Fatima y Jasmine. Al resto de monstruos se refiere por sus profesiones o aspectos más carismáticos, como la sonrisa de Smiley, pero no por su nombre de pila."
   },
   {
     "id": "Q089",
@@ -1842,7 +1842,7 @@
       "Newberry, Canadá"
     ],
     "answer": 1,
-    "explanation": "El set del pueblo se construyó en Nueva Escocia, Canadá."
+    "explanation": "El set del pueblo se construyó en Halifax, Nueva Escocia, Canadá."
   },
   {
     "id": "Q090",
@@ -1863,7 +1863,7 @@
       "Scott McCord"
     ],
     "answer": 0,
-    "explanation": "El Niño de Blanco está interpretado por Vox Smith."
+    "explanation": "El Niño de Blanco está interpretado por Vox Smith. Simon interpreta a Ethan; Viggo, al Jade joven del episodio de las setas; Eli, a Victor de niño en los flashbacks. "
   },
   {
     "id": "Q091",
@@ -1884,7 +1884,7 @@
       "Scott McCord"
     ],
     "answer": 2,
-    "explanation": "La versión infantil de Jade está interpretada por Viggo Hanvelt."
+    "explanation": "La versión infantil de Jade está interpretada por Viggo Hanvelt. Vox interpreta al niño de blanco, Simon a Ethan y Scott a Victor. "
   },
   {
     "id": "Q092",
@@ -1905,7 +1905,7 @@
       "Scott McCord"
     ],
     "answer": 1,
-    "explanation": "Ethan Matthews está interpretado por Simon Webster."
+    "explanation": "Ethan Matthews está interpretado por Simon Webster. Vox interpreta al niño de blanco, Viggo al Jade joven del episodio de las setas y Scott, a Victor."
   },
   {
     "id": "Q093",
@@ -1916,17 +1916,17 @@
     "tags": [
       "gramola",
       "marca",
-      "Steinburg"
+      "Seeburg"
     ],
     "question": "¿De qué marca es la gramola?",
     "options": [
       "Mabuse",
-      "Steinburg",
+      "Seeburg",
       "Philips",
       "GE Vscan"
     ],
     "answer": 1,
-    "explanation": "La marca visible de la gramola es Steinburg."
+    "explanation": "La marca visible de la gramola es Seeburg 100 Wall-O-Matic. "
   },
   {
     "id": "Q094",
@@ -1947,7 +1947,7 @@
       "Ethan"
     ],
     "answer": 0,
-    "explanation": "La idea de cavar es de Tabitha."
+    "explanation": "La idea de cavar es de Tabitha en el 1x06, al preguntarse de dónde provienen los cables de electricidad"
   },
   {
     "id": "Q095",
@@ -1969,7 +1969,7 @@
     "category": "reglas",
     "difficulty": 1,
     "spoilersUpTo": 0,
-    "question": "¿Qué objeto es indispensable para sobrevivir a la noche fuera de casa?",
+    "question": "¿Qué objeto es indispensable para sobrevivir a la noche dentro de casa?",
     "options": [
       "Una linterna",
       "Un talismán",
@@ -1977,7 +1977,7 @@
       "Un mapa del pueblo"
     ],
     "answer": 1,
-    "explanation": "El pequeño talismán protege a quien lo lleva de las criaturas mientras dura la noche.",
+    "explanation": "El pequeño talismán protege a los lugares cerrados, evitando que ingresen los monstruos mientras dura la noche.",
     "image": "/assets/references/talisman-404.webp",
     "imageAlt": "Talismán de FROM con símbolos tallados"
   },
@@ -1990,18 +1990,18 @@
     "options": [
       "Reunirse en la plaza",
       "Encender hogueras",
-      "Estar dentro de tu casa",
+      "Estar dentro de tu casa con un talismán y cerrar puertas y ventanas",
       "Subir al bosque"
     ],
     "answer": 2,
-    "explanation": "El interior de la propia casa protege a sus habitantes; la calle es territorio de las criaturas."
+    "explanation": "El talismán en el interior de una casa protege a sus habitantes de la entrada de los monstruos."
   },
   {
     "id": "Q098",
     "category": "reglas",
     "difficulty": 1,
     "spoilersUpTo": 0,
-    "question": "¿Qué ocurre cuando intentas alejar del pueblo por la autopista?",
+    "question": "¿Qué ocurre cuando alguien intenta alejarse del pueblo por la autopista?",
     "options": [
       "Se acaba la gasolina",
       "Un animal corta la carretera",
@@ -2024,7 +2024,7 @@
       "Excavan bajo las puertas"
     ],
     "answer": 0,
-    "explanation": "Llaman a la puerta o desde el bosque con voces de personas cercanas. Responder puede ser mortal."
+    "explanation": "Llaman a la puerta o desde el bosque imitando la entonación de voces de personas cercanas. Responder puede ser mortal."
   },
   {
     "id": "Q100",
@@ -2033,7 +2033,7 @@
     "spoilersUpTo": 0,
     "question": "¿Qué anomalía eléctrica caracteriza al pueblo?",
     "options": [
-      "Funciona con generadores ocultos",
+      "Funciona con generadores ocultos en las cuevas",
       "La luz y los aparatos funcionan sin fuente conocida",
       "Solo hay electricidad de día",
       "Las pilas se agotan al anochecer"
@@ -2053,8 +2053,8 @@
       "Solo funcionan en la iglesia",
       "Solo funcionan de noche"
     ],
-    "answer": 1,
-    "explanation": "Los residentes pueden llamar y recibir mensajes dentro del pueblo, pero comunicarse con el mundo exterior es imposible."
+    "answer": 0,
+    "explanation": "No tienen ninguna señal, así que comunicarse con el mundo exterior es imposible."
   },
   {
     "id": "Q102",
@@ -2084,7 +2084,7 @@
       "Nada, las criaturas solo atacan en el bosque"
     ],
     "answer": 2,
-    "explanation": "Dormir fuera de la protección de una casa propia, o quedarse sin talismán a la intemperie, suele terminar en muerte o desaparición."
+    "explanation": "Dormir fuera de la protección de una casa propia con talismán termina en muerte o desaparición asegurada."
   },
   {
     "id": "Q104",
@@ -2099,7 +2099,7 @@
       "La Vecina"
     ],
     "answer": 0,
-    "explanation": "El Hombre de Amarillo es una de las entidades más antiguas y inquietantes del pueblo."
+    "explanation": "El Hombre de Amarillo es una de las entidades más antiguas e inquietantes del pueblo."
   },
   {
     "id": "Q105",
@@ -2114,7 +2114,7 @@
       "Tiene dos narices"
     ],
     "answer": 1,
-    "explanation": "Esa sonrisa «de más», imposible en un rostro humano, es su firma visual."
+    "explanation": "Esa sonrisa «de más», imposible en un rostro humano, en un tono de mofa."
   },
   {
     "id": "Q106",
@@ -2129,22 +2129,22 @@
       "Enormes animales negros"
     ],
     "answer": 2,
-    "explanation": "Aparecen como humanoides desaliñados y cadavéricos, con comportamientos casi animales."
+    "explanation": "Aparecen como humanoides desaliñados y cadavéricos, con comportamientos casi animales. Algunos, incluso, no tienen pelo. "
   },
   {
     "id": "Q107",
     "category": "criaturas",
     "difficulty": 2,
     "spoilersUpTo": 0,
-    "question": "Al moverse, las criaturas suelen…",
+    "question": "Al moverse, las criaturas pueden…",
     "options": [
-      "Flotar en silencio",
-      "Desplazarse a cuatro patas y correr en zigzag",
+      "Percibir a humanos aún en silencio",
+      "Correr cuando sea necesario",
       "Avanzar siempre en fila",
       "Quedarse inmóviles hasta el alba"
     ],
     "answer": 1,
-    "explanation": "Se mueven con agilidad antinatural, gateando o corriendo en zigzag, y son rapidísimas."
+    "explanation": "Suelen ser lentas y caminar, pero vimos a Smiley correr a por Miranda en el flashback del episodio 3x09."
   },
   {
     "id": "Q108",
@@ -2186,7 +2186,7 @@
       "El pueblo solo existió en los años 70",
       "Grupos de personas atrapadas en distintos períodos",
       "El futuro del pueblo",
-      "Que las criaturas eran humanas"
+      "Que los monstruos eran todos humanos en el ciclo anterior"
     ],
     "answer": 1,
     "explanation": "El pueblo se ha repetido con «ciclos» distintos: siempre hubo alguien atrapado bajo las mismas reglas."
@@ -2260,7 +2260,7 @@
     "difficulty": 2,
     "spoilersUpTo": 0,
     "reach": "Producción",
-    "question": "Productor ejecutivo y director habitual (dirigió el piloto). ¿Quién?",
+    "question": "¿Quién de estas personas es productor ejecutivo y director habitual en diversos episodios?",
     "options": [
       "David Lynch",
       "J.J. Abrams",
@@ -2284,7 +2284,7 @@
       "Irlanda"
     ],
     "answer": 1,
-    "explanation": "Aunque la acción transcurre en un pueblo de EE. UU., FROM se rueda en Canadá: el set se construyó desde cero en Nueva Escocia."
+    "explanation": "Aunque la acción transcurre en un pueblo de EE. UU., FROM se rueda en Canadá: el set se construyó desde cero en Halifax, Nueva Escocia."
   },
   {
     "id": "Q117",
@@ -2371,7 +2371,7 @@
     "category": "canal",
     "difficulty": 1,
     "spoilersUpTo": 0,
-    "question": "¿Cuál es el handle de YouTube de El Hombre de Amarillo?",
+    "question": "¿Cuál es el handle (apodo con @) de YouTube de El Hombre de Amarillo?",
     "options": [
       "@koiboy_OG",
       "@amarilloOG",
@@ -2454,7 +2454,7 @@
       "Amarillo"
     ],
     "answer": 3,
-    "explanation": "Amarillo, por supuesto. Como el traje que es mejor no seguir con la mirada."
+    "explanation": "Amarillo, por supuesto. Como el traje que tanto terror inspira."
   },
   {
     "id": "Q128",
@@ -2521,7 +2521,7 @@
       "5 temporadas · 50 episodios"
     ],
     "answer": 1,
-    "explanation": "Cuatro temporadas de diez episodios: 40 capítulos emitidos hasta la T4."
+    "explanation": "Cuatro temporadas de diez episodios cada una, con un total de 40 capítulos emitidos hasta la T4."
   },
   {
     "id": "Q131",
