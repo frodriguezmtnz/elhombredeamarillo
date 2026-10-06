@@ -1,5 +1,16 @@
 # El Hombre de Amarillo
 
+[![Vercel](https://vercelbadge.vercel.app/api/frodriguezmtnz/elhombredeamarillo)](https://elhombredeamarillo.vercel.app)
+[![CI](https://github.com/frodriguezmtnz/elhombredeamarillo/actions/workflows/ci.yml/badge.svg)](https://github.com/frodriguezmtnz/elhombredeamarillo/actions/workflows/ci.yml)
+![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-0.185-000000?logo=three.js&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres_%2B_Auth-3FCF8E?logo=supabase&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-package_manager-F69220?logo=pnpm&logoColor=white)
+![Biome](https://img.shields.io/badge/Biome-lint_%2B_format-60A5FA?logo=biome&logoColor=white)
+
 Web de contenido y comunidad para el canal de YouTube `@koiboy_OG`, dedicado al análisis, las teorías y los debates sobre la serie FROM.
 
 Cuatro espacios conectados con estética de archivo de investigación:
