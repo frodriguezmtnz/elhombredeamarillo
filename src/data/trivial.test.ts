@@ -136,8 +136,8 @@ describe('validateQuestions', () => {
 
 describe('correcciones de contenido verificadas', () => {
   const verifiedCorrect: Record<string, string> = {
-    Q004: '30',
-    Q016: 'A ambos lados, pero más veces a la izquierda',
+    Q004: '30 o menos',
+    Q016: 'A ambos lados por igual, 2 y 2',
     Q021: 'Kenny y Jim',
     Q026: '6',
     Q074: '8',
