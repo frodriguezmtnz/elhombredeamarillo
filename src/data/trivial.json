@@ -18,7 +18,7 @@
       "15"
     ],
     "answer": 0,
-    "explanation": "We Gotta Get out Of This Place , If It Be Your Will , If i Had a Boat , Everybody Knows This is Nowhere , A Hard Rain's-A-Gonna Fall , Who By Fire, In dreams, Celebration, O-o-h Child, Send In The Clowns, Good Morning Good morning, Blue, Doctor My Eyes."
+    "explanation": "En orden: We Gotta Get out Of This Place , Last Train To Clarksville, If It Be Your Will , If I Had a Boat, Everybody Knows This is Nowhere , A Hard Rain's-A-Gonna Fall , Who By Fire, In dreams, Celebration, O-o-h Child, Send In The Clowns, Good Morning Good morning, Blue, Doctor My Eyes."
   },
   {
     "id": "Q002",
@@ -31,15 +31,15 @@
       "música",
       "títulos"
     ],
-    "question": "¿De cuántas canciones diferentes hemos podido leer el título en las gramolas, sin contar repetidas?",
+    "question": "¿Cuántos artistas hemos visto aparecer repetidos como casilla en cada una de las dos gramolas, una a cada lado de la puerta del diner?",
     "options": [
-      "36",
-      "32",
-      "40",
-      "38"
+      "3",
+      "2",
+      "1",
+      "0"
     ],
     "answer": 0,
-    "explanation": "2 de cada uno de estos artistas: Gene Pitney, Johnny Cash, Talking Heads, Lyle Lovett, Bob Dylan, Tom Waits, Joni Mitchell, Arlo Guthrie, Deep Purple, Blondie, Jimmy Driftwood, Janis Ian, Genesis, Suzi Quatro, Kinks"
+    "explanation": "Han estado repetidos en ambas Gene Pitney (en rojo), Talking Heads (en amarillo) y Joni Mitchell (en azul)."
   },
   {
     "id": "Q003",
@@ -75,13 +75,13 @@
     ],
     "question": "¿Cuántos personajes con nombre han fallecido en total hasta el final de la temporada 4, inclusive? (sin contar Eloise, con quien el fandom tiene dudas sobre su paradero)",
     "options": [
-      "30",
-      "36",
-      "37",
-      "47"
+      "30 o menos",
+      "Entre 31 y 35",
+      "Entre 36 y 40",
+      "Más de 40"
     ],
     "answer": 0,
-    "explanation": "En orden cronológico: Miranda, Christopher, Abby, Meagan, Lauren, Tobey, Bing-Qian, Gina, Frank, Nathan, Kevin, Trudy, Stacey, Khatri, Eric, Martin, Tom, Brick, Kelly, Brian, Paula, Matthias, Tian-Chen, Nicky, Dale, Tillie, Jim, Roger, Marielle, Elgin. "
+    "explanation": "En orden cronológico: Miranda, Christopher, Abby, Meagan, Lauren, Tobey, Bing-Qian, Gina, Frank, Nathan, Kevin, Trudy, Stacey, Khatri, Eric, Martin, Tom, Brick, Kelly, Brian, Paula, Matthias, Tian-Chen, Nicky, Dale, Tillie, Jim, Roger, Marielle, Elgin. 30. "
   },
   {
     "id": "Q005",
@@ -102,7 +102,7 @@
       "1485 Scotia Terrace"
     ],
     "answer": 0,
-    "explanation": "Según pone en lonchera de Víctor, la dirección es 1597 Burrow Street."
+    "explanation": "Según pone en lonchera de Víctor, la dirección es 1597 Burrow Street. Fennertry Crescent y Milne Dr es como se llaman en la realidad las calles del lugar donde se ha rodado From en Halifax, Nueva Escocia. "
   },
   {
     "id": "Q007",
@@ -115,7 +115,7 @@
       "Victor",
       "objetos"
     ],
-    "question": "¿Qué objeto no ve Victor cuando baja a las cuevas con su padre?",
+    "question": "¿Qué objeto NO ve Victor cuando baja a las cuevas con su padre?",
     "options": [
       "Una bicicleta",
       "Una maleta",
@@ -136,7 +136,7 @@
       "Miranda",
       "violín"
     ],
-    "question": "¿De quién es el violín que toca Jade?",
+    "question": "¿De quién es el violín que toca Jade, según Victor?",
     "options": [
       "Jade",
       "Miranda",
@@ -165,7 +165,7 @@
       "Los tres a la vez"
     ],
     "answer": 2,
-    "explanation": "Marielle es la primera afectada, y Kristi confunde su maldición con el síndrome de abstinencia. Esto ocurre a mitad del 2x09, que cierra con Julie y Randall también afectados por la maldición de las cigarras. "
+    "explanation": "Marielle es la primera afectada, y Kristi confunde su maldición con el síndrome de abstinencia. Esto ocurre a mitad del 2x09, episodio que cierra con Julie y Randall también afectados por la maldición. "
   },
   {
     "id": "Q010",
@@ -185,7 +185,7 @@
       "Elgin"
     ],
     "answer": 0,
-    "explanation": "Randall iba a regalar un dron a su sobrino, según cuenta a Jim en el episodio 2x07"
+    "explanation": "Randall iba a regalar un dron a su sobrino, según cuenta a Jim en el episodio 2x07. "
   },
   {
     "id": "Q011",
@@ -240,7 +240,7 @@
       "storywalking",
       "mazmorra"
     ],
-    "question": "¿Cuántas veces ha viajado Julie a otro momento de la historia mediante la mazmorra?",
+    "question": "¿Cuántas veces ha viajado Julie, que sepamos, a otro momento de la historia mediante la mazmorra?",
     "options": [
       "4",
       "3",
@@ -306,11 +306,11 @@
     "options": [
       "Siempre a la izquierda",
       "Siempre a la derecha",
-      "A ambos lados, pero más veces a la izquierda",
-      "A ambos lados, pero más veces a la derecha"
+      "A ambos lados por igual, 2 y 2",
+      "Una vez a la derecha y 3 veces a la izquierda"
     ],
     "answer": 2,
-    "explanation": "Los Matthews la ven a la izquierda en el 1x01 y la ambulancia también a la izquierda en el 3x03; los Stevens, en cambio, la ven a la derecha en el 1x08. En conjunto, más veces a la izquierda."
+    "explanation": "Los Matthews la ven a la izquierda en el 1x01 y la ambulancia también a la izquierda en el 3x03; los Stevens, en cambio, la ven a la derecha en el 1x08. El pastor la ve a la derecha en el 4x01. Por tanto, se ve 2 veces a la izquierda y otras 2 a la derecha. "
   },
   {
     "id": "Q017",
@@ -331,7 +331,7 @@
       "Kenny"
     ],
     "answer": 0,
-    "explanation": "En el 4x06, Boyd le dice a Khatri que Donna le preguntó si roncaba nada más verla, recordándolo como algo cómico y carismático por parte de la líder de Colony House"
+    "explanation": "En el 4x06, Boyd le dice a Khatri que Donna le preguntó si roncaba nada más verle, recordándolo como algo cómico y carismático por parte de la líder de Colony House"
   },
   {
     "id": "Q018",
@@ -353,7 +353,7 @@
       "Khatri"
     ],
     "answer": 2,
-    "explanation": "Kenny y su familia desaparecieron el 18 de Marzo de 2021; Kristi, el 6 de Agosto de 2021; Sara y Nathan, el 18 de Septiembre de 2021. Khatri, desde el 12 de Julio de 2019"
+    "explanation": "Kenny y su familia desaparecieron el 18 de Marzo de 2021; Kristi, el 6 de Agosto de 2021; Sara y Nathan, el 18 de Septiembre de 2021. Khatri, el 12 de Julio de 2019."
   },
   {
     "id": "Q019",
@@ -437,7 +437,7 @@
       "Judy Blume"
     ],
     "answer": 0,
-    "explanation": "La autora acreditada es Kay Dillon, mientras que Jiff Horning escribió Las Aventuras del Gran Gooligog. Los otros dos son autores reales mencionados por Khatri al explicar que no hay biblias en From, pero sí libros de estos autores."
+    "explanation": "La autora acreditada es Kay Dillon, mientras que Jiff Horning escribió Las Aventuras del Gran Gooligog. Los otros dos son autores reales mencionados por Khatri al explicar que no hay biblias en From."
   },
   {
     "id": "Q023",
@@ -458,7 +458,7 @@
       "Judy Blume"
     ],
     "answer": 1,
-    "explanation": "El autor acreditado es Jiff Horning. Kay Dillon es el autor/a de El Vuelo del Cromenockle, y los otros dos son autores reales mencionados por Khatri al explicar que no hay biblias en From, pero sí libros de estos autores."
+    "explanation": "El autor es Jiff Horning, un anagrama de Jhon Griffin. Kay Dillon es el autor/a de El Vuelo del Cromenockle, y los otros dos son autores reales mencionados por Khatri al contar que no hay biblias en From."
   },
   {
     "id": "Q024",
@@ -561,7 +561,7 @@
       "Kristi y Marielle"
     ],
     "answer": 0,
-    "explanation": "Hasta el cierre de la T4, Sophia no ha entablado ninguna conversación con Victor ni con Jade."
+    "explanation": "Hasta el cierre de la T4, Sophia no ha entablado ninguna conversación con Victor ni con Jade. Con Boyd habla cuando es rescatada del coche, con Julie en el diner y con Kristi y Marielle, en la enfermería. "
   },
   {
     "id": "Q029",
@@ -622,7 +622,7 @@
       "Wei"
     ],
     "answer": 0,
-    "explanation": "El nombre real de Kenny es Fu-Hen: nos lo cuenta jugando al ajedrez con Gina en el episodio 1x02."
+    "explanation": "El nombre real de Kenny es Fu-Hen: nos lo cuenta Bing-Qian jugando al ajedrez con Gina en el episodio 1x02."
   },
   {
     "id": "Q032",
@@ -698,13 +698,13 @@
     ],
     "question": "¿Qué monstruo le dice a Victor que, si sigue bajando a las cuevas, tendrá que quedarse?",
     "options": [
-      "El Hombre de Amarillo",
+      "La señora del abrigo",
       "Smiley",
       "El mecánico",
       "La enfermera"
     ],
     "answer": 0,
-    "explanation": "La advertencia la hace el Hombre de Amarillo."
+    "explanation": "La advertencia la hace la mujer de pelo rubio con abrigo, en el episodio 3x06 cuando Victor y Henry bajan a las cuevas a recuperar a Jasper."
   },
   {
     "id": "Q036",
@@ -787,7 +787,7 @@
       "Sara"
     ],
     "answer": 1,
-    "explanation": "Kristi sube al asiento del copiloto."
+    "explanation": "Kristi se sube en el asiento del copiloto en el episodio 4x02."
   },
   {
     "id": "Q040",
@@ -829,7 +829,7 @@
       "Tom"
     ],
     "answer": 0,
-    "explanation": "Randall desarma a Kenny."
+    "explanation": "Randall desarma a Kenny en el episodio 2x02."
   },
   {
     "id": "Q042",
@@ -872,7 +872,7 @@
       "Boyd y Sara"
     ],
     "answer": 0,
-    "explanation": "Kenny y Ellis encuentran a Kelly."
+    "explanation": "Kenny y Ellis encuentran a Kelly en el episodio 2x03."
   },
   {
     "id": "Q044",
@@ -893,7 +893,7 @@
       "67"
     ],
     "answer": 0,
-    "explanation": "El pueblo llevaba 96 días/noches sin incidentes."
+    "explanation": "El pueblo llevaba 96 días/noches sin incidentes, según pone en el cartel fuera de la comisaría."
   },
   {
     "id": "Q045",
@@ -927,15 +927,15 @@
       "Jim",
       "radio"
     ],
-    "question": "¿Quién le da a Jade la idea de cómo construir una torre de radio para contactar con el exterior?",
+    "question": "¿Quién ayuda a Jade a planear la construcción de una torre de radio para contactar con el exterior?",
     "options": [
       "Tom",
-      "El propio Jade",
+      "Solamente la construye Jade",
       "Jim",
       "Randall"
     ],
     "answer": 2,
-    "explanation": "La idea procede de Jim, se la comenta a Jade en una conversación en el bar durante el episodio 1x05"
+    "explanation": "La idea procede de Jim, ya que era ingeniero y diseñaba y construía atracciones."
   },
   {
     "id": "Q047",
@@ -956,7 +956,7 @@
       "Todos han fallecido"
     ],
     "answer": 2,
-    "explanation": "Hijo varón: Ethan, Victor, Ellis y Kenny llegan a Fromville en familia y ninguno de ellos ha fallecido hasta la fecha"
+    "explanation": "Hijo varón: Ethan, Victor, Ellis y Kenny llegan a Fromville con sus familias (salvo Henry) y ninguno de ellos ha fallecido hasta la fecha"
   },
   {
     "id": "Q048",
@@ -969,7 +969,7 @@
       "apellidos",
       "llegadas"
     ],
-    "question": "¿Cuántas familias de las que conocemos el apellido han llegado a Fromville en el ciclo actual, contando solo grupos de más de un integrante que llegan juntos?",
+    "question": "¿Cuántas familias de las que conocemos el apellido han llegado a Fromville en el ciclo actual y tienen algún integrante vivo, contando solo familias que llegan juntas siendo 2 ó más?",
     "options": [
       "6",
       "7",
@@ -1018,7 +1018,7 @@
       "8 o más"
     ],
     "answer": 3,
-    "explanation": "Al menos ocho: Kristi (tobillo), Randall (cicatriz en la cara), Elgin (nudillos y ojo), Boyd (corte en el brazo), Ethan (operación en la pierna en la caravana), Jim (se rompe una costilla tras venirse abajo la casa con el dentro), Ellis (apuñalado por Dale) y Sophia (se cae a la piscina a propósito)."
+    "explanation": "Al menos ocho: Kristi (tobillo), Randall (cicatriz en la cara), Elgin (nudillos y ojo), Boyd (corte en el brazo), Ethan (operación en la pierna en la caravana), Jim (se rompe una costilla tras venirse abajo la casa con el dron), Ellis (apuñalado por Dale) y Sophia (se cae a la piscina a propósito)."
   },
   {
     "id": "Q051",
@@ -1080,7 +1080,7 @@
       "Jim"
     ],
     "answer": 1,
-    "explanation": "Boyd es la única persona que no ha viajado al asentamiento: Jim y Kenny lo descubrieron y Jade estuvo allí cuando Kristi tuvo el accidente con la trampa por el que se hizo daño en su tobillo"
+    "explanation": "Boyd es la única persona que no ha viajado al asentamiento: Jim y Kenny lo descubrieron y Jade estuvo allí, e incluso durmió en una cabaña con Kristi y Kenny."
   },
   {
     "id": "Q054",
@@ -1093,15 +1093,15 @@
       "Fromville",
       "conteo"
     ],
-    "question": "¿Cuántos edificios o estructuras principales hay en pie en total en todo Fromville?",
+    "question": "¿Cuántos edificios principales hay en pie en total en todo Fromville?",
     "options": [
       "16",
       "12",
       "14",
       "15"
     ],
-    "answer": 0,
-    "explanation": "Se cuentan 5 viviendas más diner, comisaría, iglesia, clínica, bar, granero, Colony House, faro, invernadero, root cellar y mazmorra: 16."
+    "answer": 3,
+    "explanation": "Se cuentan 4 viviendas residenciales (la de los Matthews se vino abajo) más diner, comisaría, iglesia, clínica, bar, granero, Colony House, faro, invernadero, root cellar y mazmorra: 15."
   },
   {
     "id": "Q055",
@@ -1122,7 +1122,7 @@
       "Everybody Knows This Is Nowhere"
     ],
     "answer": 0,
-    "explanation": "La canción es «Twinkle, Twinkle, Little Star»."
+    "explanation": "La canción es «Twinkle, Twinkle, Little Star», y es tocada por Jade con el violín sobre el capó del coche."
   },
   {
     "id": "Q056",
@@ -1285,7 +1285,7 @@
       "casa",
       "diner"
     ],
-    "question": "¿Cuál es el edificio más cercano a la casa de los Matthews que termina derrumbándose?",
+    "question": "¿Cuál es el edificio más cercano a la casa de los Matthews, que termina derrumbándose?",
     "options": [
       "Diner",
       "Granero",
@@ -1293,7 +1293,7 @@
       "Casa de Sara"
     ],
     "answer": 0,
-    "explanation": "Entre las opciones, el diner es el edificio más cercano."
+    "explanation": "Entre las opciones, el diner es el edificio más cercano, ya que es contiguo a ésta: a un lado tiene el diner, y a otro, el columpio."
   },
   {
     "id": "Q064",
@@ -1377,7 +1377,7 @@
       "No se sabe el número concreto"
     ],
     "answer": 3,
-    "explanation": "La serie establece que hay varios, pero no fija un número total concreto. Victor explica a Ethan en el episodio 1x04 que hay muchos"
+    "explanation": "La serie establece que hay varios, pero no fija un número total concreto. Victor explica su funcionamiento a Ethan en el episodio 1x04 y asegura que «hay muchos»."
   },
   {
     "id": "Q068",
@@ -1432,7 +1432,7 @@
       "letrero",
       "cabra"
     ],
-    "question": "¿Qué había en la bolsa colgada del letrero?",
+    "question": "¿Qué había en la bolsa colgada del letrero a inicios de la temporada 4?",
     "options": [
       "Nada",
       "Jim",
@@ -1611,7 +1611,7 @@
       "7"
     ],
     "answer": 3,
-    "explanation": "Sophia aparece en la séptima foto. Curiosamente, en la foto nº4 descubre una foto con el número 7. "
+    "explanation": "Sophia aparece en la séptima y última foto. Curiosamente, en la foto nº4 descubre una foto con el número 7. "
   },
   {
     "id": "Q079",
@@ -1632,7 +1632,7 @@
       "Vox Smith"
     ],
     "answer": 0,
-    "explanation": "Jim Matthews está interpretado por Eion Bailey."
+    "explanation": "Jim Matthews es interpretado por Eion Bailey."
   },
   {
     "id": "Q080",
@@ -1653,7 +1653,7 @@
       "Scott McCord"
     ],
     "answer": 0,
-    "explanation": "El Hombre de Amarillo está interpretado por Douglas E. Hughes."
+    "explanation": "El Hombre de Amarillo es interpretado por Douglas E. Hughes."
   },
   {
     "id": "Q081",
@@ -1716,7 +1716,7 @@
       "Temporada 4, episodio 3"
     ],
     "answer": 2,
-    "explanation": "En el episodio 4x04, vemos a Julie cortarse el pelo tras haber sido agarrada previamente del pelo por la enfermera monstruo."
+    "explanation": "En el episodio 4x04, vemos a Julie cortarse el pelo tras haber sido agarrada previamente del pelo por la monstruo enfermera."
   },
   {
     "id": "Q084",
@@ -1779,7 +1779,7 @@
       "Noruega"
     ],
     "answer": 0,
-    "explanation": "Kenny propone viajar a Islandia en el episodio 1x10."
+    "explanation": "Kenny propone viajar a Islandia cuando salgan de From en el episodio 1x10."
   },
   {
     "id": "Q087",
@@ -1800,7 +1800,7 @@
       "Strange Affair"
     ],
     "answer": 1,
-    "explanation": "«A Hard Rain's A-Gonna Fall» sale en el 2x01, pero no en un tráiler oficial de temporada. We Gotta Get Out of This Place es la canción del tráiler de la temporada 1; Like a Dream en el tráiler de la temporada 2 y Strange Affair, en la temporada 4. "
+    "explanation": "«A Hard Rain's A-Gonna Fall» sale en el 2x01, pero no en un tráiler oficial de temporada. Sí salen We Gotta Get Out of This Place (temporada 1), Like a Dream (temporada 2) y Strange Affair (temporada 4). "
   },
   {
     "id": "Q088",
@@ -1836,7 +1836,7 @@
     ],
     "question": "¿Dónde se construyó desde cero el pueblo en el que se rueda FROM?",
     "options": [
-      "Camden, Maine",
+      "Camden, Maine, EE.UU.",
       "Nueva Escocia, Canadá",
       "Manitoulin Island, Canadá",
       "Newberry, Canadá"
@@ -1947,14 +1947,14 @@
       "Ethan"
     ],
     "answer": 0,
-    "explanation": "La idea de cavar es de Tabitha en el 1x06, al preguntarse de dónde provienen los cables de electricidad"
+    "explanation": "La idea de cavar es de Tabitha en el 1x06, al preguntarse de dónde proviene la luz que alimenta al pueblo"
   },
   {
     "id": "Q095",
     "category": "reglas",
     "difficulty": 1,
     "spoilersUpTo": 0,
-    "question": "Al caer el sol suena un misterioso sonido que recorre el pueblo. ¿Cuál?",
+    "question": "Al caer el sol suena un sonido característico que recorre el pueblo en forma de aviso. ¿Cuál?",
     "options": [
       "Una campana",
       "Un cuerno",
@@ -1962,7 +1962,7 @@
       "Un silbato"
     ],
     "answer": 0,
-    "explanation": "La pequeña campana que Boyd agita al anochecer es la señal: la noche ha comenzado y nadie debe estar fuera."
+    "explanation": "La pequeña campana que Boyd agita al anochecer es la señal: la noche ha comenzado y nadie debe estar fuera, o de lo contrario será asesinado por los monstruos."
   },
   {
     "id": "Q096",
@@ -1977,7 +1977,7 @@
       "Un mapa del pueblo"
     ],
     "answer": 1,
-    "explanation": "El pequeño talismán protege a los lugares cerrados, evitando que ingresen los monstruos mientras dura la noche.",
+    "explanation": "El pequeño talismán protege a los lugares cerrados cuando está colgado, evitando que ingresen los monstruos mientras dura la noche.",
     "image": "/assets/references/talisman-404.webp",
     "imageAlt": "Talismán de FROM con símbolos tallados"
   },
@@ -2024,7 +2024,7 @@
       "Excavan bajo las puertas"
     ],
     "answer": 0,
-    "explanation": "Llaman a la puerta o desde el bosque imitando la entonación de voces de personas cercanas. Responder puede ser mortal."
+    "explanation": "Llaman a la puerta o se acercan a las ventanas imitando la entonación de voces de personas cercanas. Responder puede ser mortal."
   },
   {
     "id": "Q100",
@@ -2049,12 +2049,12 @@
     "question": "¿Cómo se comportan los teléfonos móviles en el pueblo?",
     "options": [
       "No tienen ninguna señal",
-      "Funcionan dentro del pueblo pero no conectan con el exterior",
+      "Funcionan dentro del pueblo, pero no conectan con el exterior en cuanto salen al bosque",
       "Solo funcionan en la iglesia",
       "Solo funcionan de noche"
     ],
     "answer": 0,
-    "explanation": "No tienen ninguna señal, así que comunicarse con el mundo exterior es imposible."
+    "explanation": "No tienen señal de ningún tipo, así que comunicarse con el mundo exterior es imposible."
   },
   {
     "id": "Q102",
@@ -2069,7 +2069,7 @@
       "Cuando termina la luna llena"
     ],
     "answer": 2,
-    "explanation": "Con el alba las criaturas desaparecen y el pueblo puede respirar… hasta el siguiente anochecer."
+    "explanation": "Con el alba, al amanecer las criaturas desaparecen y el pueblo puede respirar… hasta el siguiente anochecer."
   },
   {
     "id": "Q103",
@@ -2084,7 +2084,7 @@
       "Nada, las criaturas solo atacan en el bosque"
     ],
     "answer": 2,
-    "explanation": "Dormir fuera de la protección de una casa propia con talismán termina en muerte o desaparición asegurada."
+    "explanation": "Dormir fuera de la protección de una casa propia con puertas y ventanas cerradas y con un talismán colgado en ellas termina en muerte asegurada."
   },
   {
     "id": "Q104",
@@ -2099,7 +2099,7 @@
       "La Vecina"
     ],
     "answer": 0,
-    "explanation": "El Hombre de Amarillo es una de las entidades más antiguas e inquietantes del pueblo."
+    "explanation": "El Hombre de Amarillo es una de las entidades más antiguas e inquietantes del pueblo. Es así como se refieren a él en la 4ª temporada, y a día de hoy desconocemos su nombre real. "
   },
   {
     "id": "Q105",
@@ -2139,42 +2139,42 @@
     "question": "Al moverse, las criaturas pueden…",
     "options": [
       "Percibir a humanos aún en silencio",
-      "Correr cuando sea necesario",
+      "Correr cuando sea necesario, aunque apenas les vemos hacerlo",
       "Avanzar siempre en fila",
       "Quedarse inmóviles hasta el alba"
     ],
     "answer": 1,
-    "explanation": "Suelen ser lentas y caminar, pero vimos a Smiley correr a por Miranda en el flashback del episodio 3x09."
+    "explanation": "Suelen ser lentas y caminar, aunque vimos a Smiley correr a por Miranda en el flashback del episodio 3x09."
   },
   {
     "id": "Q108",
     "category": "temporadas",
     "difficulty": 1,
     "spoilersUpTo": 1,
-    "question": "Al entrar en el pueblo, los Matthews encuentran un vehículo detenido con todos sus ocupantes muertos. ¿Cuál?",
+    "question": "Al entrar en el pueblo por primera vez, ¿quién es la primera persona a la que ven los Matthews?",
     "options": [
-      "Un autobús",
-      "Un tren de cercanías",
-      "Un camión de mudanza",
-      "Un autocar de excursión escolar"
+      "Sara",
+      "Boyd",
+      "Khatri",
+      "Donna"
     ],
     "answer": 0,
-    "explanation": "El autobús de pasajeros silenciosos es la primera imagen de horror de la serie."
+    "explanation": "Sara se encuentra sentada en las escaleras del bar de Tom. Es después cuando ven a Boyd, Khatri y los demás en el funeral"
   },
   {
     "id": "Q109",
     "category": "temporadas",
     "difficulty": 2,
     "spoilersUpTo": 2,
-    "question": "¿Qué se esconde tras un socavón en la cantera del pueblo?",
+    "question": "¿Qué personaje descubre accidentalmente las cuevas tras cavar en la primera temporada?",
     "options": [
-      "Un aparcamiento subterráneo",
-      "Una red de cuevas y túneles",
-      "Un avión estrellado",
-      "Un antiguo fuerte"
+      "Jade",
+      "Tabitha",
+      "Khatri",
+      "Boyd"
     ],
     "answer": 1,
-    "explanation": "Las cuevas bajo el pueblo revelan una red subterránea con un pasado muy oscuro."
+    "explanation": "Tabitha abre un agujero en su casa para buscar de dónde viene la luz y cae a una red subterránea de cuevas donde viven los monstruos."
   },
   {
     "id": "Q110",
@@ -2184,8 +2184,8 @@
     "question": "¿Qué muestran los flashbacks que viajan a otras épocas?",
     "options": [
       "El pueblo solo existió en los años 70",
-      "Grupos de personas atrapadas en distintos períodos",
-      "El futuro del pueblo",
+      "Han existido grupos de personas atrapadas en distintos períodos",
+      "Los flashbacks son, en realidad, el futuro del pueblo",
       "Que los monstruos eran todos humanos en el ciclo anterior"
     ],
     "answer": 1,
@@ -2198,13 +2198,13 @@
     "spoilersUpTo": 1,
     "question": "¿Qué ocurre en los primeros episodios con el terreno del pueblo?",
     "options": [
-      "Aparecen círculos en la hierba",
-      "El suelo se llena de gusanos muertos",
-      "Nace un bosque nuevo",
-      "Brota agua negra"
+      "Hace siempre un frío invernal",
+      "Los árboles se mueven",
+      "La piscina se llena de agua por sí sola",
+      "Sale agua negra de los grifos"
     ],
     "answer": 1,
-    "explanation": "El episodio inicial muestra el suelo cuajado de gusanos, presentimiento de lo que se esconde bajo el pueblo."
+    "explanation": "Víctor cuenta a Ethan que los árboles se han movido «4 pulgadas»."
   },
   {
     "id": "Q112",
@@ -2252,7 +2252,7 @@
       "J.J. Abrams"
     ],
     "answer": 0,
-    "explanation": "John Griffin es el creador y showrunner. El concepto original parte de Michael J. Sigelow y Jack Bender produce y dirige buena parte de la serie."
+    "explanation": "John Griffin es el creador y showrunner, así como el principal creador de la mitología de la serie. Jack Bender produce y hace guiones de numerosos capítulos, pero no fue quien tuvo la idea original."
   },
   {
     "id": "Q115",
@@ -2316,7 +2316,7 @@
       "Twin Peaks"
     ],
     "answer": 1,
-    "explanation": "La comparación es clásica: además, Jack Bender es nexo común con Lost."
+    "explanation": "La comparación con Perdidos es recurrente: Jack Bender es productor ejecutivo en ambas series, Jeff Pinker ha trabajado como guionista en Lost y como productor ejecutivo en From, y Harold Perrineau (Boyd) interpretó a Michael."
   },
   {
     "id": "Q119",
@@ -2348,7 +2348,7 @@
       "2026"
     ],
     "answer": 1,
-    "explanation": "La T3 se estrenó en 2024."
+    "explanation": "La Temporada 3 se estrenó en 2024."
   },
   {
     "id": "Q121",
@@ -2475,7 +2475,7 @@
       "The End"
     ],
     "answer": 0,
-    "explanation": "La cabecera usa el «Que Sera, Sera» reinterpretado por Pixies: un contraste deliberado, alegre y escalofriante."
+    "explanation": "La cabecera usa el «Que Sera, Sera (Whatever Will Be, Will be)» reinterpretado por The Pixies."
   },
   {
     "id": "Q129",
@@ -2513,7 +2513,7 @@
       "temporadas",
       "episodios"
     ],
-    "question": "¿Cuántas temporadas y episodios acumula FROM tras su cuarta entrega?",
+    "question": "¿Cuántas temporadas y episodios se han emitido hasta 2026 (inclusive)?",
     "options": [
       "3 temporadas · 30 episodios",
       "4 temporadas · 40 episodios",
@@ -2556,12 +2556,12 @@
     ],
     "question": "¿Qué productoras están detrás de FROM?",
     "options": [
-      "MGM, AGBO y Midnight Radio",
+      "MGM+, AGBO y Midnight Radio",
       "Warner Bros. y Bad Robot",
       "HBO y Anonymous Content",
       "Netflix y Chernin Entertainment"
     ],
     "answer": 0,
-    "explanation": "La serie la producen MGM Television, AGBO (los hermanos Russo) y Midnight Radio."
+    "explanation": "La serie la producen MGM+ Television, AGBO (los hermanos Russo) y Midnight Radio."
   }
 ]
