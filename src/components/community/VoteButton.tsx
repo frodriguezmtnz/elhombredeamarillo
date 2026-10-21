@@ -26,47 +26,60 @@ export default function VoteButton({ hypothesisId, initialVotes, initialVoted = 
       return;
     }
     if (initialVoted) return;
-    getSupabase().then((sb) =>
-      sb
-        .from('votes')
-        .select('id', { count: 'exact', head: true })
-        .eq('hypothesis_id', hypothesisId)
-        .eq('user_id', user.id)
-        .then(({ count }) => {
-          setVoted((count ?? 0) > 0);
-        }),
-    );
+    getSupabase()
+      .then((sb) =>
+        sb
+          .from('votes')
+          .select('id', { count: 'exact', head: true })
+          .eq('hypothesis_id', hypothesisId)
+          .eq('user_id', user.id)
+          .then(({ count }) => {
+            setVoted((count ?? 0) > 0);
+          }),
+      )
+      .catch(() => setVoted(false));
   }, [user, hypothesisId, initialVoted]);
 
   const toggle = useCallback(async () => {
     if (!user || loading) return;
     setLoading(true);
 
-    if (voted) {
-      setVotes((v) => v - 1);
-      setVoted(false);
-      const sb = await getSupabase();
-      const { error } = await sb.from('votes').delete().eq('hypothesis_id', hypothesisId).eq('user_id', user.id);
-      if (error) {
+    try {
+      if (voted) {
+        setVotes((v) => v - 1);
+        setVoted(false);
+        const sb = await getSupabase();
+        const { error } = await sb.from('votes').delete().eq('hypothesis_id', hypothesisId).eq('user_id', user.id);
+        if (error) {
+          setVotes((v) => v + 1);
+          setVoted(true);
+        } else {
+          onVoteChange?.();
+        }
+      } else {
+        setVotes((v) => v + 1);
+        setVoted(true);
+        const sb = await getSupabase();
+        const { error } = await sb.from('votes').insert({ hypothesis_id: hypothesisId, user_id: user.id });
+        if (error) {
+          setVotes((v) => v - 1);
+          setVoted(false);
+        } else {
+          onVoteChange?.();
+        }
+      }
+    } catch {
+      // Sin conexión/credenciales: deshace el cambio optimista
+      if (voted) {
         setVotes((v) => v + 1);
         setVoted(true);
       } else {
-        onVoteChange?.();
-      }
-    } else {
-      setVotes((v) => v + 1);
-      setVoted(true);
-      const sb = await getSupabase();
-      const { error } = await sb.from('votes').insert({ hypothesis_id: hypothesisId, user_id: user.id });
-      if (error) {
         setVotes((v) => v - 1);
         setVoted(false);
-      } else {
-        onVoteChange?.();
       }
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }, [user, voted, loading, hypothesisId, onVoteChange]);
 
   if (!user) {
