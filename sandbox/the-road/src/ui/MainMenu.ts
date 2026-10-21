@@ -67,6 +67,7 @@ export class MainMenu {
         <button data-action="exit">Exit</button>
       </nav>
       <div class="hint">WASD drive · SHIFT run / high beams · F emergency · G siren · R radio · C camera · E interact · ESC pause · F3 debug</div>
+      <a class="site-back" href="/" lang="es" rel="home">← Volver a El Hombre de Amarillo</a>
     `;
     for (const button of el.querySelectorAll('button')) {
       button.addEventListener('click', () => {
