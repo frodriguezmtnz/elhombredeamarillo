@@ -11,24 +11,26 @@ interface Props {
 }
 
 function fetchHypotheses(mysteryId: string): Promise<{ data: HypothesisData[] | null; error: string | null }> {
-  return getSupabase().then((sb) =>
-    sb
-      .from('hypotheses')
-      .select('id, title, description, author, votes_count, display_order')
-      .eq('mystery_id', mysteryId)
-      .order('display_order')
-      .then(({ data, error }) => {
-        if (error) return { data: null, error: error.message };
-        const mapped: HypothesisData[] = (data ?? []).map((h) => ({
-          id: h.id,
-          title: h.title,
-          description: h.description ?? '',
-          author: h.author ?? 'Anónimo',
-          votes: h.votes_count ?? 0,
-        }));
-        return { data: mapped, error: null };
-      }),
-  );
+  return getSupabase()
+    .then((sb) =>
+      sb
+        .from('hypotheses')
+        .select('id, title, description, author, votes_count, display_order')
+        .eq('mystery_id', mysteryId)
+        .order('display_order')
+        .then(({ data, error }) => {
+          if (error) return { data: null, error: error.message };
+          const mapped: HypothesisData[] = (data ?? []).map((h) => ({
+            id: h.id,
+            title: h.title,
+            description: h.description ?? '',
+            author: h.author ?? 'Anónimo',
+            votes: h.votes_count ?? 0,
+          }));
+          return { data: mapped, error: null };
+        }),
+    )
+    .catch(() => ({ data: null, error: 'No se pudo conectar con el archivo comunitario.' }));
 }
 
 export default function MysteryDetail({ mystery }: Props) {
@@ -50,16 +52,18 @@ export default function MysteryDetail({ mystery }: Props) {
     }
     const ids = hyps.map((h) => h.id);
     if (ids.length === 0) return;
-    getSupabase().then((sb) =>
-      sb
-        .from('votes')
-        .select('hypothesis_id')
-        .eq('user_id', user.id)
-        .in('hypothesis_id', ids)
-        .then(({ data }) => {
-          setVotedIds(new Set(data?.map((v) => v.hypothesis_id) ?? []));
-        }),
-    );
+    getSupabase()
+      .then((sb) =>
+        sb
+          .from('votes')
+          .select('hypothesis_id')
+          .eq('user_id', user.id)
+          .in('hypothesis_id', ids)
+          .then(({ data }) => {
+            setVotedIds(new Set(data?.map((v) => v.hypothesis_id) ?? []));
+          }),
+      )
+      .catch(() => setVotedIds(new Set()));
   };
 
   const refreshHypotheses = () => {
@@ -93,20 +97,24 @@ export default function MysteryDetail({ mystery }: Props) {
 
     let unsubscribe: (() => void) | undefined;
 
-    getSupabase().then((sb) => {
-      const refresh = () => {
-        fetchHypotheses(mysteryId).then(({ data, error }) => applyData(data, error));
-      };
+    getSupabase()
+      .then((sb) => {
+        const refresh = () => {
+          fetchHypotheses(mysteryId).then(({ data, error }) => applyData(data, error));
+        };
 
-      const channel = sb
-        .channel(`hypotheses-${mysteryId}`)
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'hypotheses' }, refresh)
-        .subscribe();
+        const channel = sb
+          .channel(`hypotheses-${mysteryId}`)
+          .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'hypotheses' }, refresh)
+          .subscribe();
 
-      unsubscribe = () => {
-        sb.removeChannel(channel);
-      };
-    });
+        unsubscribe = () => {
+          sb.removeChannel(channel);
+        };
+      })
+      .catch(() => {
+        // Sin credenciales: el detalle sigue funcionando sin realtime
+      });
 
     return () => {
       unsubscribe?.();
