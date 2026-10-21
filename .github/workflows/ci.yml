@@ -40,8 +40,15 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Typecheck THE ROAD
+        run: pnpm typecheck:road
+
+      - name: Smoke THE ROAD
+        run: pnpm --filter the-road smoke
+
+      # Réplica exacta del build de Vercel: juego + sitio + copia a dist/the-road
       - name: Build
-        run: pnpm build
+        run: pnpm build:road && pnpm build && node scripts/copy-road.mjs
 
       - name: Validate OpenSpec (informativo)
         continue-on-error: true
