@@ -1,5 +1,12 @@
 # Plan de Desarrollo — Migración a Astro + React + Tailwind + Supabase
 
+> **DOCUMENTO HISTÓRICO.** Se conserva como referencia del proceso de migración, pero ya no
+> refleja el estado real del proyecto: muchas tareas figuran sin marcar aunque están implementadas,
+> y algunas decisiones cambiaron (p. ej. el catálogo de vídeos vive en Supabase, no solo en
+> `src/data/videos.ts`; el auth es email/contraseña, no Google/GitHub) y la versión de Astro es 7.
+> La fuente de verdad del comportamiento es `openspec/specs/`; el estado y los comandos actuales,
+> `README.md`.
+
 > **Proyecto:** El Hombre de Amarillo — Web de contenido y comunidad
 > **Stack objetivo:** Astro 5.x / React 19 / Tailwind CSS v4 / Supabase / TypeScript
 > **Deployment:** Vercel

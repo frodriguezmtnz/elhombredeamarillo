@@ -236,6 +236,22 @@ body {
   letter-spacing: 0.12em;
 }
 
+.menu .site-back {
+  margin-top: -1.4rem;
+  color: var(--road-dim);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+
+.menu .site-back:hover,
+.menu .site-back:focus-visible {
+  color: var(--road-accent);
+  outline: none;
+}
+
 /* settings */
 
 .settings {

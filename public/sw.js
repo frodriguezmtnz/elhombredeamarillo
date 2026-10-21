@@ -1,5 +1,8 @@
-const CACHE_NAME = 'hda-v6';
-const STATIC_ASSETS = ['/manifest.webmanifest'];
+const CACHE_NAME = 'hda-v7';
+const OFFLINE_URL = '/offline.html';
+const STATIC_ASSETS = ['/manifest.webmanifest', OFFLINE_URL];
+
+const offlineFallback = () => caches.match(OFFLINE_URL).then((cached) => cached || Response.error());
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)));
@@ -21,9 +24,10 @@ self.addEventListener('fetch', (event) => {
 
   if (url.origin === location.origin) {
     const ext = url.pathname.split('.').pop();
+    const isDocument = request.mode === 'navigate' || ext === 'html' || url.pathname.endsWith('/');
 
     // Network-first for JS, CSS, and HTML (changes on every build)
-    if (ext === 'js' || ext === 'css' || ext === 'html' || url.pathname.endsWith('/')) {
+    if (ext === 'js' || ext === 'css' || isDocument) {
       event.respondWith(
         fetch(request)
           .then((response) => {
@@ -33,7 +37,9 @@ self.addEventListener('fetch', (event) => {
             }
             return response;
           })
-          .catch(() => caches.match(request).then((cached) => cached || Response.error())),
+          .catch(() =>
+            caches.match(request).then((cached) => cached || (isDocument ? offlineFallback() : Response.error())),
+          ),
       );
       return;
     }

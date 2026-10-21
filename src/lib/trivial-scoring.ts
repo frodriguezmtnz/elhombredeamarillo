@@ -1,6 +1,14 @@
 /** Segundos por pregunta según dificultad (1 = fácil, 2 = media, 3 = difícil) */
 export const TIME_LIMIT_BY_DIFFICULTY: Record<1 | 2 | 3, number> = { 1: 15, 2: 20, 3: 30 };
 
+/** Tope de puntuación aceptado por la tabla `trivia_scores` (CHECK score <= 30000). */
+export const MAX_STORED_SCORE = 30000;
+
+/** Ajusta la marca de sesión al rango que acepta la BD antes de publicarla. */
+export function clampScoreForLeaderboard(score: number): number {
+  return Math.max(0, Math.min(Math.floor(score), MAX_STORED_SCORE));
+}
+
 export function getTimeLimit(difficulty: 1 | 2 | 3): number {
   return TIME_LIMIT_BY_DIFFICULTY[difficulty];
 }
