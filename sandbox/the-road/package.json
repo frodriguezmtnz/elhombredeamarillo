@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "description": "THE ROAD — horror psicológico 3D para navegador (original)",
+  "engines": {
+    "node": "^24.22.1"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
