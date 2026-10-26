@@ -38,7 +38,7 @@ Cuatro espacios conectados con estética de archivo de investigación:
 
 ## Requisitos
 
-- Node.js 22+
+- Node.js ≥ 24.22.1 (LTS)
 - pnpm
 
 ## Puesta en marcha
