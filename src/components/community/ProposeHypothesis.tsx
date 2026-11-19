@@ -35,7 +35,8 @@ export default function ProposeHypothesis({ mysteryId, onSubmitted, onCancel }: 
       mystery_id: mysteryId,
       title: title.trim(),
       description: description.trim(),
-      author: user.email ?? 'Anónimo',
+      // Nunca el email: hypotheses es de lectura pública (PII)
+      author: 'Anónimo',
       votes_count: 0,
       display_order: 0,
     });

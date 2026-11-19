@@ -121,7 +121,7 @@ export default function LoginForm({ isOpen, onClose }: Props) {
                 onChange={(e) => setPassword(e.currentTarget.value)}
                 placeholder="••••••••"
                 required
-                minLength={6}
+                minLength={8}
                 className="w-full min-h-[40px] px-3 border border-border bg-surface text-text text-xs font-mono rounded-lg outline-none focus:border-yellow focus:ring-1 focus:ring-yellow/20 transition-colors placeholder:text-text-muted/25"
               />
             </div>
