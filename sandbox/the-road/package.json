@@ -15,10 +15,10 @@
     "smoke": "esbuild scripts/smoke.ts --bundle --platform=node --format=esm --outfile=smoke.mjs --log-level=error && node smoke.mjs && node -e \"fs.unlinkSync('smoke.mjs')\""
   },
   "dependencies": {
-    "three": "^0.185.1"
+    "three": "^0.187.0"
   },
   "devDependencies": {
-    "@types/three": "^0.185.4",
+    "@types/three": "^0.187.0",
     "typescript": "^5.8.0",
     "vite": "^7.1.0"
   }
