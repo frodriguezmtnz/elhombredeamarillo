@@ -40,6 +40,9 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Typecheck THE ROAD
+        run: pnpm typecheck:road
+
       - name: Build
         run: pnpm build
 
