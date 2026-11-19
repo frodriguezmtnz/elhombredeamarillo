@@ -26,3 +26,6 @@ _archive/
 # auditorías locales (Lighthouse report, referencias/iteraciones)
 reports/
 docs/
+
+# artefactos de navegador (Playwright MCP)
+.playwright-mcp/

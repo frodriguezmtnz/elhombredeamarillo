@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#070805" />
+    <title>Sin conexión — El Hombre de Amarillo</title>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        background:
+          radial-gradient(ellipse at 50% 0%, rgba(228, 183, 34, 0.12), transparent 55%),
+          #070805;
+        color: #d8d3c5;
+        font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+      }
+      main { max-width: 46ch; text-align: center; }
+      .code {
+        font-family: Consolas, 'Courier New', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.28em;
+        color: #e4b722;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 1rem 0 0.75rem;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: clamp(2rem, 6vw, 3rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #f2ead3;
+      }
+      p { margin: 0 0 1.5rem; line-height: 1.7; color: #a9a394; font-size: 0.95rem; }
+      a {
+        display: inline-block;
+        padding: 0.85rem 1.6rem;
+        border: 1px solid rgba(228, 183, 34, 0.45);
+        border-radius: 0.6rem;
+        color: #e4b722;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      a:hover, a:focus-visible { background: #e4b722; color: #070805; outline: none; }
+      .hint { margin-top: 1.25rem; font-size: 0.72rem; color: #6f6a5e; letter-spacing: 0.1em; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="code">ARCHIVO // SIN SEÑAL</p>
+      <h1>Se ha cortado la conexión</h1>
+      <p>
+        El archivo no puede alcanzar el pueblo ahora mismo. Las páginas que ya habías visitado
+        siguen disponibles; esta ruta necesita red para abrirse.
+      </p>
+      <a href="/">Volver al inicio</a>
+      <p class="hint">Se recargará sola cuando vuelva la conexión.</p>
+    </main>
+    <script>
+      window.addEventListener('online', function () {
+        window.location.reload();
+      });
+    </script>
+  </body>
+</html>

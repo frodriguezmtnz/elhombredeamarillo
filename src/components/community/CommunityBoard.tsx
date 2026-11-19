@@ -61,22 +61,27 @@ function CommunityBoardInner() {
   const selectedMystery = selectedId ? (mysteries.find((m) => m.id === selectedId) ?? null) : null;
 
   useEffect(() => {
-    getSupabase().then((sb) => {
-      sb.from('mysteries')
-        .select('*, hypotheses(id, title, votes_count)')
-        .order('display_order')
-        .then(({ data, error: err }) => {
-          if (err) {
-            setError(err.message);
+    getSupabase()
+      .then((sb) => {
+        sb.from('mysteries')
+          .select('*, hypotheses(id, title, votes_count)')
+          .order('display_order')
+          .then(({ data, error: err }) => {
+            if (err) {
+              setError(err.message);
+              setLoading(false);
+              return;
+            }
+            const mapped = (data as SupabaseMysteryRow[]).map(mapRow);
+            setMysteries(mapped);
+            setFiltered(mapped);
             setLoading(false);
-            return;
-          }
-          const mapped = (data as SupabaseMysteryRow[]).map(mapRow);
-          setMysteries(mapped);
-          setFiltered(mapped);
-          setLoading(false);
-        });
-    });
+          });
+      })
+      .catch(() => {
+        setError('No se pudo conectar con el archivo comunitario.');
+        setLoading(false);
+      });
   }, []);
 
   const fetchVotedIds = useCallback(async () => {
@@ -84,9 +89,13 @@ function CommunityBoardInner() {
       setVotedHypIds(new Set());
       return;
     }
-    const sb = await getSupabase();
-    const { data } = await sb.from('votes').select('hypothesis_id').eq('user_id', user.id);
-    setVotedHypIds(new Set(data?.map((v) => v.hypothesis_id) ?? []));
+    try {
+      const sb = await getSupabase();
+      const { data } = await sb.from('votes').select('hypothesis_id').eq('user_id', user.id);
+      setVotedHypIds(new Set(data?.map((v) => v.hypothesis_id) ?? []));
+    } catch {
+      setVotedHypIds(new Set());
+    }
   }, [user]);
 
   useEffect(() => {

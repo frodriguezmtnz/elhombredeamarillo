@@ -1,5 +1,20 @@
-import { computePoints, getTimeLimit } from '@lib/trivial-scoring';
+import { MAX_STORED_SCORE, clampScoreForLeaderboard, computePoints, getTimeLimit } from '@lib/trivial-scoring';
 import { describe, expect, it } from 'vitest';
+
+describe('clampScoreForLeaderboard', () => {
+  it('respeta las marcas dentro del rango de la BD', () => {
+    expect(clampScoreForLeaderboard(1234)).toBe(1234);
+  });
+
+  it('recorta al máximo aceptado por trivia_scores', () => {
+    expect(clampScoreForLeaderboard(MAX_STORED_SCORE + 1)).toBe(MAX_STORED_SCORE);
+  });
+
+  it('nunca devuelve negativos ni decimales', () => {
+    expect(clampScoreForLeaderboard(-5)).toBe(0);
+    expect(clampScoreForLeaderboard(12.9)).toBe(12);
+  });
+});
 
 describe('getTimeLimit', () => {
   it('asigna más tiempo cuanto más difícil', () => {

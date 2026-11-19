@@ -1,10 +1,9 @@
 import { getRank } from '@data/trivial';
+import { clampScoreForLeaderboard } from '@lib/trivial-scoring';
 import { sanitizePlayerAlias, submitTriviaScore } from '@lib/trivial-service';
 import { useState } from 'react';
 import { useAuth } from '../community/AuthProvider';
 import type { TriviaSummary } from './TriviaGame';
-
-const MAX_POINTS_HINT = 100000;
 
 interface Props {
   summary: TriviaSummary;
@@ -20,7 +19,7 @@ export default function TriviaSubmit({ summary, alias, onAliasChange, onRecorded
 
   const accuracy = summary.total > 0 ? Math.round((summary.correct / summary.total) * 100) : 0;
   const rank = getRank(accuracy).name;
-  const effectiveScore = Math.min(summary.score, MAX_POINTS_HINT);
+  const effectiveScore = clampScoreForLeaderboard(summary.score);
 
   async function publish() {
     if (!user) return;

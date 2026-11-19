@@ -30,22 +30,27 @@ export default function ProposeHypothesis({ mysteryId, onSubmitted, onCancel }: 
     setSubmitting(true);
     setError('');
 
-    const sb = await getSupabase();
-    const { error: err } = await sb.from('hypotheses').insert({
-      mystery_id: mysteryId,
-      title: title.trim(),
-      description: description.trim(),
-      // Nunca el email: hypotheses es de lectura pública (PII)
-      author: 'Anónimo',
-      votes_count: 0,
-      display_order: 0,
-    });
+    try {
+      const sb = await getSupabase();
+      const { error: err } = await sb.from('hypotheses').insert({
+        mystery_id: mysteryId,
+        title: title.trim(),
+        description: description.trim(),
+        // Nunca el email: hypotheses es de lectura pública (PII)
+        author: 'Anónimo',
+        votes_count: 0,
+        display_order: 0,
+      });
 
-    if (err) {
-      setError(err.message);
+      if (err) {
+        setError(err.message);
+        setSubmitting(false);
+      } else {
+        onSubmitted();
+      }
+    } catch {
+      setError('No se pudo conectar con el archivo comunitario.');
       setSubmitting(false);
-    } else {
-      onSubmitted();
     }
   };
 
