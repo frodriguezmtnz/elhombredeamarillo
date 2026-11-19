@@ -124,4 +124,4 @@ Regla: el feedback nuevo entra por `propose` (no directamente a código) y cada 
 
 ## Deploy
 
-El proyecto está pensado para Vercel (build: `pnpm build`, output: `dist`). También incluye `Dockerfile` + `nginx.conf` para autoalojamiento.
+El proyecto está pensado para Vercel: build `pnpm build:road && pnpm build && node scripts/copy-road.mjs` (juego + sitio en `dist/`, con THE ROAD en `dist/the-road/`). Las cabeceras de seguridad (CSP, HSTS, etc.) viven en `vercel.json`.
